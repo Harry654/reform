@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/lib/firebase/config";
 
 function Login() {
@@ -20,14 +20,19 @@ function Login() {
       // Signed in successfully
       const user = userCredential.user;
       console.log("User logged in:", user);
-    } catch (error: any) {
-      const errorCode = error.code;
-      // const errorMessage = error.message;
-      if (errorCode === "auth/invalid-credential")
-        return alert("username or password is invalid");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        // Check if error has a 'code' property
+        const errorCode = (error as { code?: string }).code;
 
-      alert("something went wrong");
-      // console.error("Error logging in:", errorCode, errorMessage);
+        if (errorCode === "auth/invalid-credential") {
+          return alert("Username or password is invalid");
+        }
+
+        alert("Something went wrong");
+      } else {
+        alert("Unknown error occurred");
+      }
     }
   };
 

@@ -1,13 +1,6 @@
 import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import {
-  Question,
-  QuestionType,
-  MCQQuestion,
-  ShortAnswerQuestion,
-  LongAnswerQuestion,
-  RatingQuestion,
-} from "@/types/question";
+import { Question, QuestionType } from "@/types/question";
 import {
   MCQQuestionComponent,
   ShortAnswerQuestionComponent,
@@ -100,7 +93,7 @@ export default function SurveyQuestionEditor() {
         return null;
     }
   };
-return null
+  return null;
   return (
     <div className="max-w-4xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6">Survey Question Editor</h1>
