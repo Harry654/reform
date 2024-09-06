@@ -42,9 +42,6 @@ export default function Countdown() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await addToWaitlist(email); // Add email to waitlist
-    alert(
-      "Thank you for your interest! We'll notify you when Reform launches."
-    );
     setEmail("");
   };
 
