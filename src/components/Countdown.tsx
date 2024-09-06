@@ -1,5 +1,6 @@
-"use client"
-import React, { useState, useEffect } from 'react'
+"use client";
+import { addToWaitlist } from "@/helpers/addToWaitlist";
+import React, { useState, useEffect } from "react";
 
 export default function Countdown() {
   const [timeLeft, setTimeLeft] = useState({
@@ -7,40 +8,43 @@ export default function Countdown() {
     hours: 0,
     minutes: 0,
     seconds: 0,
-  })
+  });
 
-  const [email, setEmail] = useState('')
+  const [email, setEmail] = useState("");
 
   useEffect(() => {
-    const launchDate = new Date('2024-09-10T00:00:00').getTime()
+    const launchDate = new Date("2024-09-10T00:00:00").getTime();
 
     const timer = setInterval(() => {
-      const now = new Date().getTime()
-      const difference = launchDate - now
+      const now = new Date().getTime();
+      const difference = launchDate - now;
 
-      const days = Math.floor(difference / (1000 * 60 * 60 * 24))
-      const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60))
-      const seconds = Math.floor((difference % (1000 * 60)) / 1000)
+      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+      const hours = Math.floor(
+        (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+      );
+      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
-      setTimeLeft({ days, hours, minutes, seconds })
+      setTimeLeft({ days, hours, minutes, seconds });
 
       if (difference < 0) {
-        clearInterval(timer)
-        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 })
+        clearInterval(timer);
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
       }
-    }, 1000)
+    }, 1000);
 
-    return () => clearInterval(timer)
-  }, [])
+    return () => clearInterval(timer);
+  }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Here you would typically send the email to your backend
-    console.log('Email submitted:', email)
-    alert('Thank you for your interest! We\'ll notify you when Reform launches.')
-    setEmail('')
-  }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await addToWaitlist(email); // Add email to waitlist
+    alert(
+      "Thank you for your interest! We'll notify you when Reform launches."
+    );
+    setEmail("");
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-600 to-blue-500 flex flex-col justify-center items-center p-4">
@@ -50,19 +54,25 @@ export default function Countdown() {
             Reform is Coming Soon!
           </h1>
           <p className="text-xl text-center text-gray-600 mb-8">
-            Get ready for an AI-powered survey platform that keeps your users interactively engaged throughout the survey process.
+            Get ready for an AI-powered survey platform that keeps your users
+            interactively engaged throughout the survey process.
           </p>
-          
+
           <div className="flex justify-center space-x-4 sm:space-x-8 mb-12">
             {Object.entries(timeLeft).map(([unit, value]) => (
               <div key={unit} className="flex flex-col items-center">
-                <span className="text-4xl sm:text-5xl font-bold text-purple-600">{value}</span>
+                <span className="text-4xl sm:text-5xl font-bold text-purple-600">
+                  {value}
+                </span>
                 <span className="text-gray-500 capitalize">{unit}</span>
               </div>
             ))}
           </div>
-          
-          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
+
+          <form
+            onSubmit={handleSubmit}
+            className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4"
+          >
             <input
               type="email"
               placeholder="Enter your email"
@@ -79,25 +89,51 @@ export default function Countdown() {
             </button>
           </form>
         </div>
-        
+
         <div className="bg-gray-100 p-8 sm:p-12">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Why Choose Reform?</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">
+            Why Choose Reform?
+          </h2>
           <ul className="space-y-2 text-gray-600">
             <li className="flex items-center">
-              <svg className="w-5 h-5 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              <svg
+                className="w-5 h-5 mr-2 text-green-500"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clipRule="evenodd"
+                />
               </svg>
               AI-powered engagement keeps users interested
             </li>
             <li className="flex items-center">
-              <svg className="w-5 h-5 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              <svg
+                className="w-5 h-5 mr-2 text-green-500"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clipRule="evenodd"
+                />
               </svg>
               Seamless and enjoyable user experience
             </li>
             <li className="flex items-center">
-              <svg className="w-5 h-5 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              <svg
+                className="w-5 h-5 mr-2 text-green-500"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clipRule="evenodd"
+                />
               </svg>
               Gather more valuable insights from your surveys
             </li>
@@ -105,5 +141,5 @@ export default function Countdown() {
         </div>
       </div>
     </div>
-  )
+  );
 }
