@@ -1,5 +1,6 @@
 "use client";
 import { addToWaitlist } from "@/helpers/addToWaitlist";
+// import { formatDate } from "@/helpers/formatDate";
 import React, { useState, useEffect } from "react";
 
 export default function Countdown() {
@@ -11,9 +12,10 @@ export default function Countdown() {
   });
 
   const [email, setEmail] = useState("");
+  const launchDateISO = "2024-09-15T00:00:00";
 
   useEffect(() => {
-    const launchDate = new Date("2024-09-10T00:00:00").getTime();
+    const launchDate = new Date(launchDateISO).getTime();
 
     const timer = setInterval(() => {
       const now = new Date().getTime();
@@ -57,7 +59,7 @@ export default function Countdown() {
             Get ready for an AI-powered survey platform that keeps your users
             interactively engaged throughout the survey process.
           </p>
-
+          {/* <p className="text-3xl text-center text-gray-600 mb-8">{formatDate(launchDateISO)}</p> */}
           <div className="flex justify-center space-x-4 sm:space-x-8 mb-12">
             {Object.entries(timeLeft).map(([unit, value]) => (
               <div key={unit} className="flex flex-col items-center">
