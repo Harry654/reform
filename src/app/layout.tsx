@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { AuthProvider } from "@/context/AuthContext";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -14,7 +15,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Reform - making surveys interactive",
+  title: "Reform - Making Surveys Interactive",
   description:
     "Reform is an AI powered survey platform designed to keep users engaged while filling out surveys",
 };
@@ -33,15 +34,15 @@ export default function RootLayout({
           href="assets/img/favicon.png"
         />
 
-        <link rel="stylesheet" href="assets/css/bootstrap-4.5.0.min.css" />
-        <link rel="stylesheet" href="assets/css/lineicons.css" />
-        <link rel="stylesheet" href="assets/css/animate.css" />
-        <link rel="stylesheet" href="assets/css/style.css" />
+        <link rel="stylesheet" href="/assets/css/bootstrap-4.5.0.min.css" />
+        <link rel="stylesheet" href="/assets/css/lineicons.css" />
+        {/* <link rel="stylesheet" href="/assets/css/animate.css" /> */}
+        <link rel="stylesheet" href="/assets/css/style.css" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

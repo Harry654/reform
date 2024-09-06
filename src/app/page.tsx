@@ -1,15 +1,33 @@
+import Countdown from "@/components/Countdown";
+import Head from "next/head";
 import Image from "next/image";
 
 export default function Home() {
   return (
     <div>
+      <Head>
+        <script
+          src="assets/js/vendor/modernizr-3.5.0.min.js"
+          async={true}
+        ></script>
+        <script
+          src="assets/js/vendor/jquery-3.5.1.min.js"
+          async={true}
+        ></script>
+        <script src="assets/js/popper.min.js" async={true}></script>
+        <script src="assets/js/bootstrap-4.5.0.min.js" async={true}></script>
+        <script src="assets/js/countdown.js" async={true}></script>
+        <script src="assets/js/wow.min.js" async={true}></script>
+        <script src="assets/js/main.js" async={true}></script>
+      </Head>
+
       <main className="main-06">
         <div className="header header-06">
           <div className="container">
             <div className="row align-items-center">
               <div className="col-md-4">
                 <a href="#" className="logo">
-                  <img src="assets/img/logo.png" alt="" />
+                  <h2 className="text-4xl text-white font-bold">Reform</h2>
                 </a>
               </div>
               <div className="col-md-8">
@@ -24,29 +42,11 @@ export default function Home() {
           <div className="hero-area">
             <div className="container">
               <div className="row">
-                <div className="col-xl-12">
-                  <div className="heading">
-                    <h1
-                      className="text-white wow fadeInUp"
-                      data-wow-delay=".2s"
-                    >
-                      We Are <br />
-                      Coming Soon
-                    </h1>
-                  </div>
-                </div>
-                <div className="col-xl-7 col-lg-7">
-                  <div
-                    className="wow fadeInRight"
-                    data-wow-delay=".4s"
-                    data-countdown="2021/10/01"
-                  ></div>
-                </div>
-                <div className="col-xl-5 col-lg-5">
-                  <p className="wow fadeInLeft" data-wow-delay=".4s">
-                    We're strong believers that the best solutions come from
-                    gathering new insights and pushing conventional boundaries.
-                  </p>
+                <div className="w-full flex flex-col justify-center items-center">
+                  <h2 className="text-white wow fadeInUp" data-wow-delay=".2s">
+                    Coming Soon
+                  </h2>
+                  <Countdown targetDate="2024-09-10T00:00:00Z" />
                 </div>
               </div>
             </div>
@@ -192,14 +192,6 @@ export default function Home() {
           </div>
         </div>
       </main>
-
-      <script src="assets/js/vendor/modernizr-3.5.0.min.js"></script>
-      <script src="assets/js/vendor/jquery-3.5.1.min.js"></script>
-      <script src="assets/js/popper.min.js"></script>
-      <script src="assets/js/bootstrap-4.5.0.min.js"></script>
-      <script src="assets/js/countdown.js"></script>
-      <script src="assets/js/wow.min.js"></script>
-      <script src="assets/js/main.js"></script>
     </div>
   );
 }
