@@ -1,6 +1,8 @@
 "use client";
 import { addToWaitlist } from "@/helpers/addToWaitlist";
-// import { formatDate } from "@/helpers/formatDate";
+import { addToBrevo } from "@/helpers/addToBrevo";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import React, { useState, useEffect } from "react";
 
 export default function Countdown() {
@@ -12,6 +14,7 @@ export default function Countdown() {
   });
 
   const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
   const launchDateISO = "2024-09-15T00:00:00";
 
   useEffect(() => {
@@ -41,12 +44,20 @@ export default function Countdown() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await addToWaitlist(email); // Add email to waitlist
+    setLoading(true);
+    const success = await addToBrevo(email);
+    if (success) {
+      toast.success("Successfully added to waitlist!");
+    } else {
+      toast.error("Failed to save email.");
+    }
+    setLoading(false);
     setEmail("");
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-600 to-blue-500 flex flex-col justify-center items-center p-4">
+      <ToastContainer /> {/* Toast container for notifications */}
       <div className="max-w-4xl w-full bg-white rounded-lg shadow-2xl overflow-hidden">
         <div className="p-8 sm:p-12">
           <h1 className="text-4xl sm:text-5xl font-bold text-center text-gray-800 mb-4">
@@ -56,7 +67,6 @@ export default function Countdown() {
             Get ready for an AI-powered survey platform that keeps your users
             interactively engaged throughout the survey process.
           </p>
-          {/* <p className="text-3xl text-center text-gray-600 mb-8">{formatDate(launchDateISO)}</p> */}
           <div className="flex justify-center space-x-4 sm:space-x-8 mb-12">
             {Object.entries(timeLeft).map(([unit, value]) => (
               <div key={unit} className="flex flex-col items-center">
@@ -79,12 +89,45 @@ export default function Countdown() {
               onChange={(e) => setEmail(e.target.value)}
               className="w-full sm:w-auto px-4 py-2 text-gray-700 bg-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
               required
+              disabled={loading} // Disable input when loading
             />
             <button
               type="submit"
-              className="w-full sm:w-auto px-6 py-2 text-white bg-purple-600 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-opacity-50 transition duration-300"
+              className={`w-full sm:w-auto px-6 py-2 text-white bg-purple-600 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-opacity-50 transition duration-300 ${
+                loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              disabled={loading}
             >
-              Notify Me
+              {loading ? (
+                <span>
+                  <span
+                    style={{
+                      display: "inline-block",
+                      width: "20px",
+                      height: "20px",
+                      marginRight: "8px",
+                      border: "2px solid #ffffff",
+                      borderTop: "2px solid transparent",
+                      borderRadius: "50%",
+                      animation: "spin 1s linear infinite",
+                      verticalAlign: "middle",
+                    }}
+                  />
+                  <style jsx>{`
+                    @keyframes spin {
+                      0% {
+                        transform: rotate(0deg);
+                      }
+                      100% {
+                        transform: rotate(360deg);
+                      }
+                    }
+                  `}</style>
+                  Processing...
+                </span>
+              ) : (
+                "Notify Me"
+              )}
             </button>
           </form>
         </div>
