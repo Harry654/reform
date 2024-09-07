@@ -1,5 +1,4 @@
 "use client";
-import { addToWaitlist } from "@/helpers/addToWaitlist";
 import { addToBrevo } from "@/helpers/addToBrevo";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
