@@ -1,5 +1,12 @@
 import { db } from "@/lib/firebase/config";
-import { collection, addDoc, query, getDocs, where, Timestamp } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  query,
+  getDocs,
+  where,
+  Timestamp,
+} from "firebase/firestore";
 
 export const addToWaitlist = async (email: string) => {
   const waitlistRef = collection(db, "waitlist");
