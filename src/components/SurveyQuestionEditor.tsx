@@ -1,66 +1,27 @@
-import React, { useState } from "react";
-import { v4 as uuidv4 } from "uuid";
-import { Question, QuestionType } from "@/types/question";
+import React from "react";
+
+import { Question } from "@/types/question";
 import {
   MCQQuestionComponent,
   ShortAnswerQuestionComponent,
   LongAnswerQuestionComponent,
   RatingQuestionComponent,
+  CheckboxesQuestionComponent,
+  DropdownQuestionComponent,
+  RankingQuestionComponent,
+  DateTimeQuestionComponent,
+  MatrixQuestionComponent,
+  SliderQuestionComponent,
+  FileUploadQuestionComponent,
+  YesNoQuestionComponent,
+  ImageChoiceQuestionComponent,
 } from "./QuestionComponents";
+import { surveyQuestions } from "@/constants/question_types";
+import { useQuestion } from "@/context/QuestionContext";
 
 export default function SurveyQuestionEditor() {
-  const [questions, setQuestions] = useState<Question[]>([]);
-
-  const addQuestion = (type: QuestionType) => {
-    let newQuestion: Question;
-
-    switch (type) {
-      case "mcq":
-        newQuestion = {
-          id: uuidv4(),
-          type: "mcq",
-          text: "",
-          options: [""],
-        };
-        break;
-      case "short_answer":
-        newQuestion = {
-          id: uuidv4(),
-          type: "short_answer",
-          text: "",
-        };
-        break;
-      case "long_answer":
-        newQuestion = {
-          id: uuidv4(),
-          type: "long_answer",
-          text: "",
-        };
-        break;
-      case "rating":
-        newQuestion = {
-          id: uuidv4(),
-          type: "rating",
-          text: "",
-          maxRating: 5,
-        };
-        break;
-      default:
-        throw new Error(`Unsupported question type: ${type}`);
-    }
-
-    setQuestions([...questions, newQuestion]);
-  };
-
-  const updateQuestion = (updatedQuestion: Question) => {
-    setQuestions(
-      questions.map((q) => (q.id === updatedQuestion.id ? updatedQuestion : q))
-    );
-  };
-
-  const removeQuestion = (id: string) => {
-    setQuestions(questions.filter((q) => q.id !== id));
-  };
+  const { questions, addQuestion, updateQuestion, removeQuestion } =
+    useQuestion();
 
   const renderQuestion = (question: Question) => {
     switch (question.type) {
@@ -89,14 +50,77 @@ export default function SurveyQuestionEditor() {
             onUpdate={updateQuestion}
           />
         );
+      case "checkboxes":
+        return (
+          <CheckboxesQuestionComponent
+            question={question}
+            onUpdate={updateQuestion}
+          />
+        );
+      case "dropdown":
+        return (
+          <DropdownQuestionComponent
+            question={question}
+            onUpdate={updateQuestion}
+          />
+        );
+      case "ranking":
+        return (
+          <RankingQuestionComponent
+            question={question}
+            onUpdate={updateQuestion}
+          />
+        );
+      case "date_time":
+        return (
+          <DateTimeQuestionComponent
+            question={question}
+            onUpdate={updateQuestion}
+          />
+        );
+      case "matrix":
+        return (
+          <MatrixQuestionComponent
+            question={question}
+            onUpdate={updateQuestion}
+          />
+        );
+      case "slider":
+        return (
+          <SliderQuestionComponent
+            question={question}
+            onUpdate={updateQuestion}
+          />
+        );
+      case "file_upload":
+        return (
+          <FileUploadQuestionComponent
+            question={question}
+            onUpdate={updateQuestion}
+          />
+        );
+      case "yes_no":
+        return (
+          <YesNoQuestionComponent
+            question={question}
+            onUpdate={updateQuestion}
+          />
+        );
+      case "image_choice":
+        return (
+          <ImageChoiceQuestionComponent
+            question={question}
+            onUpdate={updateQuestion}
+          />
+        );
       default:
         return null;
     }
   };
-  return null;
+
   return (
     <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Survey Question Editor</h1>
+      <h1 className="text-2xl font-bold mb-6">Add Questions</h1>
       <div className="space-y-6">
         {questions.map((question) => (
           <div key={question.id} className="border p-4 rounded-lg">
@@ -110,35 +134,21 @@ export default function SurveyQuestionEditor() {
           </div>
         ))}
       </div>
-      <div className="mt-6 space-x-4">
-        <button
-          type="button"
-          onClick={() => addQuestion("mcq")}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-        >
-          Add MCQ
-        </button>
-        <button
-          type="button"
-          onClick={() => addQuestion("short_answer")}
-          className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-        >
-          Add Short Answer
-        </button>
-        <button
-          type="button"
-          onClick={() => addQuestion("long_answer")}
-          className="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700"
-        >
-          Add Long Answer
-        </button>
-        <button
-          type="button"
-          onClick={() => addQuestion("rating")}
-          className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
-        >
-          Add Rating
-        </button>
+      <div className="mt-6 space-x-4 space-y-4">
+        {surveyQuestions.map(({ code, value }, index) => (
+          <button
+            key={code}
+            type="button"
+            onClick={() => addQuestion(code)}
+            className={`px-4 py-2 text-white rounded ${
+              index % 2 === 0
+                ? "bg-blue-600 hover:bg-blue-700"
+                : "bg-green-600 hover:bg-green-700"
+            }`}
+          >
+            Add {value}
+          </button>
+        ))}
       </div>
     </div>
   );

@@ -36,12 +36,12 @@ export default function SurveyCreator() {
     console.log(formData);
     alert("Survey created successfully!");
   };
-return null
+
   return (
     <>
       <Navbar />
 
-      <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md">
+      <div className="max-w-2xl mx-auto p-6 border rounded-lg shadow-md">
         <h2 className="text-2xl font-bold mb-4">Create a New Survey</h2>
         <p className="text-gray-600 mb-6">
           Set up the basic details for your survey
@@ -59,7 +59,7 @@ return null
               type="text"
               id="title"
               name="title"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-transparent"
               placeholder="Enter survey title"
               value={formData.title}
               onChange={handleChange}
@@ -77,7 +77,7 @@ return null
             <textarea
               id="description"
               name="description"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-transparent"
               placeholder="What is this survey about?"
               rows={3}
               value={formData.description}
@@ -86,7 +86,7 @@ return null
             />
           </div>
 
-          <div>
+          {/* <div>
             <label
               htmlFor="questionCount"
               className="block text-sm font-medium text-gray-700 mb-1"
@@ -97,14 +97,14 @@ return null
               type="number"
               id="questionCount"
               name="questionCount"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-transparent"
               min="1"
               max="50"
               value={formData.questionCount}
               onChange={handleChange}
               required
             />
-          </div>
+          </div> */}
 
           <div>
             <label
@@ -116,7 +116,7 @@ return null
             <select
               id="primaryAim"
               name="primaryAim"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-transparent"
               value={formData.primaryAim}
               onChange={handleChange}
               required
