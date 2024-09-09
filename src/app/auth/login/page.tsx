@@ -1,26 +1,38 @@
 "use client";
 
 import React, { useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+} from "firebase/auth";
 import { auth } from "@/lib/firebase/config";
+import { useRouter } from "next/navigation";
+import { BeatLoader } from "react-spinners";
 
-function Login() {
+export default function LoginComponent() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const router = useRouter();
 
-  const logInUser = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSignInWithEmailAndPassword = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
     e.preventDefault();
+    if (loading) return;
     if (!email || !password) return alert("Some fields are missing");
     try {
+      setLoading(true);
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
         password
       );
       // Signed in successfully
-      const user = userCredential.user;
-      console.log("User logged in:", user);
+      redirect();
     } catch (error: unknown) {
+      setLoading(false);
       if (error instanceof Error) {
         // Check if error has a 'code' property
         const errorCode = (error as { code?: string }).code;
@@ -36,134 +48,125 @@ function Login() {
     }
   };
 
+  const signInWithGoogle = async () => {
+    if (loading) return;
+    const provider = new GoogleAuthProvider();
+    try {
+      await signInWithPopup(auth, provider);
+      redirect();
+    } catch (error) {
+      console.error("Error signing in with Google", error);
+      alert("Failed to sign in with Google");
+    }
+  };
+
+  const redirect = () => router.push("/");
+
   return (
-    <section className="h-screen">
-      <div className="container h-full px-6 py-24">
-        <div className="flex h-full flex-wrap items-center justify-center lg:justify-between">
-          <div className="mb-12 md:mb-0 md:w-8/12 lg:w-6/12">
-            <img
-              src="https://tecdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.svg"
-              className="w-full"
-              alt="Phone image"
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="bg-white p-8 rounded-lg shadow-md w-96">
+        <h2 className="text-2xl font-bold mb-6 text-center text-black">
+          Login
+        </h2>
+        <form onSubmit={handleSignInWithEmailAndPassword} className="space-y-4">
+          <div>
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              required
             />
           </div>
-
-          <div className="md:w-8/12 lg:ms-6 lg:w-5/12">
-            <form onSubmit={logInUser}>
-              <div className="relative mb-6" data-twe-input-wrapper-init>
-                <input
-                  type="email"
-                  className="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[2.15] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 peer-focus:text-primary data-[twe-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-white dark:placeholder:text-neutral-300 dark:autofill:shadow-autofill dark:peer-focus:text-primary [&:not([data-twe-input-placeholder-active])]:placeholder:opacity-0"
-                  id="exampleFormControlInput3"
-                  placeholder="Email address"
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-                <label
-                  htmlFor="exampleFormControlInput3"
-                  className="pointer-events-none absolute left-3 top-0 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[2.15] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[1.15rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[twe-input-state-active]:-translate-y-[1.15rem] peer-data-[twe-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-400 dark:peer-focus:text-primary"
-                >
-                  {!email && "Email address"}
-                </label>
-              </div>
-
-              <div className="relative mb-6" data-twe-input-wrapper-init>
-                <input
-                  type="password"
-                  className="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[2.15] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 peer-focus:text-primary data-[twe-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-white dark:placeholder:text-neutral-300 dark:autofill:shadow-autofill dark:peer-focus:text-primary [&:not([data-twe-input-placeholder-active])]:placeholder:opacity-0"
-                  id="exampleFormControlInput33"
-                  placeholder="Password"
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-                <label
-                  htmlFor="exampleFormControlInput33"
-                  className="pointer-events-none absolute left-3 top-0 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[2.15] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[1.15rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[twe-input-state-active]:-translate-y-[1.15rem] peer-data-[twe-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-400 dark:peer-focus:text-primary"
-                >
-                  {!password && "Password"}
-                </label>
-              </div>
-
-              <div className="mb-6 flex items-center justify-between">
-                <div className="mb-[0.125rem] block min-h-[1.5rem] ps-[1.5rem]">
-                  <input
-                    className="relative float-left -ms-[1.5rem] me-[6px] mt-[0.15rem] h-[1.125rem] w-[1.125rem] appearance-none rounded-[0.25rem] border-[0.125rem] border-solid border-secondary-500 outline-none before:pointer-events-none before:absolute before:h-[0.875rem] before:w-[0.875rem] before:scale-0 before:rounded-full before:bg-transparent before:opacity-0 before:shadow-checkbox before:shadow-transparent before:content-[''] checked:border-primary checked:bg-primary checked:before:opacity-[0.16] checked:after:absolute checked:after:-mt-px checked:after:ms-[0.25rem] checked:after:block checked:after:h-[0.8125rem] checked:after:w-[0.375rem] checked:after:rotate-45 checked:after:border-[0.125rem] checked:after:border-l-0 checked:after:border-t-0 checked:after:border-solid checked:after:border-white checked:after:bg-transparent checked:after:content-[''] hover:cursor-pointer hover:before:opacity-[0.04] hover:before:shadow-black/60 focus:shadow-none focus:transition-[border-color_0.2s] focus:before:scale-100 focus:before:opacity-[0.12] focus:before:shadow-black/60 focus:before:transition-[box-shadow_0.2s,transform_0.2s] focus:after:absolute focus:after:z-[1] focus:after:block focus:after:h-[0.875rem] focus:after:w-[0.875rem] focus:after:rounded-[0.125rem] focus:after:content-[''] checked:focus:before:scale-100 checked:focus:before:shadow-checkbox checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s] checked:focus:after:-mt-px checked:focus:after:ms-[0.25rem] checked:focus:after:h-[0.8125rem] checked:focus:after:w-[0.375rem] checked:focus:after:rotate-45 checked:focus:after:rounded-none checked:focus:after:border-[0.125rem] checked:focus:after:border-l-0 checked:focus:after:border-t-0 checked:focus:after:border-solid checked:focus:after:border-white checked:focus:after:bg-transparent rtl:float-right dark:border-neutral-400 dark:checked:border-primary dark:checked:bg-primary"
-                    type="checkbox"
-                    value=""
-                    id="exampleCheck3"
-                    checked
-                  />
-                  <label
-                    className="inline-block ps-[0.15rem] hover:cursor-pointer"
-                    htmlFor="exampleCheck3"
-                  >
-                    Remember me
-                  </label>
-                </div>
-
-                <a
-                  href="#!"
-                  className="text-primary focus:outline-none dark:text-primary-400"
-                >
-                  Forgot password?
-                </a>
-              </div>
-
-              <button
-                type="submit"
-                className="inline-block w-full rounded bg-primary px-7 pb-2.5 pt-3 text-sm font-medium uppercase leading-normal text-white shadow-primary-3 transition duration-150 ease-in-out hover:bg-primary-accent-300 hover:shadow-primary-2 focus:bg-primary-accent-300 focus:shadow-primary-2 focus:outline-none focus:ring-0 active:bg-primary-600 active:shadow-primary-2 dark:shadow-black/30 dark:hover:shadow-dark-strong dark:focus:shadow-dark-strong dark:active:shadow-dark-strong"
-                data-twe-ripple-init
-                data-twe-ripple-color="light"
+          <div>
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
+              loading && "opacity-50"
+            }`}
+            disabled={loading}
+          >
+            {!loading ? "Sign In" : <BeatLoader size={10} color="#fff" />}
+          </button>
+        </form>
+        <div className="mt-6">
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-white text-gray-500">
+                Or continue with
+              </span>
+            </div>
+          </div>
+          <div className="mt-6">
+            <button
+              onClick={signInWithGoogle}
+              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              <svg
+                className="w-5 h-5 mr-2"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                xmlns="http://www.w3.org/2000/svg"
               >
-                Sign in
-              </button>
+                <path
+                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                  fill="#4285F4"
+                />
+                <path
+                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                  fill="#34A853"
+                />
+                <path
+                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                  fill="#FBBC05"
+                />
+                <path
+                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                  fill="#EA4335"
+                />
+              </svg>
+              Sign in with Google
+            </button>
+          </div>
 
-              <div className="opacity-10">
-                <div className="my-4 flex items-center before:mt-0.5 before:flex-1 before:border-t before:border-neutral-300 after:mt-0.5 after:flex-1 after:border-t after:border-neutral-300 dark:before:border-neutral-500 dark:after:border-neutral-500">
-                  <p className="mx-4 mb-0 text-center font-semibold dark:text-neutral-200">
-                    OR
-                  </p>
-                </div>
-
-                <a
-                  className="mb-3 flex w-full items-center justify-center rounded bg-primary px-7 pb-2.5 pt-3 text-center text-sm font-medium uppercase leading-normal text-white shadow-primary-3 transition duration-150 ease-in-out hover:bg-primary-accent-300 hover:shadow-primary-2 focus:bg-primary-accent-300 focus:shadow-primary-2 focus:outline-none focus:ring-0 active:bg-primary-600 active:shadow-primary-2 dark:shadow-black/30 dark:hover:shadow-dark-strong dark:focus:shadow-dark-strong dark:active:shadow-dark-strong bg-[#3b5998]"
-                  href="#!"
-                  role="button"
-                  data-twe-ripple-init
-                  data-twe-ripple-color="light"
-                >
-                  <span className="me-2 fill-white [&>svg]:mx-auto [&>svg]:h-3.5 [&>svg]:w-3.5">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 320 512"
-                    >
-                      <path d="M80 299.3V512H196V299.3h86.5l18-97.8H196V166.9c0-51.7 20.3-71.5 72.7-71.5c16.3 0 29.4 .4 37 1.2V7.9C291.4 4 256.4 0 236.2 0C129.3 0 80 50.5 80 159.4v42.1H14v97.8H80z" />
-                    </svg>
-                  </span>
-                  Continue with Facebook
-                </a>
-                <a
-                  className="mb-3 flex w-full items-center justify-center rounded bg-info px-7 pb-2.5 pt-3 text-center text-sm font-medium uppercase leading-normal text-white shadow-info-3 transition duration-150 ease-in-out hover:bg-info-accent-300 hover:shadow-info-2 focus:bg-info-accent-300 focus:shadow-info-2 focus:outline-none focus:ring-0 active:bg-info-600 active:shadow-info-2 dark:shadow-black/30 dark:hover:shadow-dark-strong dark:focus:shadow-dark-strong dark:active:shadow-dark-strong bg-[#55acee]"
-                  href="#!"
-                  role="button"
-                  data-twe-ripple-init
-                  data-twe-ripple-color="light"
-                >
-                  <span className="me-2 fill-white [&>svg]:h-3.5 [&>svg]:w-3.5">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 512 512"
-                    >
-                      <path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z" />
-                    </svg>
-                  </span>
-                  Continue with X
-                </a>
-              </div>
-            </form>
+          <div className="mt-6 text-center">
+            <p className="text-sm text-gray-600">
+              Don&apos; have an account?{" "}
+              <a
+                href="/auth/signup"
+                className="text-indigo-600 hover:text-indigo-500"
+              >
+                Sign Up here
+              </a>
+            </p>
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 }
-
-export default Login;

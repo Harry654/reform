@@ -1,11 +1,13 @@
 "use client";
 
 import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
-  const handleSignIn = () => alert("Sign in");
+  const router = useRouter();
+  const handleSignIn = () => router.push("/auth/login");
 
   return (
     <nav className="bg-white shadow">
