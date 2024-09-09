@@ -7,6 +7,8 @@ import {
   signInWithPopup,
 } from "firebase/auth";
 import { auth } from "@/lib/firebase/config";
+import { doc, getDoc, setDoc } from "firebase/firestore"; // Import Firestore methods
+import { db } from "@/lib/firebase/config"; // Import Firestore instance
 import { useRouter } from "next/navigation";
 import { BeatLoader } from "react-spinners";
 
@@ -37,17 +39,42 @@ export default function SignupPage() {
 
     try {
       setLoading(true);
-      await createUserWithEmailAndPassword(auth, email, password);
+
+      // Create user with email and password
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      const user = userCredential.user;
+
+      // Save user's first and last name, and subscription plan details to Firestore
+      await setDoc(doc(db, "users", user.uid), {
+        uid: user.uid,
+        firstName,
+        lastName,
+        email: user.email,
+        createdAt: new Date(),
+        subscriptionPlan: null, // or set to a default plan ID if applicable
+        subscriptionStartDate: null,
+        subscriptionEndDate: null,
+        subscriptionStatus: "inactive", // default status
+        lastPaymentDate: null,
+        paymentMethod: null,
+        tosAgreedAt: new Date(), // Add the timestamp of ToS agreement
+        privacyPolicyAgreedAt: new Date(),
+      });
+
       redirect();
-      // Here you would typically save the first and last name to your user profile in your database
     } catch (error) {
       setLoading(false);
       if (error instanceof Error) {
-        // Check if error has a 'code' property
         const errorCode = (error as { code?: string }).code;
 
-        if (errorCode === "auth/email-already-in-use")
+        if (errorCode === "auth/email-already-in-use") {
           return setError("Account already exists");
+        }
 
         setError("Something went wrong");
       } else {
@@ -57,11 +84,40 @@ export default function SignupPage() {
   };
 
   const handleGoogleSignup = async () => {
+    if (!agreeToTerms) {
+      setError("You must agree to the Terms & Conditions and Privacy Policy");
+      return;
+    }
+
     const provider = new GoogleAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      // Check if user already exists in Firestore
+      const userDocRef = doc(db, "users", user.uid);
+      const userDoc = await getDoc(userDocRef);
+
+      if (!userDoc.exists()) {
+        // Save user's information to Firestore if it's a new user
+        await setDoc(userDocRef, {
+          uid: user.uid,
+          firstName: user.displayName?.split(" ")[0] || "",
+          lastName: user.displayName?.split(" ")[1] || "",
+          email: user.email,
+          createdAt: new Date(),
+          subscriptionPlan: null, // or set to a default plan ID if applicable
+          subscriptionStartDate: null,
+          subscriptionEndDate: null,
+          subscriptionStatus: "inactive", // default status
+          lastPaymentDate: null,
+          paymentMethod: null,
+          tosAgreedAt: new Date(), // Add the timestamp of ToS agreement
+          privacyPolicyAgreedAt: new Date(),
+        });
+      }
+
       redirect();
-      // Here you would typically check if it's a new user and if so, save additional info to your database
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);

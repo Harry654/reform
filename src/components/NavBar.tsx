@@ -20,12 +20,12 @@ export default function Navbar() {
             {user ? (
               <div className="flex items-center space-x-4">
                 <span className="text-sm font-medium text-gray-700">
-                  {user.displayName}
+                  {`${user.firstName} ${user.lastName}`}
                 </span>
                 <img
                   className="h-8 w-8 rounded-full"
                   src={user.photoURL ? user.photoURL : undefined}
-                  alt={`${user.displayName}'s profile`}
+                  alt={`${user.firstName}'s profile`}
                 />
                 <button
                   onClick={logout}

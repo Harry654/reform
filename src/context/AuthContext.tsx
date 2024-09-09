@@ -6,12 +6,14 @@ import React, {
   useState,
   ReactNode,
 } from "react";
-import { User, onAuthStateChanged, signOut } from "firebase/auth";
-import { auth } from "@/lib/firebase/config";
+import { onAuthStateChanged, signOut, User } from "firebase/auth";
+import { auth, db } from "@/lib/firebase/config";
+import { TFirestoreUser } from "@/types/user";
+import { doc, getDoc } from "firebase/firestore";
 
 // Define the shape of your context
 interface AuthContextType {
-  user: User | null;
+  user: TFirestoreUser | null;
   loading: boolean;
   logout: () => void;
 }
@@ -21,14 +23,31 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // AuthProvider component
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<TFirestoreUser | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setLoading(false);
-    });
+    const unsubscribe = onAuthStateChanged(
+      auth,
+      async (firebaseUser: User | null) => {
+        if (firebaseUser) {
+          // Fetch user data from Firestore
+          const userDocRef = doc(db, "users", firebaseUser.uid);
+          const userDoc = await getDoc(userDocRef);
+
+          if (userDoc.exists()) {
+            setUser(userDoc.data() as TFirestoreUser); // Cast to FirestoreUser type
+          } else {
+            console.error("No such user document!");
+            setUser(null);
+          }
+        } else {
+          setUser(null);
+        }
+
+        setLoading(false);
+      }
+    );
 
     return () => unsubscribe();
   }, []);
