@@ -1,6 +1,7 @@
 "use client";
 import Navbar from "@/components/NavBar";
 import SurveyQuestionEditor from "@/components/SurveyQuestionEditor";
+import { useQuestion } from "@/context/QuestionContext";
 import React, { useState } from "react";
 
 interface SurveyForm {
@@ -11,6 +12,7 @@ interface SurveyForm {
 }
 
 export default function SurveyCreator() {
+  const { questions } = useQuestion();
   const [formData, setFormData] = useState<SurveyForm>({
     title: "",
     description: "",
@@ -33,8 +35,9 @@ export default function SurveyCreator() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Here you would typically send the form data to your backend
+    if (!questions.length) return alert("Add at least one question");
     console.log(formData);
-    alert("Survey created successfully!");
+    console.log(questions);
   };
 
   return (

@@ -41,6 +41,7 @@ export const MCQQuestionComponent: React.FC<QuestionProps> = ({
     <div className="space-y-4">
       <input
         type="text"
+        required={true}
         value={mcqQuestion.text}
         onChange={(e) => onUpdate({ ...mcqQuestion, text: e.target.value })}
         className="w-full p-2 border rounded"
@@ -50,18 +51,21 @@ export const MCQQuestionComponent: React.FC<QuestionProps> = ({
         <div key={index} className="flex items-center space-x-2">
           <input
             type="text"
+            required={true}
             value={option}
             onChange={(e) => handleOptionChange(index, e.target.value)}
             className="flex-grow p-2 border rounded"
             placeholder={`Option ${index + 1}`}
           />
           <button
-            onClick={() =>
+            type="button"
+            onClick={() => {
+              if (mcqQuestion.options.length === 1) return;
               onUpdate({
                 ...mcqQuestion,
                 options: mcqQuestion.options.filter((_, i) => i !== index),
-              })
-            }
+              });
+            }}
             className="px-2 py-1 text-red-600 border border-red-600 rounded hover:bg-red-100"
           >
             Remove
@@ -89,6 +93,7 @@ export const ShortAnswerQuestionComponent: React.FC<QuestionProps> = ({
     <div className="space-y-4">
       <input
         type="text"
+        required={true}
         value={shortAnswerQuestion.text}
         onChange={(e) =>
           onUpdate({ ...shortAnswerQuestion, text: e.target.value })
@@ -98,6 +103,7 @@ export const ShortAnswerQuestionComponent: React.FC<QuestionProps> = ({
       />
       <input
         type="text"
+        required={true}
         className="w-full p-2 border rounded bg-gray-100"
         placeholder="Short answer field (for preview)"
         disabled
@@ -116,6 +122,7 @@ export const LongAnswerQuestionComponent: React.FC<QuestionProps> = ({
     <div className="space-y-4">
       <input
         type="text"
+        required={true}
         value={longAnswerQuestion.text}
         onChange={(e) =>
           onUpdate({ ...longAnswerQuestion, text: e.target.value })
@@ -143,6 +150,7 @@ export const RatingQuestionComponent: React.FC<QuestionProps> = ({
     <div className="space-y-4">
       <input
         type="text"
+        required={true}
         value={ratingQuestion.text}
         onChange={(e) => onUpdate({ ...ratingQuestion, text: e.target.value })}
         className="w-full p-2 border rounded"
@@ -202,6 +210,7 @@ export const CheckboxesQuestionComponent: React.FC<QuestionProps> = ({
     <div className="space-y-4">
       <input
         type="text"
+        required={true}
         value={checkboxesQuestion.text}
         onChange={(e) =>
           onUpdate({ ...checkboxesQuestion, text: e.target.value })
@@ -214,20 +223,23 @@ export const CheckboxesQuestionComponent: React.FC<QuestionProps> = ({
           <input type="checkbox" disabled className="form-checkbox" />
           <input
             type="text"
+            required={true}
             value={option}
             onChange={(e) => handleOptionChange(index, e.target.value)}
             className="flex-grow p-2 border rounded"
             placeholder={`Option ${index + 1}`}
           />
           <button
-            onClick={() =>
+            type="button"
+            onClick={() => {
+              if (checkboxesQuestion.options.length === 1) return;
               onUpdate({
                 ...checkboxesQuestion,
                 options: checkboxesQuestion.options.filter(
                   (_, i) => i !== index
                 ),
-              })
-            }
+              });
+            }}
             className="px-2 py-1 text-red-600 border border-red-600 rounded hover:bg-red-100"
           >
             Remove
@@ -268,6 +280,7 @@ export const DropdownQuestionComponent: React.FC<QuestionProps> = ({
     <div className="space-y-4">
       <input
         type="text"
+        required={true}
         value={dropdownQuestion.text}
         onChange={(e) =>
           onUpdate({ ...dropdownQuestion, text: e.target.value })
@@ -287,18 +300,21 @@ export const DropdownQuestionComponent: React.FC<QuestionProps> = ({
         <div key={index} className="flex items-center space-x-2">
           <input
             type="text"
+            required={true}
             value={option}
             onChange={(e) => handleOptionChange(index, e.target.value)}
             className="flex-grow p-2 border rounded"
             placeholder={`Option ${index + 1}`}
           />
           <button
-            onClick={() =>
+            type="button"
+            onClick={() => {
+              if (dropdownQuestion.options.length === 1) return;
               onUpdate({
                 ...dropdownQuestion,
                 options: dropdownQuestion.options.filter((_, i) => i !== index),
-              })
-            }
+              });
+            }}
             className="px-2 py-1 text-red-600 border border-red-600 rounded hover:bg-red-100"
           >
             Remove
@@ -336,6 +352,7 @@ export const RankingQuestionComponent: React.FC<QuestionProps> = ({
     <div className="space-y-4">
       <input
         type="text"
+        required={true}
         value={rankingQuestion.text}
         onChange={(e) => onUpdate({ ...rankingQuestion, text: e.target.value })}
         className="w-full p-2 border rounded"
@@ -346,6 +363,7 @@ export const RankingQuestionComponent: React.FC<QuestionProps> = ({
           <span className="font-bold">{index + 1}.</span>
           <input
             type="text"
+            required={true}
             value={option}
             onChange={(e) => handleOptionChange(index, e.target.value)}
             className="flex-grow p-2 border rounded"
@@ -353,12 +371,13 @@ export const RankingQuestionComponent: React.FC<QuestionProps> = ({
           />
           <button
             type="button"
-            onClick={() =>
+            onClick={() => {
+              if (rankingQuestion.options.length === 1) return;
               onUpdate({
                 ...rankingQuestion,
                 options: rankingQuestion.options.filter((_, i) => i !== index),
-              })
-            }
+              });
+            }}
             className="px-2 py-1 text-red-600 border border-red-600 rounded hover:bg-red-100"
           >
             Remove
@@ -386,6 +405,7 @@ export const DateTimeQuestionComponent: React.FC<QuestionProps> = ({
     <div className="space-y-4">
       <input
         type="text"
+        required={true}
         value={dateTimeQuestion.text}
         onChange={(e) =>
           onUpdate({ ...dateTimeQuestion, text: e.target.value })
@@ -432,6 +452,7 @@ export const MatrixQuestionComponent: React.FC<QuestionProps> = ({
     <div className="space-y-4">
       <input
         type="text"
+        required={true}
         value={matrixQuestion.text}
         onChange={(e) => onUpdate({ ...matrixQuestion, text: e.target.value })}
         className="w-full p-2 border rounded"
@@ -446,6 +467,7 @@ export const MatrixQuestionComponent: React.FC<QuestionProps> = ({
                 <th key={index} className="p-2">
                   <input
                     type="text"
+                    required={true}
                     value={column}
                     onChange={(e) =>
                       onUpdate({
@@ -468,6 +490,7 @@ export const MatrixQuestionComponent: React.FC<QuestionProps> = ({
                 <td className="p-2">
                   <input
                     type="text"
+                    required={true}
                     value={row}
                     onChange={(e) =>
                       onUpdate({
@@ -521,6 +544,7 @@ export const SliderQuestionComponent: React.FC<QuestionProps> = ({
     <div className="space-y-4">
       <input
         type="text"
+        required={true}
         value={sliderQuestion.text}
         onChange={(e) => onUpdate({ ...sliderQuestion, text: e.target.value })}
         className="w-full p-2 border rounded"
@@ -597,6 +621,7 @@ export const FileUploadQuestionComponent: React.FC<QuestionProps> = ({
     <div className="space-y-4">
       <input
         type="text"
+        required={true}
         value={fileUploadQuestion.text}
         onChange={(e) =>
           onUpdate({ ...fileUploadQuestion, text: e.target.value })
@@ -611,6 +636,7 @@ export const FileUploadQuestionComponent: React.FC<QuestionProps> = ({
           <div key={index} className="flex items-center space-x-2 mb-2">
             <input
               type="text"
+              required={true}
               value={fileType}
               onChange={(e) => handleFileTypeChange(index, e.target.value)}
               className="flex-grow p-2 border rounded"
@@ -654,6 +680,7 @@ export const YesNoQuestionComponent: React.FC<QuestionProps> = ({
     <div className="space-y-4">
       <input
         type="text"
+        required={true}
         value={yesNoQuestion.text}
         onChange={(e) => onUpdate({ ...yesNoQuestion, text: e.target.value })}
         className="w-full p-2 border rounded"
@@ -700,6 +727,7 @@ export const ImageChoiceQuestionComponent: React.FC<QuestionProps> = ({
     <div className="space-y-4">
       <input
         type="text"
+        required={true}
         value={imageChoiceQuestion.text}
         onChange={(e) =>
           onUpdate({ ...imageChoiceQuestion, text: e.target.value })
@@ -711,6 +739,7 @@ export const ImageChoiceQuestionComponent: React.FC<QuestionProps> = ({
         <div key={index} className="flex items-center space-x-2">
           <input
             type="text"
+            required={true}
             value={option.imageUrl}
             onChange={(e) =>
               handleOptionChange(index, "imageUrl", e.target.value)
@@ -720,20 +749,23 @@ export const ImageChoiceQuestionComponent: React.FC<QuestionProps> = ({
           />
           <input
             type="text"
+            required={true}
             value={option.label}
             onChange={(e) => handleOptionChange(index, "label", e.target.value)}
             className="flex-grow p-2 border rounded"
             placeholder="Image Label"
           />
           <button
-            onClick={() =>
+            type="button"
+            onClick={() => {
+              if (imageChoiceQuestion.options.length === 1) return;
               onUpdate({
                 ...imageChoiceQuestion,
                 options: imageChoiceQuestion.options.filter(
                   (_, i) => i !== index
                 ),
-              })
-            }
+              });
+            }}
             className="px-2 py-1 text-red-600 border border-red-600 rounded hover:bg-red-100"
           >
             Remove

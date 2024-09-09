@@ -126,6 +126,7 @@ export default function SurveyQuestionEditor() {
           <div key={question.id} className="border p-4 rounded-lg">
             {renderQuestion(question)}
             <button
+              type="button"
               onClick={() => removeQuestion(question.id)}
               className="mt-4 px-4 py-2 text-red-600 border border-red-600 rounded hover:bg-red-100"
             >
