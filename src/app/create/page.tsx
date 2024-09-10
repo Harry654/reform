@@ -3,9 +3,8 @@ import Navbar from "@/components/NavBar";
 import CreateSurveyQuestionEditor from "@/components/create/CreateSurveyQuestionEditor";
 import { useAuth } from "@/context/AuthContext";
 import { useQuestion } from "@/context/CreateSurveyContext";
-import { ISurvey, ISurveyFormMetadata } from "@/types/survey";
+import { ISurvey } from "@/types/survey";
 import React, { useEffect, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 import { doc, setDoc, Timestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase/config"; // Import Firestore instance
 import { BeatLoader } from "react-spinners";
