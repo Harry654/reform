@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase/config"; // Your Firestore config
-import { ISurvey } from "@/types/survey"; // Your survey type definition
-import { SurveyResponseEditor } from "@/components/fill/SurveyResponseEditor";
+import { db } from "@/lib/firebase/config";
+import { ISurvey } from "@/types/survey";
+import { NormalSurveyResponse } from "@/components/fill/NormalSurveyResponse";
 import { useParams } from "next/navigation";
 
 const Survey = () => {
@@ -12,7 +12,7 @@ const Survey = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const { id } = useParams(); // Get survey ID from URL
+  const { id } = useParams();
 
   useEffect(() => {
     if (typeof id === "string") {
@@ -45,7 +45,7 @@ const Survey = () => {
   return (
     <div>
       {surveyData ? (
-        <SurveyResponseEditor surveyData={surveyData} />
+        <NormalSurveyResponse surveyData={surveyData} />
       ) : (
         <p>No survey data available.</p>
       )}

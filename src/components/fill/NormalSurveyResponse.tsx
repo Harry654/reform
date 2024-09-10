@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   MCQQuestionFill,
   LongAnswerQuestionFill,
@@ -22,18 +22,16 @@ import { TSurveyResponse } from "@/types/response";
 import { v4 as uuidv4 } from "uuid";
 import { useAuth } from "@/context/AuthContext";
 import { Timestamp } from "firebase/firestore";
-import { Question } from "@/types/question";
 import { isTruthy } from "@/helpers/isTruthy";
 
-interface SurveyResponseEditorProps {
+interface NormalSurveyResponseProps {
   surveyData: ISurvey;
 }
 
-export const SurveyResponseEditor: React.FC<SurveyResponseEditorProps> = ({
+export const NormalSurveyResponse: React.FC<NormalSurveyResponseProps> = ({
   surveyData,
 }) => {
-  const { survey, setSurvey, responses, skippedQuestion, setSkippedQuestion } =
-    useSurvey();
+  const { survey, setSurvey, responses, setSkippedQuestion } = useSurvey();
   const { user } = useAuth();
 
   useEffect(() => {
