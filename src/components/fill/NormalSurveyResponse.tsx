@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   MCQQuestionFill,
   LongAnswerQuestionFill,
@@ -21,9 +21,10 @@ import { ISurvey } from "@/types/survey";
 import { TSurveyResponse } from "@/types/response";
 import { v4 as uuidv4 } from "uuid";
 import { useAuth } from "@/context/AuthContext";
-import { Timestamp } from "firebase/firestore";
 import { isTruthy } from "@/helpers/isTruthy";
-
+import { doc, writeBatch, increment, Timestamp } from "firebase/firestore";
+import { db } from "@/lib/firebase/config";
+import { BeatLoader } from "react-spinners";
 interface NormalSurveyResponseProps {
   surveyData: ISurvey;
 }
@@ -33,12 +34,13 @@ export const NormalSurveyResponse: React.FC<NormalSurveyResponseProps> = ({
 }) => {
   const { survey, setSurvey, responses, setSkippedQuestion } = useSurvey();
   const { user } = useAuth();
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     setSurvey(surveyData);
   }, [surveyData, setSurvey]);
 
-  const confirmQuestionsAnswered = () => {
+  const handleAllQuestionsAnswered = (): boolean => {
     const requiredQuestions = survey?.questions.filter(
       (question) => question.required === true
     );
@@ -61,21 +63,21 @@ export const NormalSurveyResponse: React.FC<NormalSurveyResponseProps> = ({
             });
           }
 
-          return;
+          return false;
         }
       }
+
+    return true;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Survey responses:", responses);
 
-    confirmQuestionsAnswered();
+    if (!handleAllQuestionsAnswered()) return;
 
-    // Here you would typically send the responses to your backend
     const response: TSurveyResponse = {
       surveyId: survey?.id || "",
-      userId: user?.uid,
+      userId: user?.uid || "",
       responseId: uuidv4(),
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
@@ -83,7 +85,34 @@ export const NormalSurveyResponse: React.FC<NormalSurveyResponseProps> = ({
       answers: responses,
     };
 
-    console.log(response);
+    try {
+      setLoading(true);
+      const batch = writeBatch(db);
+
+      // Reference to the survey document
+      const surveyDocRef = doc(db, "surveys", survey?.id || "");
+
+      // Reference to the new response document
+      const responseDocRef = doc(db, "responses", response.responseId);
+
+      // Add the response to the "responses" collection
+      batch.set(responseDocRef, response);
+
+      // Increment the responseCount in the survey document
+      batch.update(surveyDocRef, {
+        responsesCount: increment(1),
+        updatedAt: Timestamp.now(),
+      });
+
+      // Commit the batch
+      await batch.commit();
+
+      alert("Thank You for your feedback. Your response has been saved.");
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      alert("Error saving response and updating survey" + error);
+    }
   };
 
   if (!survey) return <div>Loading survey...</div>;
@@ -131,9 +160,12 @@ export const NormalSurveyResponse: React.FC<NormalSurveyResponseProps> = ({
         })}
         <button
           type="submit"
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${
+            loading && "opacity-20"
+          }`}
+          disabled={loading}
         >
-          Submit
+          {!loading ? "Submit" : <BeatLoader size={10} color="#fff" />}
         </button>
       </form>
     </div>

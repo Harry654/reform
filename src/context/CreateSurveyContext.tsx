@@ -31,6 +31,9 @@ export const CreateSurveyProvider = ({ children }: { children: ReactNode }) => {
     category: "",
     createdBy: user?.uid || "",
     type: "normal",
+    isAnonymous: false,
+    allowMultipleResponses: false,
+    successMessage: null,
   };
 
   const [formMetadata, setFormMetadata] =

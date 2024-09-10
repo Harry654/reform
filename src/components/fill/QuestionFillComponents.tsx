@@ -276,7 +276,7 @@ export const RankingQuestionFill: React.FC<QuestionProps> = ({ question }) => {
                 type="button"
                 onClick={() => moveItem(index, Math.max(0, index - 1))}
                 disabled={index === 0}
-                className="px-2 py-1 bg-gray-200 rounded disabled:opacity-50"
+                className="px-2 py-1 bg-gray-200 rounded disabled:opacity-20"
               >
                 ↑
               </button>
@@ -289,7 +289,7 @@ export const RankingQuestionFill: React.FC<QuestionProps> = ({ question }) => {
                   )
                 }
                 disabled={index === currentRanking.length - 1}
-                className="px-2 py-1 bg-gray-200 rounded disabled:opacity-50"
+                className="px-2 py-1 bg-gray-200 rounded disabled:opacity-20"
               >
                 ↓
               </button>

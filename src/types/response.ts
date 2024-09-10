@@ -12,6 +12,7 @@ export type TAnswer =
 export type TQuestionResponse = {
   questionId: string;
   questionType: QuestionType;
+  questionText: string;
   answer: TAnswer;
 };
 

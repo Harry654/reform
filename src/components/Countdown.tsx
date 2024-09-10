@@ -92,8 +92,8 @@ export default function Countdown() {
             />
             <button
               type="submit"
-              className={`w-full sm:w-auto px-6 py-2 text-white bg-purple-600 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-opacity-50 transition duration-300 ${
-                loading ? "opacity-50 cursor-not-allowed" : ""
+              className={`w-full sm:w-auto px-6 py-2 text-white bg-purple-600 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-opacity-20 transition duration-300 ${
+                loading ? "opacity-20 cursor-not-allowed" : ""
               }`}
               disabled={loading}
             >

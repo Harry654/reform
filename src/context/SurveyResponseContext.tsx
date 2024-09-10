@@ -37,6 +37,7 @@ export const SurveyResponseProvider: React.FC<{ children: ReactNode }> = ({
         {
           questionId: question.id,
           questionType: question.type,
+          questionText: question.text,
           answer,
         },
       ];
