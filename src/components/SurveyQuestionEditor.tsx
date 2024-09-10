@@ -15,7 +15,7 @@ import {
   FileUploadQuestionComponent,
   YesNoQuestionComponent,
   ImageChoiceQuestionComponent,
-} from "./QuestionComponents";
+} from "./create/QuestionComponents";
 import { surveyQuestions } from "@/constants/question_types";
 import { useQuestion } from "@/context/QuestionContext";
 

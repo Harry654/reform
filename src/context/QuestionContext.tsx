@@ -30,6 +30,7 @@ export const QuestionProvider = ({ children }: { children: ReactNode }) => {
           type: "mcq",
           text: "",
           options: [""],
+          required: true,
         };
         break;
       case "short_answer":
@@ -37,6 +38,7 @@ export const QuestionProvider = ({ children }: { children: ReactNode }) => {
           id: uuidv4(),
           type: "short_answer",
           text: "",
+          required: true,
         };
         break;
       case "long_answer":
@@ -44,6 +46,7 @@ export const QuestionProvider = ({ children }: { children: ReactNode }) => {
           id: uuidv4(),
           type: "long_answer",
           text: "",
+          required: true,
         };
         break;
       case "rating":
@@ -52,6 +55,7 @@ export const QuestionProvider = ({ children }: { children: ReactNode }) => {
           type: "rating",
           text: "",
           maxRating: 5,
+          required: true,
         };
         break;
       case "checkboxes":
@@ -60,6 +64,7 @@ export const QuestionProvider = ({ children }: { children: ReactNode }) => {
           type: "checkboxes",
           text: "",
           options: [""],
+          required: true,
         };
         break;
       case "dropdown":
@@ -68,6 +73,7 @@ export const QuestionProvider = ({ children }: { children: ReactNode }) => {
           type: "dropdown",
           text: "",
           options: [""],
+          required: true,
         };
         break;
       case "ranking":
@@ -76,6 +82,7 @@ export const QuestionProvider = ({ children }: { children: ReactNode }) => {
           type: "ranking",
           text: "",
           options: [""],
+          required: true,
         };
         break;
       case "date_time":
@@ -84,6 +91,7 @@ export const QuestionProvider = ({ children }: { children: ReactNode }) => {
           type: "date_time",
           text: "",
           includeTime: false,
+          required: true,
         };
         break;
       case "matrix":
@@ -93,6 +101,7 @@ export const QuestionProvider = ({ children }: { children: ReactNode }) => {
           text: "",
           rows: [""],
           columns: [""],
+          required: true,
         };
         break;
       case "slider":
@@ -103,6 +112,7 @@ export const QuestionProvider = ({ children }: { children: ReactNode }) => {
           min: 0,
           max: 100,
           step: 1,
+          required: true,
         };
         break;
       case "file_upload":
@@ -111,6 +121,7 @@ export const QuestionProvider = ({ children }: { children: ReactNode }) => {
           type: "file_upload",
           text: "",
           allowedFileTypes: [".pdf", ".jpg", ".png"],
+          required: true,
         };
         break;
       case "yes_no":
@@ -118,6 +129,7 @@ export const QuestionProvider = ({ children }: { children: ReactNode }) => {
           id: uuidv4(),
           type: "yes_no",
           text: "",
+          required: true,
         };
         break;
       case "image_choice":
@@ -126,6 +138,7 @@ export const QuestionProvider = ({ children }: { children: ReactNode }) => {
           type: "image_choice",
           text: "",
           options: [{ imageUrl: "", label: "" }],
+          required: true,
         };
         break;
       default:

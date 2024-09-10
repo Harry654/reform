@@ -1,24 +1,34 @@
 "use client";
 import Navbar from "@/components/NavBar";
 import SurveyQuestionEditor from "@/components/SurveyQuestionEditor";
+import { useAuth } from "@/context/AuthContext";
 import { useQuestion } from "@/context/QuestionContext";
-import React, { useState } from "react";
-
-interface SurveyForm {
-  title: string;
-  description: string;
-  questionCount: number;
-  primaryAim: string;
-}
+import { ISurvey, ISurveyFormMetadata } from "@/types/survey";
+import React, { useEffect, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
+import { doc, setDoc, Timestamp } from "firebase/firestore";
+import { db } from "@/lib/firebase/config"; // Import Firestore instance
+import { BeatLoader } from "react-spinners";
 
 export default function SurveyCreator() {
+  const { user } = useAuth();
   const { questions } = useQuestion();
-  const [formData, setFormData] = useState<SurveyForm>({
+  const [formMetadata, setFormMetadata] = useState<ISurveyFormMetadata>({
+    id: uuidv4(),
     title: "",
     description: "",
-    questionCount: 5,
-    primaryAim: "",
+    category: "",
+    createdBy: user?.uid || "",
   });
+  // const [error, setError] = useState<string>();
+  const [loading, setLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    setFormMetadata((prevFormMetadata) => ({
+      ...prevFormMetadata,
+      createdBy: user?.uid || "",
+    }));
+  }, [user]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -26,18 +36,48 @@ export default function SurveyCreator() {
     >
   ) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
+    setFormMetadata((prevData) => ({
       ...prevData,
-      [name]: name === "questionCount" ? parseInt(value) : value,
+      [name]: value,
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Here you would typically send the form data to your backend
+    // setError("");
+    if (loading) return;
+
     if (!questions.length) return alert("Add at least one question");
-    console.log(formData);
-    console.log(questions);
+
+    const SurveyFormData: ISurvey = {
+      ...formMetadata,
+      questionCount: questions.length,
+      expired: false,
+      access_url: `${process.env.NEXT_PUBLIC_BASE_URL}/s/${formMetadata.id}`,
+      questions,
+      createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now(),
+      startDate: Timestamp.now(),
+      endDate: Timestamp.now(),
+      status: "active",
+      visibility: "public",
+      responsesCount: 0,
+      maxResponses: null,
+      isAnonymous: true,
+      tags: [],
+    };
+
+    try {
+      setLoading(true);
+      // Add survey form data to Firestore
+      await setDoc(doc(db, "surveys", formMetadata.id), SurveyFormData);
+      alert("Survey form submitted successfully!");
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.error("Error adding survey to Firestore: ", error);
+      alert("There was an error submitting the survey. Please try again.");
+    }
   };
 
   return (
@@ -64,7 +104,7 @@ export default function SurveyCreator() {
               name="title"
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-transparent"
               placeholder="Enter survey title"
-              value={formData.title}
+              value={formMetadata.title}
               onChange={handleChange}
               required
             />
@@ -83,7 +123,7 @@ export default function SurveyCreator() {
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-transparent"
               placeholder="What is this survey about?"
               rows={3}
-              value={formData.description}
+              value={formMetadata.description}
               onChange={handleChange}
               required
             />
@@ -103,7 +143,7 @@ export default function SurveyCreator() {
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-transparent"
               min="1"
               max="50"
-              value={formData.questionCount}
+              value={formMetadata.questionCount}
               onChange={handleChange}
               required
             />
@@ -111,16 +151,16 @@ export default function SurveyCreator() {
 
           <div>
             <label
-              htmlFor="primaryAim"
+              htmlFor="category"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
               Primary Aim of the Survey
             </label>
             <select
-              id="primaryAim"
-              name="primaryAim"
+              id="category"
+              name="category"
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-transparent"
-              value={formData.primaryAim}
+              value={formMetadata.category}
               onChange={handleChange}
               required
             >
@@ -136,8 +176,9 @@ export default function SurveyCreator() {
           <button
             type="submit"
             className="w-full px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            disabled={loading}
           >
-            Create Survey
+            {!loading ? "Create Survey" : <BeatLoader size={10} color="#fff" />}
           </button>
         </form>
       </div>
