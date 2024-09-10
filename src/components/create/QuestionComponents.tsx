@@ -37,8 +37,22 @@ export const MCQQuestionComponent: React.FC<QuestionProps> = ({
     onUpdate({ ...mcqQuestion, options: [...mcqQuestion.options, ""] });
   };
 
+  const toggleRequired = () => {
+    onUpdate({ ...question, required: !question.required });
+  };
+
   return (
     <div className="space-y-4">
+      <input
+        id={question.id + "required"}
+        type="checkbox"
+        checked={question.required}
+        className="form-checkbox"
+        onChange={toggleRequired}
+      />
+      <label htmlFor={question.id + "required"} className="ms-2">
+        Required
+      </label>
       <input
         type="text"
         required={true}
@@ -89,8 +103,22 @@ export const ShortAnswerQuestionComponent: React.FC<QuestionProps> = ({
 }) => {
   const shortAnswerQuestion = question as ShortAnswerQuestion;
 
+  const toggleRequired = () => {
+    onUpdate({ ...question, required: !question.required });
+  };
+
   return (
     <div className="space-y-4">
+      <input
+        id={question.id + "required"}
+        type="checkbox"
+        checked={question.required}
+        className="form-checkbox"
+        onChange={toggleRequired}
+      />
+      <label htmlFor={question.id + "required"} className="ms-2">
+        Required
+      </label>
       <input
         type="text"
         required={true}
@@ -118,8 +146,22 @@ export const LongAnswerQuestionComponent: React.FC<QuestionProps> = ({
 }) => {
   const longAnswerQuestion = question as LongAnswerQuestion;
 
+  const toggleRequired = () => {
+    onUpdate({ ...question, required: !question.required });
+  };
+
   return (
     <div className="space-y-4">
+      <input
+        id={question.id + "required"}
+        type="checkbox"
+        checked={question.required}
+        className="form-checkbox"
+        onChange={toggleRequired}
+      />
+      <label htmlFor={question.id + "required"} className="ms-2">
+        Required
+      </label>
       <input
         type="text"
         required={true}
@@ -146,8 +188,22 @@ export const RatingQuestionComponent: React.FC<QuestionProps> = ({
 }) => {
   const ratingQuestion = question as RatingQuestion;
 
+  const toggleRequired = () => {
+    onUpdate({ ...question, required: !question.required });
+  };
+
   return (
     <div className="space-y-4">
+      <input
+        id={question.id + "required"}
+        type="checkbox"
+        checked={question.required}
+        className="form-checkbox"
+        onChange={toggleRequired}
+      />
+      <label htmlFor={question.id + "required"} className="ms-2">
+        Required
+      </label>
       <input
         type="text"
         required={true}
@@ -206,8 +262,22 @@ export const CheckboxesQuestionComponent: React.FC<QuestionProps> = ({
     });
   };
 
+  const toggleRequired = () => {
+    onUpdate({ ...question, required: !question.required });
+  };
+
   return (
     <div className="space-y-4">
+      <input
+        id={question.id + "required"}
+        type="checkbox"
+        checked={question.required}
+        className="form-checkbox"
+        onChange={toggleRequired}
+      />
+      <label htmlFor={question.id + "required"} className="ms-2">
+        Required
+      </label>
       <input
         type="text"
         required={true}
@@ -276,8 +346,22 @@ export const DropdownQuestionComponent: React.FC<QuestionProps> = ({
     });
   };
 
+  const toggleRequired = () => {
+    onUpdate({ ...question, required: !question.required });
+  };
+
   return (
     <div className="space-y-4">
+      <input
+        id={question.id + "required"}
+        type="checkbox"
+        checked={question.required}
+        className="form-checkbox"
+        onChange={toggleRequired}
+      />
+      <label htmlFor={question.id + "required"} className="ms-2">
+        Required
+      </label>
       <input
         type="text"
         required={true}
@@ -348,8 +432,22 @@ export const RankingQuestionComponent: React.FC<QuestionProps> = ({
     onUpdate({ ...rankingQuestion, options: [...rankingQuestion.options, ""] });
   };
 
+  const toggleRequired = () => {
+    onUpdate({ ...question, required: !question.required });
+  };
+
   return (
     <div className="space-y-4">
+      <input
+        id={question.id + "required"}
+        type="checkbox"
+        checked={question.required}
+        className="form-checkbox"
+        onChange={toggleRequired}
+      />
+      <label htmlFor={question.id + "required"} className="ms-2">
+        Required
+      </label>
       <input
         type="text"
         required={true}
@@ -401,8 +499,22 @@ export const DateTimeQuestionComponent: React.FC<QuestionProps> = ({
 }) => {
   const dateTimeQuestion = question as DateTimeQuestion;
 
+  const toggleRequired = () => {
+    onUpdate({ ...question, required: !question.required });
+  };
+
   return (
     <div className="space-y-4">
+      <input
+        id={question.id + "required"}
+        type="checkbox"
+        checked={question.required}
+        className="form-checkbox"
+        onChange={toggleRequired}
+      />
+      <label htmlFor={question.id + "required"} className="ms-2">
+        Required
+      </label>
       <input
         type="text"
         required={true}
@@ -448,8 +560,22 @@ export const MatrixQuestionComponent: React.FC<QuestionProps> = ({
     onUpdate({ ...matrixQuestion, columns: [...matrixQuestion.columns, ""] });
   };
 
+  const toggleRequired = () => {
+    onUpdate({ ...question, required: !question.required });
+  };
+
   return (
     <div className="space-y-4">
+      <input
+        id={question.id + "required"}
+        type="checkbox"
+        checked={question.required}
+        className="form-checkbox"
+        onChange={toggleRequired}
+      />
+      <label htmlFor={question.id + "required"} className="ms-2">
+        Required
+      </label>
       <input
         type="text"
         required={true}
@@ -540,8 +666,22 @@ export const SliderQuestionComponent: React.FC<QuestionProps> = ({
 }) => {
   const sliderQuestion = question as SliderQuestion;
 
+  const toggleRequired = () => {
+    onUpdate({ ...question, required: !question.required });
+  };
+
   return (
     <div className="space-y-4">
+      <input
+        id={question.id + "required"}
+        type="checkbox"
+        checked={question.required}
+        className="form-checkbox"
+        onChange={toggleRequired}
+      />
+      <label htmlFor={question.id + "required"} className="ms-2">
+        Required
+      </label>
       <input
         type="text"
         required={true}
@@ -617,8 +757,22 @@ export const FileUploadQuestionComponent: React.FC<QuestionProps> = ({
     });
   };
 
+  const toggleRequired = () => {
+    onUpdate({ ...question, required: !question.required });
+  };
+
   return (
     <div className="space-y-4">
+      <input
+        id={question.id + "required"}
+        type="checkbox"
+        checked={question.required}
+        className="form-checkbox"
+        onChange={toggleRequired}
+      />
+      <label htmlFor={question.id + "required"} className="ms-2">
+        Required
+      </label>
       <input
         type="text"
         required={true}
@@ -676,8 +830,22 @@ export const YesNoQuestionComponent: React.FC<QuestionProps> = ({
 }) => {
   const yesNoQuestion = question as YesNoQuestion;
 
+  const toggleRequired = () => {
+    onUpdate({ ...question, required: !question.required });
+  };
+
   return (
     <div className="space-y-4">
+      <input
+        id={question.id + "required"}
+        type="checkbox"
+        checked={question.required}
+        className="form-checkbox"
+        onChange={toggleRequired}
+      />
+      <label htmlFor={question.id + "required"} className="ms-2">
+        Required
+      </label>
       <input
         type="text"
         required={true}
@@ -723,8 +891,22 @@ export const ImageChoiceQuestionComponent: React.FC<QuestionProps> = ({
     });
   };
 
+  const toggleRequired = () => {
+    onUpdate({ ...question, required: !question.required });
+  };
+
   return (
     <div className="space-y-4">
+      <input
+        id={question.id + "required"}
+        type="checkbox"
+        checked={question.required}
+        className="form-checkbox"
+        onChange={toggleRequired}
+      />
+      <label htmlFor={question.id + "required"} className="ms-2">
+        Required
+      </label>
       <input
         type="text"
         required={true}
