@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth } from "@/context/AuthContext";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
 
@@ -22,10 +23,16 @@ export default function Navbar() {
                 <span className="text-sm font-medium text-gray-700">
                   {`${user.firstName} ${user.lastName}`}
                 </span>
-                <img
+                <Image
                   className="h-8 w-8 rounded-full"
-                  src={user.photoURL ? user.photoURL : undefined}
+                  src={
+                    user.photoURL
+                      ? user.photoURL
+                      : "https://firebasestorage.googleapis.com/v0/b/reform-a80a2.appspot.com/o/empty_user.png?alt=media&token=5ad8397a-1e3f-44fd-8143-31972b02f3fd"
+                  }
                   alt={`${user.firstName}'s profile`}
+                  width={100}
+                  height={100}
                 />
                 <button
                   onClick={logout}

@@ -7,10 +7,12 @@ import {
   signInWithPopup,
 } from "firebase/auth";
 import { auth } from "@/lib/firebase/config";
-import { doc, getDoc, setDoc } from "firebase/firestore"; // Import Firestore methods
+import { doc, getDoc, setDoc, Timestamp } from "firebase/firestore"; // Import Firestore methods
 import { db } from "@/lib/firebase/config"; // Import Firestore instance
 import { useRouter } from "next/navigation";
 import { BeatLoader } from "react-spinners";
+import { useAuth } from "@/context/AuthContext";
+import { TFirestoreUser } from "@/types/user";
 
 export default function SignupPage() {
   const [firstName, setFirstName] = useState("");
@@ -22,6 +24,7 @@ export default function SignupPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
+  const { setUser } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -100,21 +103,24 @@ export default function SignupPage() {
 
       if (!userDoc.exists()) {
         // Save user's information to Firestore if it's a new user
-        await setDoc(userDocRef, {
+        const newUser = {
           uid: user.uid,
           firstName: user.displayName?.split(" ")[0] || "",
           lastName: user.displayName?.split(" ")[1] || "",
           email: user.email,
-          createdAt: new Date(),
+          createdAt: Timestamp.now(),
           subscriptionPlan: null, // or set to a default plan ID if applicable
           subscriptionStartDate: null,
           subscriptionEndDate: null,
           subscriptionStatus: "inactive", // default status
           lastPaymentDate: null,
           paymentMethod: null,
-          tosAgreedAt: new Date(), // Add the timestamp of ToS agreement
-          privacyPolicyAgreedAt: new Date(),
-        });
+          tosAgreedAt: Timestamp.now(), // Add the timestamp of ToS agreement
+          privacyPolicyAgreedAt: Timestamp.now(),
+          photoURL: user.photoURL,
+        };
+        await setDoc(userDocRef, newUser);
+        setUser(newUser as TFirestoreUser);
       }
 
       redirect();

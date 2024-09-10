@@ -6,15 +6,20 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
 } from "firebase/auth";
-import { auth } from "@/lib/firebase/config";
+import { auth, db } from "@/lib/firebase/config";
 import { useRouter } from "next/navigation";
 import { BeatLoader } from "react-spinners";
+import { doc, getDoc, setDoc, Timestamp } from "firebase/firestore";
+import { useAuth } from "@/context/AuthContext";
+import { TFirestoreUser } from "@/types/user";
 
 export default function LoginComponent() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState("");
   const router = useRouter();
+  const { setUser } = useAuth();
 
   const handleSignInWithEmailAndPassword = async (
     e: React.FormEvent<HTMLFormElement>
@@ -45,14 +50,44 @@ export default function LoginComponent() {
   };
 
   const signInWithGoogle = async () => {
-    if (loading) return;
     const provider = new GoogleAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      // Check if user already exists in Firestore
+      const userDocRef = doc(db, "users", user.uid);
+      const userDoc = await getDoc(userDocRef);
+
+      if (!userDoc.exists()) {
+        // Save user's information to Firestore if it's a new user
+        const newUser = {
+          uid: user.uid,
+          firstName: user.displayName?.split(" ")[0] || "",
+          lastName: user.displayName?.split(" ")[1] || "",
+          email: user.email,
+          createdAt: Timestamp.now(),
+          subscriptionPlan: null, // or set to a default plan ID if applicable
+          subscriptionStartDate: null,
+          subscriptionEndDate: null,
+          subscriptionStatus: "inactive", // default status
+          lastPaymentDate: null,
+          paymentMethod: null,
+          tosAgreedAt: Timestamp.now(), // Add the timestamp of ToS agreement
+          privacyPolicyAgreedAt: Timestamp.now(),
+          photoURL: user.photoURL,
+        };
+        await setDoc(userDocRef, newUser);
+        setUser(newUser as TFirestoreUser);
+      }
+
       redirect();
     } catch (error) {
-      console.error("Error signing in with Google", error);
-      alert("Failed to sign in with Google");
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("An unknown error occurred");
+      }
     }
   };
 
@@ -97,6 +132,9 @@ export default function LoginComponent() {
               required
             />
           </div>
+
+          {error && <div className="text-red-600 text-sm">{error}</div>}
+
           <button
             type="submit"
             className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${

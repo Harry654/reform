@@ -14,6 +14,7 @@ import { doc, getDoc } from "firebase/firestore";
 // Define the shape of your context
 interface AuthContextType {
   user: TFirestoreUser | null;
+  setUser: React.Dispatch<React.SetStateAction<TFirestoreUser | null>>;
   loading: boolean;
   logout: () => void;
 }
@@ -57,7 +58,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, logout }}>
+    <AuthContext.Provider value={{ user, setUser, loading, logout }}>
       {!loading && children}
     </AuthContext.Provider>
   );

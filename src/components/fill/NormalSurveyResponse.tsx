@@ -73,7 +73,7 @@ export const NormalSurveyResponse: React.FC<NormalSurveyResponseProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!handleAllQuestionsAnswered()) return;
+    if (!handleAllQuestionsAnswered() || loading) return;
 
     const response: TSurveyResponse = {
       surveyId: survey?.id || "",
