@@ -403,7 +403,7 @@ export const SliderQuestionFill: React.FC<QuestionProps> = ({ question }) => {
 export const FileUploadQuestionFill: React.FC<QuestionProps> = ({
   question,
 }) => {
-  const { responses, updateResponse } = useSurvey();
+  const { updateResponse } = useSurvey();
 
   const { id, text, required, allowedFileTypes } =
     question as FileUploadQuestion;
