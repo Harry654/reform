@@ -1,5 +1,4 @@
 "use client";
-import Navbar from "@/components/NavBar";
 import CreateSurveyQuestionEditor from "@/components/create/CreateSurveyQuestionEditor";
 import { useAuth } from "@/context/AuthContext";
 import { useQuestion } from "@/context/CreateSurveyContext";
