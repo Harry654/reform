@@ -15,6 +15,7 @@ import {
   YesNoQuestion,
   ImageChoiceQuestion,
 } from "@/types/question";
+import Image from "next/image";
 import React from "react";
 
 interface QuestionProps {
@@ -40,9 +41,8 @@ export const MCQQuestionFill: React.FC<QuestionProps> = ({ question }) => {
               name={id}
               value={option}
               checked={
-                (responses.find(
-                  (response) => response.questionId === question.id
-                )?.answer as string) === option
+                (responses.find((response) => response.questionId === id)
+                  ?.answer as string) === option
               }
               onChange={(e) => updateResponse(question, e.target.value)}
               required={required}
@@ -74,7 +74,7 @@ export const LongAnswerQuestionFill: React.FC<QuestionProps> = ({
         id={id}
         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
         value={
-          (responses.find((response) => response.questionId === question.id)
+          (responses.find((response) => response.questionId === id)
             ?.answer as string) || ""
         }
         onChange={(e) => updateResponse(question, e.target.value)}
@@ -105,7 +105,7 @@ export const ShortAnswerQuestionFill: React.FC<QuestionProps> = ({
         id={id}
         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
         value={
-          (responses.find((response) => response.questionId === question.id)
+          (responses.find((response) => response.questionId === id)
             ?.answer as string) || ""
         }
         onChange={(e) => updateResponse(question, e.target.value)}
@@ -130,7 +130,7 @@ export const RatingQuestionFill: React.FC<QuestionProps> = ({ question }) => {
           <button
             key={index}
             className={`w-8 h-8 rounded-full ${
-              (responses.find((response) => response.questionId === question.id)
+              (responses.find((response) => response.questionId === id)
                 ?.answer as number) > index
                 ? "bg-yellow-400"
                 : "bg-gray-200"
@@ -154,7 +154,7 @@ export const CheckboxesQuestionFill: React.FC<QuestionProps> = ({
 
   const handleCheckboxChange = (option: string) => {
     const currentAnswers =
-      (responses.find((response) => response.questionId === question.id)
+      (responses.find((response) => response.questionId === id)
         ?.answer as string[]) || [];
     const updatedAnswers = currentAnswers.includes(option)
       ? currentAnswers.filter((item) => item !== option)
@@ -176,9 +176,8 @@ export const CheckboxesQuestionFill: React.FC<QuestionProps> = ({
               value={option}
               checked={
                 (
-                  responses.find(
-                    (response) => response.questionId === question.id
-                  )?.answer as string[]
+                  responses.find((response) => response.questionId === id)
+                    ?.answer as string[]
                 )?.includes(option) || false
               }
               onChange={() => handleCheckboxChange(option)}
@@ -209,7 +208,7 @@ export const DropdownQuestionFill: React.FC<QuestionProps> = ({ question }) => {
         id={id}
         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
         value={
-          (responses.find((response) => response.questionId === question.id)
+          (responses.find((response) => response.questionId === id)
             ?.answer as string) || ""
         }
         onChange={(e) => updateResponse(question, e.target.value)}
@@ -232,7 +231,7 @@ export const RankingQuestionFill: React.FC<QuestionProps> = ({ question }) => {
   const { id, text, required, options } = question as RankingQuestion;
 
   const currentRanking = (responses.find(
-    (response) => response.questionId === question.id
+    (response) => response.questionId === id
   )?.answer as string[]) || [...options];
 
   const moveItem = (fromIndex: number, toIndex: number) => {
@@ -301,7 +300,7 @@ export const DateTimeQuestionFill: React.FC<QuestionProps> = ({ question }) => {
         id={id}
         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
         value={
-          (responses.find((response) => response.questionId === question.id)
+          (responses.find((response) => response.questionId === id)
             ?.answer as string) || ""
         }
         onChange={(e) => updateResponse(question, e.target.value)}
@@ -317,8 +316,10 @@ export const MatrixQuestionFill: React.FC<QuestionProps> = ({ question }) => {
   const { id, text, required, rows, columns } = question as MatrixQuestion;
 
   const currentAnswers =
-    (responses.find((response) => response.questionId === question.id)
-      ?.answer as Record<string, string>) || {};
+    (responses.find((response) => response.questionId === id)?.answer as Record<
+      string,
+      string
+    >) || {};
 
   const handleChange = (row: string, value: string) => {
     updateResponse(question, { ...currentAnswers, [row]: value });
@@ -385,7 +386,7 @@ export const SliderQuestionFill: React.FC<QuestionProps> = ({ question }) => {
         step={step}
         className="w-full"
         value={
-          (responses.find((response) => response.questionId === question.id)
+          (responses.find((response) => response.questionId === id)
             ?.answer as number) || min
         }
         onChange={(e) => updateResponse(question, parseFloat(e.target.value))}
@@ -453,7 +454,7 @@ export const YesNoQuestionFill: React.FC<QuestionProps> = ({ question }) => {
             name={id}
             value="Yes"
             checked={
-              (responses.find((response) => response.questionId === question.id)
+              (responses.find((response) => response.questionId === id)
                 ?.answer as string) === "Yes"
             }
             onChange={() => updateResponse(question, "Yes")}
@@ -468,7 +469,7 @@ export const YesNoQuestionFill: React.FC<QuestionProps> = ({ question }) => {
             name={id}
             value="No"
             checked={
-              (responses.find((response) => response.questionId === question.id)
+              (responses.find((response) => response.questionId === id)
                 ?.answer as string) === "No"
             }
             onChange={() => updateResponse(question, "No")}
@@ -502,15 +503,14 @@ export const ImageChoiceQuestionFill: React.FC<QuestionProps> = ({
               name={id}
               value={option.label}
               checked={
-                (responses.find(
-                  (response) => response.questionId === question.id
-                )?.answer as string) === option.label
+                (responses.find((response) => response.questionId === id)
+                  ?.answer as string) === option.label
               }
               onChange={() => updateResponse(question, option.label)}
               required={required}
             />
             <div className="border-2 rounded-lg p-2 hover:border-blue-500 transition-colors">
-              <img
+              <Image
                 src={option.imageUrl}
                 alt={option.label}
                 className="w-full h-32 object-cover rounded"

@@ -24,7 +24,7 @@ export default function LoginComponent() {
     if (!email || !password) return alert("Some fields are missing");
     try {
       setLoading(true);
-      const userCredential = await signInWithEmailAndPassword(
+      await signInWithEmailAndPassword(
         auth,
         email,
         password
