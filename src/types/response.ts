@@ -1,11 +1,20 @@
 import { Timestamp } from "firebase/firestore";
 import { QuestionType } from "./question";
 
+export type TAnswer =
+  | string
+  | string[]
+  | number
+  | boolean
+  | File
+  | { [x: string]: string };
+
 export type TQuestionResponse = {
   questionId: string;
   questionType: QuestionType;
-  answer: string | string[] | number | boolean;
+  answer: TAnswer;
 };
+
 export type TSurveyResponse = {
   surveyId: string; // Reference to the survey
   userId?: string; // Optional, if the user is authenticated

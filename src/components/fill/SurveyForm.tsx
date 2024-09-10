@@ -43,12 +43,12 @@ export const SurveyForm: React.FC<SurveyFormProps> = ({ surveyData }) => {
       <h1 className="text-2xl font-bold mb-4">{survey.title}</h1>
       <p className="mb-6 text-gray-600">{survey.description}</p>
       <form onSubmit={handleSubmit}>
-        {survey.questions.map((question) => {
+        {survey.questions.map((question, index) => {
           switch (question.type) {
             case "mcq":
-              return <MCQQuestionFill question={question} />;
+              return <MCQQuestionFill key={index} question={question} />;
             case "long_answer":
-              return <LongAnswerQuestionFill question={question} />;
+              return <LongAnswerQuestionFill key={index} question={question} />;
             default:
               return null;
           }
