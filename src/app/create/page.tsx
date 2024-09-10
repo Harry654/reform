@@ -1,8 +1,8 @@
 "use client";
 import Navbar from "@/components/NavBar";
-import SurveyQuestionEditor from "@/components/SurveyQuestionEditor";
+import CreateSurveyQuestionEditor from "@/components/create/CreateSurveyQuestionEditor";
 import { useAuth } from "@/context/AuthContext";
-import { useQuestion } from "@/context/QuestionContext";
+import { useQuestion } from "@/context/CreateSurveyContext";
 import { ISurvey, ISurveyFormMetadata } from "@/types/survey";
 import React, { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -12,14 +12,9 @@ import { BeatLoader } from "react-spinners";
 
 export default function SurveyCreator() {
   const { user } = useAuth();
-  const { questions } = useQuestion();
-  const [formMetadata, setFormMetadata] = useState<ISurveyFormMetadata>({
-    id: uuidv4(),
-    title: "",
-    description: "",
-    category: "",
-    createdBy: user?.uid || "",
-  });
+  const { formMetadata, setFormMetadata, questions, resetSurvey } =
+    useQuestion();
+
   // const [error, setError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -71,8 +66,9 @@ export default function SurveyCreator() {
       setLoading(true);
       // Add survey form data to Firestore
       await setDoc(doc(db, "surveys", formMetadata.id), SurveyFormData);
-      alert("Survey form submitted successfully!");
+      alert("Survey created successfully!");
       setLoading(false);
+      resetSurvey();
     } catch (error) {
       setLoading(false);
       console.error("Error adding survey to Firestore: ", error);
@@ -129,26 +125,6 @@ export default function SurveyCreator() {
             />
           </div>
 
-          {/* <div>
-            <label
-              htmlFor="questionCount"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Number of Questions
-            </label>
-            <input
-              type="number"
-              id="questionCount"
-              name="questionCount"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-transparent"
-              min="1"
-              max="50"
-              value={formMetadata.questionCount}
-              onChange={handleChange}
-              required
-            />
-          </div> */}
-
           <div>
             <label
               htmlFor="category"
@@ -172,7 +148,56 @@ export default function SurveyCreator() {
             </select>
           </div>
 
-          <SurveyQuestionEditor />
+          <div>
+            <label
+              htmlFor="surveyType"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Survey Type
+            </label>
+            <div className="flex space-x-4">
+              <div className="flex items-center">
+                <input
+                  type="radio"
+                  id="normal"
+                  name="type"
+                  value="normal"
+                  checked={formMetadata.type === "normal"}
+                  onChange={handleChange}
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                  required
+                />
+                <label
+                  htmlFor="normal"
+                  className="ml-2 block text-sm font-medium text-gray-700"
+                >
+                  Normal
+                </label>
+              </div>
+
+              <div className="flex items-center">
+                <input
+                  type="radio"
+                  id="interactive"
+                  name="type"
+                  value="interactive"
+                  checked={formMetadata.type === "interactive"}
+                  onChange={handleChange}
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                  required
+                />
+                <label
+                  htmlFor="interactive"
+                  className="ml-2 block text-sm font-medium text-gray-700"
+                >
+                  Interactive
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <CreateSurveyQuestionEditor />
+
           <button
             type="submit"
             className="w-full px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"

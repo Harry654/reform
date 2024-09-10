@@ -2,22 +2,39 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { Question, QuestionType } from "@/types/question";
 import { v4 as uuidv4 } from "uuid";
+import { ISurveyFormMetadata } from "@/types/survey";
+import { useAuth } from "./AuthContext";
 
 // Define the shape of your context
-interface QuestionContextType {
+interface CreateSurveyContextType {
+  formMetadata: ISurveyFormMetadata;
+  setFormMetadata: React.Dispatch<React.SetStateAction<ISurveyFormMetadata>>;
   questions: Question[];
   addQuestion: (type: QuestionType) => void;
   updateQuestion: (updatedQuestion: Question) => void;
   removeQuestion: (id: string) => void;
+  resetSurvey: () => void;
 }
 
 // Create the context
-const QuestionContext = createContext<QuestionContextType | undefined>(
+const CreateSurveyContext = createContext<CreateSurveyContextType | undefined>(
   undefined
 );
 
-// QuestionProvider component
-export const QuestionProvider = ({ children }: { children: ReactNode }) => {
+// CreateSurveyProvider component
+export const CreateSurveyProvider = ({ children }: { children: ReactNode }) => {
+  const { user } = useAuth();
+  const initialFormMetaData: ISurveyFormMetadata = {
+    id: uuidv4(),
+    title: "",
+    description: "",
+    category: "",
+    createdBy: user?.uid || "",
+    type: "normal",
+  };
+
+  const [formMetadata, setFormMetadata] =
+    useState<ISurveyFormMetadata>(initialFormMetaData);
   const [questions, setQuestions] = useState<Question[]>([]);
 
   const addQuestion = (type: QuestionType) => {
@@ -158,20 +175,33 @@ export const QuestionProvider = ({ children }: { children: ReactNode }) => {
     setQuestions(questions.filter((q) => q.id !== id));
   };
 
+  const resetSurvey = () => {
+    setFormMetadata(initialFormMetaData);
+    setQuestions([]);
+  };
+
   return (
-    <QuestionContext.Provider
-      value={{ questions, addQuestion, updateQuestion, removeQuestion }}
+    <CreateSurveyContext.Provider
+      value={{
+        formMetadata,
+        setFormMetadata,
+        questions,
+        addQuestion,
+        updateQuestion,
+        removeQuestion,
+        resetSurvey,
+      }}
     >
       {children}
-    </QuestionContext.Provider>
+    </CreateSurveyContext.Provider>
   );
 };
 
-// Custom hook to use the QuestionContext
-export const useQuestion = (): QuestionContextType => {
-  const context = useContext(QuestionContext);
+// Custom hook to use the CreateSurveyContext
+export const useQuestion = (): CreateSurveyContextType => {
+  const context = useContext(CreateSurveyContext);
   if (context === undefined) {
-    throw new Error("useQuestion must be used within an QuestionProvider");
+    throw new Error("useQuestion must be used within an CreateSurveyProvider");
   }
   return context;
 };

@@ -15,9 +15,9 @@ import {
   FileUploadQuestionComponent,
   YesNoQuestionComponent,
   ImageChoiceQuestionComponent,
-} from "./create/QuestionComponents";
+} from "./QuestionComponents";
 import { surveyQuestions } from "@/constants/question_types";
-import { useQuestion } from "@/context/QuestionContext";
+import { useQuestion } from "@/context/CreateSurveyContext";
 
 export default function SurveyQuestionEditor() {
   const { questions, addQuestion, updateQuestion, removeQuestion } =

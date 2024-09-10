@@ -5,22 +5,28 @@ import { TAnswer, TQuestionResponse } from "@/types/response";
 import { ISurvey } from "@/types/survey";
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
-interface SurveyContextType {
+interface SurveyResponseContextType {
   survey: ISurvey | null;
   responses: TQuestionResponse[];
   setSurvey: (survey: ISurvey) => void;
   updateResponse: (question: Question, answer: TAnswer) => void;
+  skippedQuestion: Question | null;
+  setSkippedQuestion: React.Dispatch<React.SetStateAction<Question | null>>;
 }
 
-const SurveyContext = createContext<SurveyContextType | undefined>(undefined);
+const SurveyResponseContext = createContext<
+  SurveyResponseContextType | undefined
+>(undefined);
 
-export const SurveyProvider: React.FC<{ children: ReactNode }> = ({
+export const SurveyResponseProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [survey, setSurvey] = useState<ISurvey | null>(null);
   const [responses, setSurveyResponses] = useState<TQuestionResponse[]>([]);
+  const [skippedQuestion, setSkippedQuestion] = useState<Question | null>(null);
 
   const updateResponse = (question: Question, answer: TAnswer) => {
+    setSkippedQuestion(null);
     setSurveyResponses((prevResponses) => {
       const filteredResponses = prevResponses.filter(
         (response) => response.questionId !== question.id
@@ -38,18 +44,25 @@ export const SurveyProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   return (
-    <SurveyContext.Provider
-      value={{ survey, responses, setSurvey, updateResponse }}
+    <SurveyResponseContext.Provider
+      value={{
+        survey,
+        responses,
+        setSurvey,
+        updateResponse,
+        skippedQuestion,
+        setSkippedQuestion,
+      }}
     >
       {children}
-    </SurveyContext.Provider>
+    </SurveyResponseContext.Provider>
   );
 };
 
 export const useSurvey = () => {
-  const context = useContext(SurveyContext);
+  const context = useContext(SurveyResponseContext);
   if (!context) {
-    throw new Error("useSurvey must be used within a SurveyProvider");
+    throw new Error("useSurvey must be used within a SurveyResponseProvider");
   }
   return context;
 };

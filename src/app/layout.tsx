@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
-import { QuestionProvider } from "@/context/QuestionContext";
-import { SurveyProvider } from "@/context/SurveyContext";
+import { CreateSurveyProvider } from "@/context/CreateSurveyContext";
+import { SurveyResponseProvider } from "@/context/SurveyResponseContext";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -33,9 +33,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AuthProvider>
-          <QuestionProvider>
-            <SurveyProvider>{children}</SurveyProvider>
-          </QuestionProvider>
+          <CreateSurveyProvider>
+            <SurveyResponseProvider>{children}</SurveyResponseProvider>
+          </CreateSurveyProvider>
         </AuthProvider>
       </body>
     </html>

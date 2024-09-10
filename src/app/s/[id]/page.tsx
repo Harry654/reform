@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase/config"; // Your Firestore config
 import { ISurvey } from "@/types/survey"; // Your survey type definition
-import { SurveyForm } from "@/components/fill/SurveyForm";
+import { SurveyResponseEditor } from "@/components/fill/SurveyResponseEditor";
 import { useParams } from "next/navigation";
 
 const Survey = () => {
@@ -45,7 +45,7 @@ const Survey = () => {
   return (
     <div>
       {surveyData ? (
-        <SurveyForm surveyData={surveyData} />
+        <SurveyResponseEditor surveyData={surveyData} />
       ) : (
         <p>No survey data available.</p>
       )}

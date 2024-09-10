@@ -6,7 +6,8 @@ export interface ISurveyFormMetadata {
   title: string;
   description: string;
   category: string;
-  createdBy: string; // User ID or email of the survey creator
+  createdBy: string;
+  type: "normal" | "interactive";
 }
 
 export interface ISurvey extends ISurveyFormMetadata {

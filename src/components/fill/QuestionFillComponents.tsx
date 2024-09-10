@@ -1,4 +1,4 @@
-import { useSurvey } from "@/context/SurveyContext";
+import { useSurvey } from "@/context/SurveyResponseContext";
 import {
   LongAnswerQuestion,
   MCQQuestion,
@@ -23,14 +23,17 @@ interface QuestionProps {
 }
 
 export const MCQQuestionFill: React.FC<QuestionProps> = ({ question }) => {
-  const { responses, updateResponse } = useSurvey();
+  const { responses, updateResponse, skippedQuestion } = useSurvey();
 
   const { id, text, required, options } = question as MCQQuestion;
 
   return (
-    <div className="mb-6">
+    <div id={id} className="mb-6">
       <label className="block text-gray-700 text-sm font-bold mb-2">
-        {text} {required && <span className="text-red-500">*</span>}
+        {text} {required && <span className="text-red-500">*</span>}{" "}
+        {skippedQuestion?.id === question.id && (
+          <span className="text-red-900 ms-2">This is a required question</span>
+        )}
       </label>
       {options.map((option, index) => (
         <div key={index} className="mb-2">
@@ -45,7 +48,6 @@ export const MCQQuestionFill: React.FC<QuestionProps> = ({ question }) => {
                   ?.answer as string) === option
               }
               onChange={(e) => updateResponse(question, e.target.value)}
-              required={required}
             />
             <span className="ml-2">{option}</span>
           </label>
@@ -58,17 +60,20 @@ export const MCQQuestionFill: React.FC<QuestionProps> = ({ question }) => {
 export const LongAnswerQuestionFill: React.FC<QuestionProps> = ({
   question,
 }) => {
-  const { responses, updateResponse } = useSurvey();
+  const { responses, updateResponse, skippedQuestion } = useSurvey();
 
   const { id, text, required } = question as LongAnswerQuestion;
 
   return (
-    <div className="mb-6">
+    <div id={id} className="mb-6">
       <label
         className="block text-gray-700 text-sm font-bold mb-2"
         htmlFor={id}
       >
-        {text} {required && <span className="text-red-500">*</span>}
+        {text} {required && <span className="text-red-500">*</span>}{" "}
+        {skippedQuestion?.id === question.id && (
+          <span className="text-red-900 ms-2">This is a required question</span>
+        )}
       </label>
       <textarea
         id={id}
@@ -78,7 +83,6 @@ export const LongAnswerQuestionFill: React.FC<QuestionProps> = ({
             ?.answer as string) || ""
         }
         onChange={(e) => updateResponse(question, e.target.value)}
-        required={required}
         rows={4}
       />
     </div>
@@ -88,17 +92,20 @@ export const LongAnswerQuestionFill: React.FC<QuestionProps> = ({
 export const ShortAnswerQuestionFill: React.FC<QuestionProps> = ({
   question,
 }) => {
-  const { responses, updateResponse } = useSurvey();
+  const { responses, updateResponse, skippedQuestion } = useSurvey();
 
   const { id, text, required } = question as ShortAnswerQuestion;
 
   return (
-    <div className="mb-6">
+    <div id={id} className="mb-6">
       <label
         className="block text-gray-700 text-sm font-bold mb-2"
         htmlFor={id}
       >
-        {text} {required && <span className="text-red-500">*</span>}
+        {text} {required && <span className="text-red-500">*</span>}{" "}
+        {skippedQuestion?.id === question.id && (
+          <span className="text-red-900 ms-2">This is a required question</span>
+        )}
       </label>
       <input
         type="text"
@@ -109,25 +116,28 @@ export const ShortAnswerQuestionFill: React.FC<QuestionProps> = ({
             ?.answer as string) || ""
         }
         onChange={(e) => updateResponse(question, e.target.value)}
-        required={required}
       />
     </div>
   );
 };
 
 export const RatingQuestionFill: React.FC<QuestionProps> = ({ question }) => {
-  const { responses, updateResponse } = useSurvey();
+  const { responses, updateResponse, skippedQuestion } = useSurvey();
 
   const { id, text, required, maxRating } = question as RatingQuestion;
 
   return (
-    <div className="mb-6">
+    <div id={id} className="mb-6">
       <label className="block text-gray-700 text-sm font-bold mb-2">
-        {text} {required && <span className="text-red-500">*</span>}
+        {text} {required && <span className="text-red-500">*</span>}{" "}
+        {skippedQuestion?.id === question.id && (
+          <span className="text-red-900 ms-2">This is a required question</span>
+        )}
       </label>
       <div className="flex space-x-2">
         {[...Array(maxRating)].map((_, index) => (
           <button
+            type="button"
             key={index}
             className={`w-8 h-8 rounded-full ${
               (responses.find((response) => response.questionId === id)
@@ -148,7 +158,7 @@ export const RatingQuestionFill: React.FC<QuestionProps> = ({ question }) => {
 export const CheckboxesQuestionFill: React.FC<QuestionProps> = ({
   question,
 }) => {
-  const { responses, updateResponse } = useSurvey();
+  const { responses, updateResponse, skippedQuestion } = useSurvey();
 
   const { id, text, required, options } = question as CheckboxesQuestion;
 
@@ -163,9 +173,12 @@ export const CheckboxesQuestionFill: React.FC<QuestionProps> = ({
   };
 
   return (
-    <div className="mb-6">
+    <div id={id} className="mb-6">
       <label className="block text-gray-700 text-sm font-bold mb-2">
-        {text} {required && <span className="text-red-500">*</span>}
+        {text} {required && <span className="text-red-500">*</span>}{" "}
+        {skippedQuestion?.id === question.id && (
+          <span className="text-red-900 ms-2">This is a required question</span>
+        )}
       </label>
       {options.map((option, index) => (
         <div key={index} className="mb-2">
@@ -181,7 +194,6 @@ export const CheckboxesQuestionFill: React.FC<QuestionProps> = ({
                 )?.includes(option) || false
               }
               onChange={() => handleCheckboxChange(option)}
-              required={required && index === 0}
             />
             <span className="ml-2">{option}</span>
           </label>
@@ -192,17 +204,20 @@ export const CheckboxesQuestionFill: React.FC<QuestionProps> = ({
 };
 
 export const DropdownQuestionFill: React.FC<QuestionProps> = ({ question }) => {
-  const { responses, updateResponse } = useSurvey();
+  const { responses, updateResponse, skippedQuestion } = useSurvey();
 
   const { id, text, required, options } = question as DropdownQuestion;
 
   return (
-    <div className="mb-6">
+    <div id={id} className="mb-6">
       <label
         className="block text-gray-700 text-sm font-bold mb-2"
         htmlFor={id}
       >
-        {text} {required && <span className="text-red-500">*</span>}
+        {text} {required && <span className="text-red-500">*</span>}{" "}
+        {skippedQuestion?.id === question.id && (
+          <span className="text-red-900 ms-2">This is a required question</span>
+        )}
       </label>
       <select
         id={id}
@@ -212,7 +227,6 @@ export const DropdownQuestionFill: React.FC<QuestionProps> = ({ question }) => {
             ?.answer as string) || ""
         }
         onChange={(e) => updateResponse(question, e.target.value)}
-        required={required}
       >
         <option value="">Select an option</option>
         {options.map((option, index) => (
@@ -226,7 +240,7 @@ export const DropdownQuestionFill: React.FC<QuestionProps> = ({ question }) => {
 };
 
 export const RankingQuestionFill: React.FC<QuestionProps> = ({ question }) => {
-  const { responses, updateResponse } = useSurvey();
+  const { responses, updateResponse, skippedQuestion } = useSurvey();
 
   const { id, text, required, options } = question as RankingQuestion;
 
@@ -242,9 +256,12 @@ export const RankingQuestionFill: React.FC<QuestionProps> = ({ question }) => {
   };
 
   return (
-    <div className="mb-6">
+    <div id={id} className="mb-6">
       <label className="block text-gray-700 text-sm font-bold mb-2">
-        {text} {required && <span className="text-red-500">*</span>}
+        {text} {required && <span className="text-red-500">*</span>}{" "}
+        {skippedQuestion?.id === question.id && (
+          <span className="text-red-900 ms-2">This is a required question</span>
+        )}
       </label>
       <ul className="space-y-2">
         {currentRanking.map((item, index) => (
@@ -256,6 +273,7 @@ export const RankingQuestionFill: React.FC<QuestionProps> = ({ question }) => {
             <span>{item}</span>
             <div className="ml-auto space-x-1">
               <button
+                type="button"
                 onClick={() => moveItem(index, Math.max(0, index - 1))}
                 disabled={index === 0}
                 className="px-2 py-1 bg-gray-200 rounded disabled:opacity-50"
@@ -263,6 +281,7 @@ export const RankingQuestionFill: React.FC<QuestionProps> = ({ question }) => {
                 ↑
               </button>
               <button
+                type="button"
                 onClick={() =>
                   moveItem(
                     index,
@@ -283,17 +302,20 @@ export const RankingQuestionFill: React.FC<QuestionProps> = ({ question }) => {
 };
 
 export const DateTimeQuestionFill: React.FC<QuestionProps> = ({ question }) => {
-  const { responses, updateResponse } = useSurvey();
+  const { responses, updateResponse, skippedQuestion } = useSurvey();
 
   const { id, text, required, includeTime } = question as DateTimeQuestion;
 
   return (
-    <div className="mb-6">
+    <div id={id} className="mb-6">
       <label
         className="block text-gray-700 text-sm font-bold mb-2"
         htmlFor={id}
       >
-        {text} {required && <span className="text-red-500">*</span>}
+        {text} {required && <span className="text-red-500">*</span>}{" "}
+        {skippedQuestion?.id === question.id && (
+          <span className="text-red-900 ms-2">This is a required question</span>
+        )}
       </label>
       <input
         type={includeTime ? "datetime-local" : "date"}
@@ -304,14 +326,14 @@ export const DateTimeQuestionFill: React.FC<QuestionProps> = ({ question }) => {
             ?.answer as string) || ""
         }
         onChange={(e) => updateResponse(question, e.target.value)}
-        required={required}
+        max={new Date().toISOString().split("T")[0]}
       />
     </div>
   );
 };
 
 export const MatrixQuestionFill: React.FC<QuestionProps> = ({ question }) => {
-  const { responses, updateResponse } = useSurvey();
+  const { responses, updateResponse, skippedQuestion } = useSurvey();
 
   const { id, text, required, rows, columns } = question as MatrixQuestion;
 
@@ -326,9 +348,12 @@ export const MatrixQuestionFill: React.FC<QuestionProps> = ({ question }) => {
   };
 
   return (
-    <div className="mb-6">
+    <div id={id} className="mb-6">
       <label className="block text-gray-700 text-sm font-bold mb-2">
-        {text} {required && <span className="text-red-500">*</span>}
+        {text} {required && <span className="text-red-500">*</span>}{" "}
+        {skippedQuestion?.id === question.id && (
+          <span className="text-red-900 ms-2">This is a required question</span>
+        )}
       </label>
       <table className="w-full border-collapse">
         <thead>
@@ -353,7 +378,6 @@ export const MatrixQuestionFill: React.FC<QuestionProps> = ({ question }) => {
                     value={column}
                     checked={currentAnswers[row] === column}
                     onChange={() => handleChange(row, column)}
-                    required={required && rowIndex === 0 && columnIndex === 0}
                   />
                 </td>
               ))}
@@ -366,17 +390,20 @@ export const MatrixQuestionFill: React.FC<QuestionProps> = ({ question }) => {
 };
 
 export const SliderQuestionFill: React.FC<QuestionProps> = ({ question }) => {
-  const { responses, updateResponse } = useSurvey();
+  const { responses, updateResponse, skippedQuestion } = useSurvey();
 
   const { id, text, required, min, max, step } = question as SliderQuestion;
 
   return (
-    <div className="mb-6">
+    <div id={id} className="mb-6">
       <label
         className="block text-gray-700 text-sm font-bold mb-2"
         htmlFor={id}
       >
-        {text} {required && <span className="text-red-500">*</span>}
+        {text} {required && <span className="text-red-500">*</span>}{" "}
+        {skippedQuestion?.id === question.id && (
+          <span className="text-red-900 ms-2">This is a required question</span>
+        )}
       </label>
       <input
         type="range"
@@ -390,7 +417,6 @@ export const SliderQuestionFill: React.FC<QuestionProps> = ({ question }) => {
             ?.answer as number) || min
         }
         onChange={(e) => updateResponse(question, parseFloat(e.target.value))}
-        required={required}
       />
       <div className="flex justify-between text-xs">
         <span>{min}</span>
@@ -403,7 +429,7 @@ export const SliderQuestionFill: React.FC<QuestionProps> = ({ question }) => {
 export const FileUploadQuestionFill: React.FC<QuestionProps> = ({
   question,
 }) => {
-  const { updateResponse } = useSurvey();
+  const { updateResponse, skippedQuestion } = useSurvey();
 
   const { id, text, required, allowedFileTypes } =
     question as FileUploadQuestion;
@@ -414,12 +440,15 @@ export const FileUploadQuestionFill: React.FC<QuestionProps> = ({
   };
 
   return (
-    <div className="mb-6">
+    <div id={id} className="mb-6">
       <label
         className="block text-gray-700 text-sm font-bold mb-2"
         htmlFor={id}
       >
-        {text} {required && <span className="text-red-500">*</span>}
+        {text} {required && <span className="text-red-500">*</span>}{" "}
+        {skippedQuestion?.id === question.id && (
+          <span className="text-red-900 ms-2">This is a required question</span>
+        )}
       </label>
       <input
         type="file"
@@ -427,7 +456,6 @@ export const FileUploadQuestionFill: React.FC<QuestionProps> = ({
         className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
         accept={allowedFileTypes.join(",")}
         onChange={handleFileChange}
-        required={required}
       />
       <p className="mt-1 text-sm text-gray-500">
         Allowed file types: {allowedFileTypes.join(", ")}
@@ -437,14 +465,17 @@ export const FileUploadQuestionFill: React.FC<QuestionProps> = ({
 };
 
 export const YesNoQuestionFill: React.FC<QuestionProps> = ({ question }) => {
-  const { responses, updateResponse } = useSurvey();
+  const { responses, updateResponse, skippedQuestion } = useSurvey();
 
   const { id, text, required } = question as YesNoQuestion;
 
   return (
-    <div className="mb-6">
+    <div id={id} className="mb-6">
       <label className="block text-gray-700 text-sm font-bold mb-2">
-        {text} {required && <span className="text-red-500">*</span>}
+        {text} {required && <span className="text-red-500">*</span>}{" "}
+        {skippedQuestion?.id === question.id && (
+          <span className="text-red-900 ms-2">This is a required question</span>
+        )}
       </label>
       <div className="space-x-4">
         <label className="inline-flex items-center">
@@ -458,7 +489,6 @@ export const YesNoQuestionFill: React.FC<QuestionProps> = ({ question }) => {
                 ?.answer as string) === "Yes"
             }
             onChange={() => updateResponse(question, "Yes")}
-            required={required}
           />
           <span className="ml-2">Yes</span>
         </label>
@@ -473,7 +503,6 @@ export const YesNoQuestionFill: React.FC<QuestionProps> = ({ question }) => {
                 ?.answer as string) === "No"
             }
             onChange={() => updateResponse(question, "No")}
-            required={required}
           />
           <span className="ml-2">No</span>
         </label>
@@ -485,14 +514,17 @@ export const YesNoQuestionFill: React.FC<QuestionProps> = ({ question }) => {
 export const ImageChoiceQuestionFill: React.FC<QuestionProps> = ({
   question,
 }) => {
-  const { responses, updateResponse } = useSurvey();
+  const { responses, updateResponse, skippedQuestion } = useSurvey();
 
   const { id, text, required, options } = question as ImageChoiceQuestion;
 
   return (
-    <div className="mb-6">
+    <div id={id} className="mb-6">
       <label className="block text-gray-700 text-sm font-bold mb-2">
-        {text} {required && <span className="text-red-500">*</span>}
+        {text} {required && <span className="text-red-500">*</span>}{" "}
+        {skippedQuestion?.id === question.id && (
+          <span className="text-red-900 ms-2">This is a required question</span>
+        )}
       </label>
       <div className="grid grid-cols-2 gap-4">
         {options.map((option, index) => (
@@ -507,7 +539,6 @@ export const ImageChoiceQuestionFill: React.FC<QuestionProps> = ({
                   ?.answer as string) === option.label
               }
               onChange={() => updateResponse(question, option.label)}
-              required={required}
             />
             <div className="border-2 rounded-lg p-2 hover:border-blue-500 transition-colors">
               <Image
