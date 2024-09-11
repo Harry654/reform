@@ -1,21 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import {
-  MCQQuestionFill,
-  LongAnswerQuestionFill,
-  ShortAnswerQuestionFill,
-  RatingQuestionFill,
-  CheckboxesQuestionFill,
-  DropdownQuestionFill,
-  RankingQuestionFill,
-  DateTimeQuestionFill,
-  MatrixQuestionFill,
-  SliderQuestionFill,
-  FileUploadQuestionFill,
-  YesNoQuestionFill,
-  ImageChoiceQuestionFill,
-} from "./QuestionFillComponents";
+
 import { useSurvey } from "@/context/SurveyResponseContext";
 import { ISurvey } from "@/types/survey";
 import { TSurveyResponse } from "@/types/response";
@@ -25,6 +11,8 @@ import { isTruthy } from "@/helpers/isTruthy";
 import { doc, writeBatch, increment, Timestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import { BeatLoader } from "react-spinners";
+import SegmentFill from "./SegmentFill";
+import { Question } from "@/types/question";
 interface NormalSurveyResponseProps {
   surveyData: ISurvey;
 }
@@ -41,9 +29,12 @@ export const NormalSurveyResponse: React.FC<NormalSurveyResponseProps> = ({
   }, [surveyData, setSurvey]);
 
   const handleAllQuestionsAnswered = (): boolean => {
-    const requiredQuestions = survey?.questions.filter(
-      (question) => question.required === true
-    );
+    let requiredQuestions: Question[] = [];
+    survey?.segments.map((segment) => {
+      segment.questions.map((question) => {
+        if (question.required) requiredQuestions.push(question);
+      });
+    });
 
     if (requiredQuestions)
       for (const requiredQuestion of requiredQuestions) {
@@ -122,42 +113,9 @@ export const NormalSurveyResponse: React.FC<NormalSurveyResponseProps> = ({
       <h1 className="text-2xl font-bold mb-4">{survey.title}</h1>
       <p className="mb-6 text-gray-600">{survey.description}</p>
       <form onSubmit={handleSubmit}>
-        {survey.questions.map((question, index) => {
-          switch (question.type) {
-            case "mcq":
-              return <MCQQuestionFill key={index} question={question} />;
-            case "long_answer":
-              return <LongAnswerQuestionFill key={index} question={question} />;
-            case "short_answer":
-              return (
-                <ShortAnswerQuestionFill key={index} question={question} />
-              );
-            case "rating":
-              return <RatingQuestionFill key={index} question={question} />;
-            case "checkboxes":
-              return <CheckboxesQuestionFill key={index} question={question} />;
-            case "dropdown":
-              return <DropdownQuestionFill key={index} question={question} />;
-            case "ranking":
-              return <RankingQuestionFill key={index} question={question} />;
-            case "date_time":
-              return <DateTimeQuestionFill key={index} question={question} />;
-            case "matrix":
-              return <MatrixQuestionFill key={index} question={question} />;
-            case "slider":
-              return <SliderQuestionFill key={index} question={question} />;
-            case "file_upload":
-              return <FileUploadQuestionFill key={index} question={question} />;
-            case "yes_no":
-              return <YesNoQuestionFill key={index} question={question} />;
-            case "image_choice":
-              return (
-                <ImageChoiceQuestionFill key={index} question={question} />
-              );
-            default:
-              return null;
-          }
-        })}
+        {survey.segments.map((segment) => (
+          <SegmentFill segment={segment} />
+        ))}
         <button
           type="submit"
           className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${

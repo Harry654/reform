@@ -1,5 +1,5 @@
 import React from "react";
-
+import { motion, AnimatePresence } from "framer-motion";
 import { Question } from "@/types/question";
 import {
   MCQQuestionComponent,
@@ -16,15 +16,16 @@ import {
   YesNoQuestionComponent,
   ImageChoiceQuestionComponent,
 } from "./QuestionComponents";
-import { surveyQuestions } from "@/constants/question_types";
 import { useQuestion } from "@/context/CreateSurveyContext";
 import { ISegment } from "@/types/survey";
+import DeleteIcon from "../icons/DeleteIcon";
+
 interface Props {
   segment: ISegment | null;
 }
 
 const CreateSurveyQuestionEditor: React.FC<Props> = ({ segment }) => {
-  const { addQuestion, updateQuestion, removeQuestion } = useQuestion();
+  const { updateQuestion, removeQuestion } = useQuestion();
 
   const renderQuestion = (question: Question) => {
     switch (question.type) {
@@ -120,42 +121,29 @@ const CreateSurveyQuestionEditor: React.FC<Props> = ({ segment }) => {
         return null;
     }
   };
+
   if (!segment) return null;
+
   return (
     <div className="max-w-4xl mx-auto p-6">
-      <div className="space-y-6">
+      <AnimatePresence>
         {segment.questions.map((question) => (
-          <div key={question.id} className="border p-4 rounded-lg">
+          <motion.div
+            key={question.id}
+            initial={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="border p-4 rounded-lg flex mb-4"
+          >
             {renderQuestion(question)}
-            <button
-              type="button"
+            <DeleteIcon
+              color="red"
               onClick={() => removeQuestion(question.id, question.segment_id)}
-              className="mt-4 px-4 py-2 text-red-600 border border-red-600 rounded hover:bg-red-100"
-            >
-              Remove Question
-            </button>
-          </div>
+              className="ms-auto hover:scale-110 duration-200 cursor-pointer"
+            />
+          </motion.div>
         ))}
-      </div>
-      <details>
-        <summary>Add Question</summary>
-        <div className="mt-6 space-x-4 space-y-4">
-          {surveyQuestions.map(({ code, value }, index) => (
-            <button
-              key={code}
-              type="button"
-              onClick={() => addQuestion(code, segment.id)}
-              className={`px-4 py-2 text-white rounded ${
-                index % 2 === 0
-                  ? "bg-blue-600 hover:bg-blue-700"
-                  : "bg-green-600 hover:bg-green-700"
-              }`}
-            >
-              Add {value}
-            </button>
-          ))}
-        </div>
-      </details>
+      </AnimatePresence>
     </div>
   );
 };

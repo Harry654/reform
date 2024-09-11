@@ -27,11 +27,8 @@ body {
 } */
 
 .segment-collapsed {
-  height: 0px;
-  transition-duration: 200ms;
-  overflow: hidden;
+  max-height: 0;
 }
 .segment-expanded {
-  height: calc(100%);
-  transition-duration: 200ms;
+  max-height: 5000px;
 }
