@@ -22,6 +22,6 @@ export type TSurveyResponse = {
   responseId: string; // Unique ID for this response
   createdAt: Timestamp; // Timestamp when the response was submitted
   updatedAt: Timestamp; // Timestamp for any updates
-  isAnonymous: boolean; // Whether the user chose to respond anonymously
+  allowAnonymousResponses: boolean; // Whether the user chose to respond anonymously
   answers: TQuestionResponse[];
 };

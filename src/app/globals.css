@@ -25,3 +25,13 @@ body {
     text-wrap: balance;
   }
 } */
+
+.segment-collapsed {
+  height: 0px;
+  transition-duration: 200ms;
+  overflow: hidden;
+}
+.segment-expanded {
+  height: calc(100%);
+  transition-duration: 200ms;
+}

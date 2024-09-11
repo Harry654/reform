@@ -1,18 +1,22 @@
 "use client";
 import React, { createContext, useContext, useState, ReactNode } from "react";
-import { Question, QuestionType } from "@/types/question";
+import { Question, QuestionType, ShortAnswerQuestion } from "@/types/question";
 import { v4 as uuidv4 } from "uuid";
-import { ISurveyFormMetadata } from "@/types/survey";
+import { ISurveyFormMetadata, ISegment } from "@/types/survey";
 import { useAuth } from "./AuthContext";
 
 // Define the shape of your context
 interface CreateSurveyContextType {
   formMetadata: ISurveyFormMetadata;
   setFormMetadata: React.Dispatch<React.SetStateAction<ISurveyFormMetadata>>;
-  questions: Question[];
-  addQuestion: (type: QuestionType) => void;
+  // questions: Question[];
+  segments: ISegment[];
+  addSegment: () => void;
+  updateSegment: (updatedSegment: ISegment) => void;
+  removeSegment: (id: string) => void;
+  addQuestion: (type: QuestionType, segment_id: string) => void;
   updateQuestion: (updatedQuestion: Question) => void;
-  removeQuestion: (id: string) => void;
+  removeQuestion: (id: string, segment_id: string) => void;
   resetSurvey: () => void;
 }
 
@@ -31,16 +35,68 @@ export const CreateSurveyProvider = ({ children }: { children: ReactNode }) => {
     category: "",
     createdBy: user?.uid || "",
     type: "normal",
-    isAnonymous: false,
-    allowMultipleResponses: false,
-    successMessage: null,
+    allowAnonymousResponses: false,
+    allowMultipleSubmissions: false,
+    successMessage:
+      "Thank You for your feedback. Your response has been saved.",
+  };
+
+  const mainSegment: ISegment = {
+    id: "main_segment",
+    title: "Main Segment",
+    description: "main segment",
+    questions: [
+      {
+        id: uuidv4(),
+        type: "short_answer",
+        text: "",
+        required: true,
+        segment_id: "main_segment",
+      },
+    ],
+    isMainSegment: true,
   };
 
   const [formMetadata, setFormMetadata] =
     useState<ISurveyFormMetadata>(initialFormMetaData);
-  const [questions, setQuestions] = useState<Question[]>([]);
+  const [segments, setSegments] = useState<ISegment[]>([mainSegment]);
+  // const [questions, setQuestions] = useState<Question[]>([]);
 
-  const addQuestion = (type: QuestionType) => {
+  const addSegment = () => {
+    const segment_id = uuidv4();
+    const newSegment: ISegment = {
+      id: segment_id,
+      title: "Segment " + segments.length,
+      description: "",
+      questions: [
+        {
+          id: uuidv4(),
+          type: "short_answer",
+          text: "",
+          required: true,
+          segment_id,
+        },
+      ],
+      isMainSegment: false,
+    };
+    setSegments([...segments, newSegment]);
+  };
+
+  const updateSegment = (updatedSegment: ISegment) => {
+    setSegments((prevSegments) =>
+      prevSegments.map((segment) =>
+        segment.id === updatedSegment.id ? updatedSegment : segment
+      )
+    );
+  };
+
+  const removeSegment = (id: string) =>
+    setSegments(segments.filter((segment) => segment.id !== id));
+
+  const addQuestion = (
+    type: QuestionType,
+    segment_id: string = "main_segment"
+  ) => {
     let newQuestion: Question;
 
     switch (type) {
@@ -51,6 +107,7 @@ export const CreateSurveyProvider = ({ children }: { children: ReactNode }) => {
           text: "",
           options: [""],
           required: true,
+          segment_id,
         };
         break;
       case "short_answer":
@@ -59,6 +116,7 @@ export const CreateSurveyProvider = ({ children }: { children: ReactNode }) => {
           type: "short_answer",
           text: "",
           required: true,
+          segment_id,
         };
         break;
       case "long_answer":
@@ -67,6 +125,7 @@ export const CreateSurveyProvider = ({ children }: { children: ReactNode }) => {
           type: "long_answer",
           text: "",
           required: true,
+          segment_id,
         };
         break;
       case "rating":
@@ -76,6 +135,7 @@ export const CreateSurveyProvider = ({ children }: { children: ReactNode }) => {
           text: "",
           maxRating: 5,
           required: true,
+          segment_id,
         };
         break;
       case "checkboxes":
@@ -85,6 +145,7 @@ export const CreateSurveyProvider = ({ children }: { children: ReactNode }) => {
           text: "",
           options: [""],
           required: true,
+          segment_id,
         };
         break;
       case "dropdown":
@@ -94,6 +155,7 @@ export const CreateSurveyProvider = ({ children }: { children: ReactNode }) => {
           text: "",
           options: [""],
           required: true,
+          segment_id,
         };
         break;
       case "ranking":
@@ -103,6 +165,7 @@ export const CreateSurveyProvider = ({ children }: { children: ReactNode }) => {
           text: "",
           options: [""],
           required: true,
+          segment_id,
         };
         break;
       case "date_time":
@@ -112,6 +175,7 @@ export const CreateSurveyProvider = ({ children }: { children: ReactNode }) => {
           text: "",
           includeTime: false,
           required: true,
+          segment_id,
         };
         break;
       case "matrix":
@@ -122,6 +186,7 @@ export const CreateSurveyProvider = ({ children }: { children: ReactNode }) => {
           rows: [""],
           columns: [""],
           required: true,
+          segment_id,
         };
         break;
       case "slider":
@@ -133,6 +198,7 @@ export const CreateSurveyProvider = ({ children }: { children: ReactNode }) => {
           max: 100,
           step: 1,
           required: true,
+          segment_id,
         };
         break;
       case "file_upload":
@@ -142,6 +208,7 @@ export const CreateSurveyProvider = ({ children }: { children: ReactNode }) => {
           text: "",
           allowedFileTypes: [".pdf", ".jpg", ".png"],
           required: true,
+          segment_id,
         };
         break;
       case "yes_no":
@@ -150,6 +217,7 @@ export const CreateSurveyProvider = ({ children }: { children: ReactNode }) => {
           type: "yes_no",
           text: "",
           required: true,
+          segment_id,
         };
         break;
       case "image_choice":
@@ -159,28 +227,65 @@ export const CreateSurveyProvider = ({ children }: { children: ReactNode }) => {
           text: "",
           options: [{ imageUrl: "", label: "" }],
           required: true,
+          segment_id,
         };
         break;
       default:
         throw new Error(`Unsupported question type: ${type}`);
     }
 
-    setQuestions([...questions, newQuestion]);
-  };
-
-  const updateQuestion = (updatedQuestion: Question) => {
-    setQuestions(
-      questions.map((q) => (q.id === updatedQuestion.id ? updatedQuestion : q))
+    // setQuestions([...questions, newQuestion]);
+    setSegments((prevSegments) =>
+      prevSegments.map((segment) =>
+        segment.id === segment_id
+          ? { ...segment, questions: [...segment.questions, newQuestion] }
+          : segment
+      )
     );
   };
 
-  const removeQuestion = (id: string) => {
-    setQuestions(questions.filter((q) => q.id !== id));
+  const updateQuestion = (updatedQuestion: Question) => {
+    // setQuestions(
+    //   questions.map((q) => (q.id === updatedQuestion.id ? updatedQuestion : q))
+    // );
+
+    setSegments((prevSegments) =>
+      prevSegments.map((segment) =>
+        segment.id === updatedQuestion.segment_id
+          ? {
+              ...segment,
+              questions: segment.questions.map((q) =>
+                q.id === updatedQuestion.id ? updatedQuestion : q
+              ),
+            }
+          : segment
+      )
+    );
+  };
+
+  const removeQuestion = (id: string, segment_id: string) => {
+    // setQuestions(questions.filter((q) => q.id !== id));
+
+    setSegments((prevSegments) =>
+      prevSegments.map((segment) =>
+        segment.id === segment_id
+          ? {
+              ...segment,
+              questions: segment.isMainSegment
+                ? segment.questions.filter((q) => q.id !== id)
+                : segment.questions.length > 1
+                ? segment.questions.filter((q) => q.id !== id)
+                : segment.questions,
+            }
+          : segment
+      )
+    );
   };
 
   const resetSurvey = () => {
     setFormMetadata(initialFormMetaData);
-    setQuestions([]);
+    // setQuestions([]);
+    setSegments([mainSegment]);
   };
 
   return (
@@ -188,7 +293,11 @@ export const CreateSurveyProvider = ({ children }: { children: ReactNode }) => {
       value={{
         formMetadata,
         setFormMetadata,
-        questions,
+        // questions,
+        segments,
+        addSegment,
+        updateSegment,
+        removeSegment,
         addQuestion,
         updateQuestion,
         removeQuestion,

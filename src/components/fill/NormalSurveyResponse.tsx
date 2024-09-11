@@ -81,7 +81,7 @@ export const NormalSurveyResponse: React.FC<NormalSurveyResponseProps> = ({
       responseId: uuidv4(),
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
-      isAnonymous: false,
+      allowAnonymousResponses: false,
       answers: responses,
     };
 
@@ -107,7 +107,7 @@ export const NormalSurveyResponse: React.FC<NormalSurveyResponseProps> = ({
       // Commit the batch
       await batch.commit();
 
-      alert("Thank You for your feedback. Your response has been saved.");
+      alert(survey?.successMessage);
       setLoading(false);
     } catch (error) {
       setLoading(false);

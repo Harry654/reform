@@ -18,10 +18,13 @@ import {
 } from "./QuestionComponents";
 import { surveyQuestions } from "@/constants/question_types";
 import { useQuestion } from "@/context/CreateSurveyContext";
+import { ISegment } from "@/types/survey";
+interface Props {
+  segment: ISegment | null;
+}
 
-export default function SurveyQuestionEditor() {
-  const { questions, addQuestion, updateQuestion, removeQuestion } =
-    useQuestion();
+const CreateSurveyQuestionEditor: React.FC<Props> = ({ segment }) => {
+  const { addQuestion, updateQuestion, removeQuestion } = useQuestion();
 
   const renderQuestion = (question: Question) => {
     switch (question.type) {
@@ -117,17 +120,16 @@ export default function SurveyQuestionEditor() {
         return null;
     }
   };
-
+  if (!segment) return null;
   return (
     <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Add Questions</h1>
       <div className="space-y-6">
-        {questions.map((question) => (
+        {segment.questions.map((question) => (
           <div key={question.id} className="border p-4 rounded-lg">
             {renderQuestion(question)}
             <button
               type="button"
-              onClick={() => removeQuestion(question.id)}
+              onClick={() => removeQuestion(question.id, question.segment_id)}
               className="mt-4 px-4 py-2 text-red-600 border border-red-600 rounded hover:bg-red-100"
             >
               Remove Question
@@ -135,22 +137,27 @@ export default function SurveyQuestionEditor() {
           </div>
         ))}
       </div>
-      <div className="mt-6 space-x-4 space-y-4">
-        {surveyQuestions.map(({ code, value }, index) => (
-          <button
-            key={code}
-            type="button"
-            onClick={() => addQuestion(code)}
-            className={`px-4 py-2 text-white rounded ${
-              index % 2 === 0
-                ? "bg-blue-600 hover:bg-blue-700"
-                : "bg-green-600 hover:bg-green-700"
-            }`}
-          >
-            Add {value}
-          </button>
-        ))}
-      </div>
+      <details>
+        <summary>Add Question</summary>
+        <div className="mt-6 space-x-4 space-y-4">
+          {surveyQuestions.map(({ code, value }, index) => (
+            <button
+              key={code}
+              type="button"
+              onClick={() => addQuestion(code, segment.id)}
+              className={`px-4 py-2 text-white rounded ${
+                index % 2 === 0
+                  ? "bg-blue-600 hover:bg-blue-700"
+                  : "bg-green-600 hover:bg-green-700"
+              }`}
+            >
+              Add {value}
+            </button>
+          ))}
+        </div>
+      </details>
     </div>
   );
-}
+};
+
+export default CreateSurveyQuestionEditor;

@@ -221,10 +221,10 @@ export const RatingQuestionComponent: React.FC<QuestionProps> = ({
           id="maxRating"
           value={ratingQuestion.maxRating}
           onChange={(e) =>
-            onUpdate({ ...ratingQuestion, maxRating: parseInt(e.target.value) })
+            onUpdate({ ...ratingQuestion, maxRating: parseInt(e.target.value || "3") })
           }
           className="w-20 p-2 border rounded"
-          min="1"
+          min="3"
           max="10"
         />
       </div>

@@ -8,16 +8,24 @@ export interface ISurveyFormMetadata {
   category: string;
   createdBy: string;
   type: "normal" | "interactive";
-  allowMultipleResponses: boolean;
-  successMessage: string | null;
-  isAnonymous: boolean;
+  allowMultipleSubmissions: boolean;
+  allowAnonymousResponses: boolean;
+  successMessage: string;
+}
+
+export interface ISegment {
+  id: string;
+  title: string;
+  description?: string;
+  questions: Question[];
+  isMainSegment: boolean;
 }
 
 export interface ISurvey extends ISurveyFormMetadata {
   questionCount: number;
   expired: boolean;
   access_url: string;
-  questions: Question[];
+  segments: ISegment[];
   createdAt: Timestamp;
   updatedAt: Timestamp;
   startDate: Timestamp;

@@ -8,10 +8,11 @@ import { doc, setDoc, Timestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase/config"; // Import Firestore instance
 import { BeatLoader } from "react-spinners";
 import Sidebar from "@/components/Sidebar"; // Import the Sidebar component
+import Segment from "@/components/create/Segment";
 
 export default function SurveyCreator() {
   const { user } = useAuth();
-  const { formMetadata, setFormMetadata, questions, resetSurvey } =
+  const { formMetadata, setFormMetadata, segments, resetSurvey, addSegment } =
     useQuestion();
 
   const [loading, setLoading] = useState<boolean>(false);
@@ -46,10 +47,10 @@ export default function SurveyCreator() {
       [name]: newValue,
     }));
 
-    if (name === "isAnonymous")
+    if (name === "allowAnonymousResponses")
       setFormMetadata((prevData) => ({
         ...prevData,
-        allowMultipleResponses: true,
+        allowMultipleSubmissions: true,
       }));
   };
 
@@ -57,42 +58,44 @@ export default function SurveyCreator() {
     e.preventDefault();
     if (loading) return;
 
-    if (!questions.length) return alert("Add at least one question");
-    if (!formMetadata.createdBy)
-      return alert("Please login to create a survey");
+    const main_segment = segments.find((segment) => segment.isMainSegment);
 
-    const SurveyFormData: ISurvey = {
-      ...formMetadata,
-      questionCount: questions.length,
-      expired: false,
-      access_url: `${process.env.NEXT_PUBLIC_BASE_URL}/s/${formMetadata.id}`,
-      questions,
-      createdAt: Timestamp.now(),
-      updatedAt: Timestamp.now(),
-      startDate: Timestamp.now(),
-      endDate: Timestamp.now(),
-      status: "active",
-      visibility: "public",
-      responsesCount: 0,
-      maxResponses: null,
-      isAnonymous: true,
-      tags: [],
-      allowMultipleResponses: true,
-      successMessage: null,
-    };
+    // if there are no questions added
+    if (segments.length === 1 && !main_segment?.questions.length)
+      return alert("Add at least one question");
 
-    try {
-      setLoading(true);
-      // Add survey form data to Firestore
-      await setDoc(doc(db, "surveys", formMetadata.id), SurveyFormData);
-      alert("Survey created successfully!");
-      setLoading(false);
-      resetSurvey();
-    } catch (error) {
-      setLoading(false);
-      console.error("Error adding survey to Firestore: ", error);
-      alert("There was an error submitting the survey. Please try again.");
-    }
+    // if (!formMetadata.createdBy)
+    //   return alert("Please login to create a survey");
+
+    // const SurveyFormData: ISurvey = {
+    //   ...formMetadata,
+    //   questionCount: questions.length,
+    //   expired: false,
+    //   access_url: `${process.env.NEXT_PUBLIC_BASE_URL}/s/${formMetadata.id}`,
+    //   questions,
+    //   createdAt: Timestamp.now(),
+    //   updatedAt: Timestamp.now(),
+    //   startDate: Timestamp.now(),
+    //   endDate: Timestamp.now(),
+    //   status: "active",
+    //   visibility: "public",
+    //   responsesCount: 0,
+    //   maxResponses: null,
+    //   tags: [],
+    // };
+
+    // try {
+    //   setLoading(true);
+    //   // Add survey form data to Firestore
+    //   await setDoc(doc(db, "surveys", formMetadata.id), SurveyFormData);
+    //   alert("Survey created successfully!");
+    //   setLoading(false);
+    //   resetSurvey();
+    // } catch (error) {
+    //   setLoading(false);
+    //   console.error("Error adding survey to Firestore: ", error);
+    //   alert("There was an error submitting the survey. Please try again.");
+    // }
   };
 
   return (
@@ -220,7 +223,7 @@ export default function SurveyCreator() {
 
             <div>
               <label
-                htmlFor="isAnonymous"
+                htmlFor="allowAnonymousResponses"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
                 Anonymous Responses
@@ -228,14 +231,14 @@ export default function SurveyCreator() {
               <div className="flex items-center">
                 <input
                   type="checkbox"
-                  id="isAnonymous"
-                  name="isAnonymous"
-                  checked={formMetadata.isAnonymous}
+                  id="allowAnonymousResponses"
+                  name="allowAnonymousResponses"
+                  checked={formMetadata.allowAnonymousResponses}
                   onChange={handleCheckboxChange}
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
                 />
                 <label
-                  htmlFor="isAnonymous"
+                  htmlFor="allowAnonymousResponses"
                   className="ml-2 block text-sm font-medium text-gray-700"
                 >
                   Enable Anonymous Responses
@@ -243,9 +246,13 @@ export default function SurveyCreator() {
               </div>
             </div>
 
-            <div className={`${formMetadata.isAnonymous && "opacity-50"}`}>
+            <div
+              className={`${
+                formMetadata.allowAnonymousResponses && "opacity-50"
+              }`}
+            >
               <label
-                htmlFor="allowMultipleResponses"
+                htmlFor="allowMultipleSubmissions"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
                 Allow Multiple Responses
@@ -253,15 +260,15 @@ export default function SurveyCreator() {
               <div className="flex items-center">
                 <input
                   type="checkbox"
-                  id="allowMultipleResponses"
-                  name="allowMultipleResponses"
-                  checked={formMetadata.allowMultipleResponses}
+                  id="allowMultipleSubmissions"
+                  name="allowMultipleSubmissions"
+                  checked={formMetadata.allowMultipleSubmissions}
                   onChange={handleCheckboxChange}
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
-                  disabled={formMetadata.isAnonymous}
+                  disabled={formMetadata.allowAnonymousResponses}
                 />
                 <label
-                  htmlFor="allowMultipleResponses"
+                  htmlFor="allowMultipleSubmissions"
                   className="ml-2 block text-sm font-medium text-gray-700"
                 >
                   Allow Multiple Responses
@@ -287,7 +294,27 @@ export default function SurveyCreator() {
               />
             </div>
 
-            <CreateSurveyQuestionEditor />
+            {/* render the questions on the main segment */}
+            <CreateSurveyQuestionEditor
+              segment={
+                segments.find((segment) => segment.isMainSegment) || null
+              }
+            />
+
+            <button
+              type="button"
+              className="sticky top-2 px-4 py-2 text-white bg-green-600 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+              disabled={loading}
+              onClick={addSegment}
+            >
+              Add Segment
+            </button>
+
+            {segments
+              .filter((segment) => !segment.isMainSegment)
+              .map((segment) => (
+                <Segment key={segment.id} segment={segment} />
+              ))}
 
             <button
               type="submit"
