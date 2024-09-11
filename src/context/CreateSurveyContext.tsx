@@ -1,6 +1,6 @@
 "use client";
 import React, { createContext, useContext, useState, ReactNode } from "react";
-import { Question, QuestionType, ShortAnswerQuestion } from "@/types/question";
+import { Question, QuestionType } from "@/types/question";
 import { v4 as uuidv4 } from "uuid";
 import { ISurveyFormMetadata, ISegment } from "@/types/survey";
 import { useAuth } from "./AuthContext";

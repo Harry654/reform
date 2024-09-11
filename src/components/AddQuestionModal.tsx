@@ -68,7 +68,7 @@ export default function AddQuestionModal({
                   </Dialog.Title>
                   <div className="mt-2">
                     <p className="text-sm text-gray-500">
-                      Select the type of question you'd like to add to your
+                      Select the type of question you&apos;d like to add to your
                       survey.
                     </p>
                   </div>

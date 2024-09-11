@@ -29,7 +29,7 @@ export const NormalSurveyResponse: React.FC<NormalSurveyResponseProps> = ({
   }, [surveyData, setSurvey]);
 
   const handleAllQuestionsAnswered = (): boolean => {
-    let requiredQuestions: Question[] = [];
+    const requiredQuestions: Question[] = [];
     survey?.segments.map((segment) => {
       segment.questions.map((question) => {
         if (question.required) requiredQuestions.push(question);
@@ -114,7 +114,7 @@ export const NormalSurveyResponse: React.FC<NormalSurveyResponseProps> = ({
       <p className="mb-6 text-gray-600">{survey.description}</p>
       <form onSubmit={handleSubmit}>
         {survey.segments.map((segment) => (
-          <SegmentFill segment={segment} />
+          <SegmentFill key={segment.id} segment={segment} />
         ))}
         <button
           type="submit"
