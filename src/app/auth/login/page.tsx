@@ -91,7 +91,7 @@ export default function LoginComponent() {
     }
   };
 
-  const redirect = () => router.push("/");
+  const redirect = () => router.push("/landing");
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
