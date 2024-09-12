@@ -32,3 +32,6 @@ body {
 .section-expanded {
   max-height: 5000px;
 }
+*{
+  scroll-behavior: smooth;
+}

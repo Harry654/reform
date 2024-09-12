@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Dialog, Transition, TransitionChild } from "@headlessui/react";
+import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from "@headlessui/react";
 import { Fragment } from "react";
 import { Settings, X } from "lucide-react";
 
@@ -61,8 +61,8 @@ const SurveySettings: React.FC<SurveySettingsProps> = ({
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                  <Dialog.Title
+                <DialogPanel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                  <DialogTitle
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900 flex justify-between items-center"
                   >
@@ -73,7 +73,7 @@ const SurveySettings: React.FC<SurveySettingsProps> = ({
                     >
                       <X size={20} />
                     </button>
-                  </Dialog.Title>
+                  </DialogTitle>
                   <div className="mt-4 space-y-4">
                     <label className="flex items-center space-x-2">
                       <input
@@ -119,7 +119,7 @@ const SurveySettings: React.FC<SurveySettingsProps> = ({
                       Close
                     </button>
                   </div>
-                </Dialog.Panel>
+                </DialogPanel>
               </TransitionChild>
             </div>
           </div>

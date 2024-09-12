@@ -16,17 +16,22 @@ import {
   ImageChoiceQuestionFill,
 } from "./QuestionFillComponents";
 interface Props {
-  section: ISection;
+  section: ISection | null;
 }
 
 const SectionFill: React.FC<Props> = ({ section }) => {
+  if (!section) return;
   return (
     <section>
-      <div className="flex items-center">
-        <h1 className="font-bold text-2xl p-2 border-gray-400">
-          {section.title}
-        </h1>
-      </div>
+      {!section.isMainSection && (
+        <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md border mt-5">
+          <h1 className="font-bold text-2xl py-2 border-gray-400">
+            {section.title}
+          </h1>
+          <p className="text-md py-2 border-gray-400">{section.description}</p>
+        </div>
+      )}
+
       <div>
         {section.questions.map((question, index) => {
           switch (question.type) {

@@ -30,7 +30,7 @@ const SectionCreate: React.FC<Props> = ({ section }) => {
     updateSection({ ...section, description: value });
   };
   return (
-    <section>
+    <section className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md border mt-5">
       <div className="flex items-center sticky top-0 z-10 backdrop-blur-md">
         <DownArrowIcon
           onClick={toggleSectionOpen}

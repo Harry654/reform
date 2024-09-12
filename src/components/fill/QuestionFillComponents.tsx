@@ -28,7 +28,7 @@ export const MCQQuestionFill: React.FC<QuestionProps> = ({ question }) => {
   const { id, text, required, options } = question as MCQQuestion;
 
   return (
-    <div id={id} className="mb-6">
+    <div id={id} className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md border mt-5">
       <label className="block text-gray-700 text-sm font-bold mb-2">
         {text} {required && <span className="text-red-500">*</span>}{" "}
         {skippedQuestion?.id === question.id && (
@@ -65,7 +65,7 @@ export const LongAnswerQuestionFill: React.FC<QuestionProps> = ({
   const { id, text, required } = question as LongAnswerQuestion;
 
   return (
-    <div id={id} className="mb-6">
+    <div id={id} className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md border mt-5">
       <label
         className="block text-gray-700 text-sm font-bold mb-2"
         htmlFor={id}
@@ -97,7 +97,7 @@ export const ShortAnswerQuestionFill: React.FC<QuestionProps> = ({
   const { id, text, required } = question as ShortAnswerQuestion;
 
   return (
-    <div id={id} className="mb-6">
+    <div id={id} className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md border mt-5">
       <label
         className="block text-gray-700 text-sm font-bold mb-2"
         htmlFor={id}
@@ -127,7 +127,7 @@ export const RatingQuestionFill: React.FC<QuestionProps> = ({ question }) => {
   const { id, text, required, maxRating } = question as RatingQuestion;
 
   return (
-    <div id={id} className="mb-6">
+    <div id={id} className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md border mt-5">
       <label className="block text-gray-700 text-sm font-bold mb-2">
         {text} {required && <span className="text-red-500">*</span>}{" "}
         {skippedQuestion?.id === question.id && (
@@ -173,7 +173,7 @@ export const CheckboxesQuestionFill: React.FC<QuestionProps> = ({
   };
 
   return (
-    <div id={id} className="mb-6">
+    <div id={id} className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md border mt-5">
       <label className="block text-gray-700 text-sm font-bold mb-2">
         {text} {required && <span className="text-red-500">*</span>}{" "}
         {skippedQuestion?.id === question.id && (
@@ -209,7 +209,7 @@ export const DropdownQuestionFill: React.FC<QuestionProps> = ({ question }) => {
   const { id, text, required, options } = question as DropdownQuestion;
 
   return (
-    <div id={id} className="mb-6">
+    <div id={id} className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md border mt-5">
       <label
         className="block text-gray-700 text-sm font-bold mb-2"
         htmlFor={id}
@@ -256,7 +256,7 @@ export const RankingQuestionFill: React.FC<QuestionProps> = ({ question }) => {
   };
 
   return (
-    <div id={id} className="mb-6">
+    <div id={id} className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md border mt-5">
       <label className="block text-gray-700 text-sm font-bold mb-2">
         {text} {required && <span className="text-red-500">*</span>}{" "}
         {skippedQuestion?.id === question.id && (
@@ -307,7 +307,7 @@ export const DateTimeQuestionFill: React.FC<QuestionProps> = ({ question }) => {
   const { id, text, required, includeTime } = question as DateTimeQuestion;
 
   return (
-    <div id={id} className="mb-6">
+    <div id={id} className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md border mt-5">
       <label
         className="block text-gray-700 text-sm font-bold mb-2"
         htmlFor={id}
@@ -348,7 +348,7 @@ export const MatrixQuestionFill: React.FC<QuestionProps> = ({ question }) => {
   };
 
   return (
-    <div id={id} className="mb-6">
+    <div id={id} className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md border mt-5">
       <label className="block text-gray-700 text-sm font-bold mb-2">
         {text} {required && <span className="text-red-500">*</span>}{" "}
         {skippedQuestion?.id === question.id && (
@@ -395,7 +395,7 @@ export const SliderQuestionFill: React.FC<QuestionProps> = ({ question }) => {
   const { id, text, required, min, max, step } = question as SliderQuestion;
 
   return (
-    <div id={id} className="mb-6">
+    <div id={id} className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md border mt-5">
       <label
         className="block text-gray-700 text-sm font-bold mb-2"
         htmlFor={id}
@@ -440,7 +440,7 @@ export const FileUploadQuestionFill: React.FC<QuestionProps> = ({
   };
 
   return (
-    <div id={id} className="mb-6">
+    <div id={id} className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md border mt-5">
       <label
         className="block text-gray-700 text-sm font-bold mb-2"
         htmlFor={id}
@@ -470,7 +470,7 @@ export const YesNoQuestionFill: React.FC<QuestionProps> = ({ question }) => {
   const { id, text, required } = question as YesNoQuestion;
 
   return (
-    <div id={id} className="mb-6">
+    <div id={id} className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md border mt-5">
       <label className="block text-gray-700 text-sm font-bold mb-2">
         {text} {required && <span className="text-red-500">*</span>}{" "}
         {skippedQuestion?.id === question.id && (
@@ -519,7 +519,7 @@ export const ImageChoiceQuestionFill: React.FC<QuestionProps> = ({
   const { id, text, required, options } = question as ImageChoiceQuestion;
 
   return (
-    <div id={id} className="mb-6">
+    <div id={id} className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md border mt-5">
       <label className="block text-gray-700 text-sm font-bold mb-2">
         {text} {required && <span className="text-red-500">*</span>}{" "}
         {skippedQuestion?.id === question.id && (
