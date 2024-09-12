@@ -95,7 +95,7 @@ const SurveySettings: React.FC<SurveySettingsProps> = ({
                             name="type"
                             value="normal"
                             checked={formMetadata.type === "normal"}
-                            onChange={(e) => onSettingsChange("type", "normal")}
+                            onChange={() => onSettingsChange("type", "normal")}
                             className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
                             required
                           />
@@ -114,7 +114,7 @@ const SurveySettings: React.FC<SurveySettingsProps> = ({
                             name="type"
                             value="interactive"
                             checked={formMetadata.type === "interactive"}
-                            onChange={(e) =>
+                            onChange={() =>
                               onSettingsChange("type", "interactive")
                             }
                             className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
