@@ -56,6 +56,7 @@ export const NormalSurveyResponse: React.FC<NormalSurveyResponseProps> = ({
 
     const newCurrentSection = survey.sections[currentSectionIndex + 1];
     setCurrentSection(newCurrentSection);
+    console.log("nextttttttttttttttt");
   };
 
   const handlePrevSection = () => {
@@ -116,8 +117,10 @@ export const NormalSurveyResponse: React.FC<NormalSurveyResponseProps> = ({
     return true;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmitDisabled = async (e: React.FormEvent) => {
     e.preventDefault();
+  };
+  const handleSubmit = async () => {
     console.log("sunlight");
 
     if (!survey) return;
@@ -176,7 +179,7 @@ export const NormalSurveyResponse: React.FC<NormalSurveyResponseProps> = ({
     <>
       <Navbar />
 
-      <form onSubmit={handleSubmit} className="max-w-2xl mx-auto mt-5">
+      <form onSubmit={handleSubmitDisabled} className="max-w-2xl mx-auto mt-5">
         {currentSection?.isMainSection && (
           <>
             <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md border mt-5">
@@ -208,11 +211,12 @@ export const NormalSurveyResponse: React.FC<NormalSurveyResponseProps> = ({
         {getSectionIndex(currentSection?.id || "") ===
         survey.sections.length - 1 ? (
           <button
-            type="submit"
+            type="button"
             className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ms-auto mt-5 rounded focus:outline-none focus:shadow-outline ${
               loading && "opacity-20"
             }`}
             disabled={loading}
+            onClick={handleSubmit}
           >
             {!loading ? "Submit" : <BeatLoader size={10} color="#fff" />}
           </button>
