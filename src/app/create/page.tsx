@@ -115,8 +115,7 @@ export default function SurveyCreator() {
         <div className="max-w-2xl mx-auto p-6 border rounded-lg shadow-md">
           <div className="w-full flex justify-end">
             <SurveySettings
-              allowAnonymousResponses={formMetadata.allowAnonymousResponses}
-              allowMultipleSubmissions={formMetadata.allowMultipleSubmissions}
+              formMetadata={formMetadata}
               onSettingsChange={handleSettingsChanged}
             />
           </div>
@@ -185,72 +184,6 @@ export default function SurveyCreator() {
                 <option value="complaints">Complaints</option>
                 <option value="other">Other</option>
               </select>
-            </div>
-
-            <div>
-              <label
-                htmlFor="surveyType"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Survey Type
-              </label>
-              <div className="flex space-x-4">
-                <div className="flex items-center">
-                  <input
-                    type="radio"
-                    id="normal"
-                    name="type"
-                    value="normal"
-                    checked={formMetadata.type === "normal"}
-                    onChange={handleChange}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
-                    required
-                  />
-                  <label
-                    htmlFor="normal"
-                    className="ml-2 block text-sm font-medium text-gray-700"
-                  >
-                    Normal
-                  </label>
-                </div>
-
-                <div className="flex items-center">
-                  <input
-                    type="radio"
-                    id="interactive"
-                    name="type"
-                    value="interactive"
-                    checked={formMetadata.type === "interactive"}
-                    onChange={handleChange}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
-                    required
-                  />
-                  <label
-                    htmlFor="interactive"
-                    className="ml-2 block text-sm font-medium text-gray-700"
-                  >
-                    Interactive
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <label
-                htmlFor="successMessage"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Success Message (Optional)
-              </label>
-              <input
-                type="text"
-                id="successMessage"
-                name="successMessage"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-transparent"
-                placeholder="Enter a custom message to display after the response has been recorded"
-                value={formMetadata.successMessage || ""}
-                onChange={handleChange}
-              />
             </div>
 
             {/* render the questions for the main section */}

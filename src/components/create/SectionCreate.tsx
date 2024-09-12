@@ -40,7 +40,7 @@ const SectionCreate: React.FC<Props> = ({ section }) => {
           contentEditable={true}
           suppressContentEditableWarning={true}
           onBlur={handleTitleChange}
-          className="font-bold text-2xl p-2 focus:border-b focus:border-gray-400 outline-none"
+          className="font-bold text-2xl p-2 border-b border-gray-400 outline-none"
         >
           {section.title}
         </h1>
