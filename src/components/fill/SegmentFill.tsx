@@ -1,4 +1,4 @@
-import { ISegment } from "@/types/survey";
+import { ISection } from "@/types/survey";
 import React from "react";
 import {
   MCQQuestionFill,
@@ -16,19 +16,19 @@ import {
   ImageChoiceQuestionFill,
 } from "./QuestionFillComponents";
 interface Props {
-  segment: ISegment;
+  section: ISection;
 }
 
-const SegmentFill: React.FC<Props> = ({ segment }) => {
+const SectionFill: React.FC<Props> = ({ section }) => {
   return (
     <section>
       <div className="flex items-center">
         <h1 className="font-bold text-2xl p-2 border-gray-400">
-          {segment.title}
+          {section.title}
         </h1>
       </div>
       <div>
-        {segment.questions.map((question, index) => {
+        {section.questions.map((question, index) => {
           switch (question.type) {
             case "mcq":
               return <MCQQuestionFill key={index} question={question} />;
@@ -69,4 +69,4 @@ const SegmentFill: React.FC<Props> = ({ segment }) => {
   );
 };
 
-export default SegmentFill;
+export default SectionFill;

@@ -4,6 +4,7 @@ import { useAuth } from "@/context/AuthContext";
 import { CheckCircle, MessageCircle, BarChart2, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { Slide } from "react-awesome-reveal";
 
 export default function LandingPage() {
   const { user, logout } = useAuth();
@@ -99,7 +100,7 @@ export default function LandingPage() {
               },
               {
                 icon: Users,
-                title: "User Segmentation",
+                title: "User Sectionation",
                 description:
                   "Target specific groups for more relevant surveys.",
               },
@@ -110,14 +111,13 @@ export default function LandingPage() {
                   "Intuitive interface for both creators and respondents.",
               },
             ].map((feature, index) => (
-              <div
-                key={index}
-                className="border border-gray-200 rounded-lg p-6 text-center shadow-lg"
-              >
-                <feature.icon className="h-10 w-10 text-blue-500 mb-4 mx-auto" />
-                <h4 className="text-xl font-bold mb-2">{feature.title}</h4>
-                <p>{feature.description}</p>
-              </div>
+              <Slide key={index} direction="up" delay={index * 100}>
+                <div className="border border-gray-200 rounded-lg p-6 text-center shadow-lg">
+                  <feature.icon className="h-10 w-10 text-blue-500 mb-4 mx-auto" />
+                  <h4 className="text-xl font-bold mb-2">{feature.title}</h4>
+                  <p>{feature.description}</p>
+                </div>
+              </Slide>
             ))}
           </div>
         </section>
@@ -156,29 +156,31 @@ export default function LandingPage() {
                 ],
               },
             ].map((plan, index) => (
-              <div
-                key={index}
-                className={`border border-gray-200 rounded-lg p-6 shadow-lg ${
-                  index === 1 ? "border-blue-500" : ""
-                } text-black`}
-              >
-                <h4 className="text-2xl font-bold mb-2">{plan.title}</h4>
-                <p className="text-3xl font-bold mb-4">{plan.price}</p>
-                {index === 1 && (
-                  <p className="text-blue-500 font-semibold">Most Popular</p>
-                )}
-                <ul className="space-y-2 my-4 text-left">
-                  {plan.features.map((feature, fIndex) => (
-                    <li key={fIndex} className="flex items-center">
-                      <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-                <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-                  Choose Plan
-                </button>
-              </div>
+              <Slide key={index} direction="right" delay={index * 100}>
+                <div
+                  key={index}
+                  className={`border border-gray-200 rounded-lg p-6 shadow-lg ${
+                    index === 1 ? "border-blue-500" : ""
+                  } text-black`}
+                >
+                  <h4 className="text-2xl font-bold mb-2">{plan.title}</h4>
+                  <p className="text-3xl font-bold mb-4">{plan.price}</p>
+                  {index === 1 && (
+                    <p className="text-blue-500 font-semibold">Most Popular</p>
+                  )}
+                  <ul className="space-y-2 my-4 text-left">
+                    {plan.features.map((feature, fIndex) => (
+                      <li key={fIndex} className="flex items-center">
+                        <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                  <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                    Choose Plan
+                  </button>
+                </div>
+              </Slide>
             ))}
           </div>
         </section>

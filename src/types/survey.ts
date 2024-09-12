@@ -13,19 +13,19 @@ export interface ISurveyFormMetadata {
   successMessage: string; // Message displayed after a response is successfully submitted.
 }
 
-export interface ISegment {
-  id: string; // Unique identifier for the segment.
-  title: string; // Title of the segment.
-  description?: string; // Optional description of the segment.
-  questions: Question[]; // List of questions within the segment.
-  isMainSegment: boolean; // Indicates if this segment is the main segment of the survey.
+export interface ISection {
+  id: string; // Unique identifier for the section.
+  title: string; // Title of the section.
+  description?: string; // Optional description of the section.
+  questions: Question[]; // List of questions within the section.
+  isMainSection: boolean; // Indicates if this section is the main section of the survey.
 }
 
 export interface ISurvey extends ISurveyFormMetadata {
   questionCount: number; // Total number of questions in the survey.
   expired: boolean; // Flag indicating if the survey has expired.
   access_url: string; // URL to access the survey.
-  segments: ISegment[]; // List of segments containing survey questions.
+  sections: ISection[]; // List of sections containing survey questions.
   createdAt: Timestamp; // Timestamp when the survey was created.
   updatedAt: Timestamp; // Timestamp when the survey was last updated.
   startDate: Timestamp; // Start date and time of the survey.

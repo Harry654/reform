@@ -8,7 +8,7 @@ import { doc, setDoc, Timestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase/config"; // Import Firestore instance
 import { BeatLoader } from "react-spinners";
 import Sidebar from "@/components/Sidebar"; // Import the Sidebar component
-import SegmentCreate from "@/components/create/SegmentCreate";
+import SectionCreate from "@/components/create/SectionCreate";
 import SurveySettings from "@/components/SurveySettings";
 import AddQuestionModal from "@/components/AddQuestionModal";
 import AddIcon from "@/components/icons/AddIcon";
@@ -18,9 +18,9 @@ export default function SurveyCreator() {
   const {
     formMetadata,
     setFormMetadata,
-    segments,
+    sections,
     resetSurvey,
-    addSegment,
+    addSection,
     addQuestion,
   } = useQuestion();
 
@@ -61,17 +61,17 @@ export default function SurveyCreator() {
     e.preventDefault();
     if (loading) return;
 
-    const main_segment = segments.find((segment) => segment.isMainSegment);
+    const main_section = sections.find((section) => section.isMainSection);
 
     // if there are no questions added
-    if (segments.length === 1 && !main_segment?.questions.length)
+    if (sections.length === 1 && !main_section?.questions.length)
       return alert("Add at least one question");
 
     if (!formMetadata.createdBy)
       return alert("Please login to create a survey");
 
-    const questionCount = segments.reduce(
-      (sum, segment) => sum + segment.questions.length,
+    const questionCount = sections.reduce(
+      (sum, section) => sum + section.questions.length,
       0
     );
     const SurveyFormData: ISurvey = {
@@ -79,7 +79,7 @@ export default function SurveyCreator() {
       questionCount,
       expired: false,
       access_url: `${process.env.NEXT_PUBLIC_BASE_URL}/s/${formMetadata.id}`,
-      segments,
+      sections,
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
       startDate: Timestamp.now(),
@@ -253,17 +253,17 @@ export default function SurveyCreator() {
               />
             </div>
 
-            {/* render the questions for the main segment */}
+            {/* render the questions for the main section */}
             <div>
               <div className="sticky top-0 backdrop-blur-md">
                 <AddQuestionModal
                   onAddQuestion={addQuestion}
-                  segment_id="main_segment"
+                  section_id="main_section"
                 />
               </div>
               <CreateSurveyQuestionEditor
-                segment={
-                  segments.find((segment) => segment.isMainSegment) || null
+                section={
+                  sections.find((section) => section.isMainSection) || null
                 }
               />
             </div>
@@ -271,17 +271,17 @@ export default function SurveyCreator() {
             <button
               type="button"
               className="w-min whitespace-nowrap flex items-center gap-2 border border-gray-400 rounded-3xl py-1 px-2 text-sm cursor-pointer hover:scale-105 duration-200"
-              onClick={addSegment}
+              onClick={addSection}
               disabled={loading}
             >
               <AddIcon />
-              Add Segment
+              Add Section
             </button>
 
-            {segments
-              .filter((segment) => !segment.isMainSegment)
-              .map((segment) => (
-                <SegmentCreate key={segment.id} segment={segment} />
+            {sections
+              .filter((section) => !section.isMainSection)
+              .map((section) => (
+                <SectionCreate key={section.id} section={section} />
               ))}
 
             <button

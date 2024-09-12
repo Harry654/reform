@@ -11,7 +11,7 @@ import { isTruthy } from "@/helpers/isTruthy";
 import { doc, writeBatch, increment, Timestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import { BeatLoader } from "react-spinners";
-import SegmentFill from "./SegmentFill";
+import SectionFill from "./SectionFill";
 import { Question } from "@/types/question";
 interface NormalSurveyResponseProps {
   surveyData: ISurvey;
@@ -30,8 +30,8 @@ export const NormalSurveyResponse: React.FC<NormalSurveyResponseProps> = ({
 
   const handleAllQuestionsAnswered = (): boolean => {
     const requiredQuestions: Question[] = [];
-    survey?.segments.map((segment) => {
-      segment.questions.map((question) => {
+    survey?.sections.map((section) => {
+      section.questions.map((question) => {
         if (question.required) requiredQuestions.push(question);
       });
     });
@@ -113,8 +113,8 @@ export const NormalSurveyResponse: React.FC<NormalSurveyResponseProps> = ({
       <h1 className="text-2xl font-bold mb-4">{survey.title}</h1>
       <p className="mb-6 text-gray-600">{survey.description}</p>
       <form onSubmit={handleSubmit}>
-        {survey.segments.map((segment) => (
-          <SegmentFill key={segment.id} segment={segment} />
+        {survey.sections.map((section) => (
+          <SectionFill key={section.id} section={section} />
         ))}
         <button
           type="submit"

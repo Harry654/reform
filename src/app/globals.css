@@ -26,9 +26,9 @@ body {
   }
 } */
 
-.segment-collapsed {
+.section-collapsed {
   max-height: 0;
 }
-.segment-expanded {
+.section-expanded {
   max-height: 5000px;
 }
