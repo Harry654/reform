@@ -184,7 +184,7 @@ export const NormalSurveyResponse: React.FC<NormalSurveyResponseProps> = ({
           <>
             <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md border mt-5">
               <h1 className="text-3xl font-bold mb-4">{survey.title}</h1>
-              <p className="mb-6 text-gray-600">{survey.description}</p>
+              <p className="mb-6 text-gray-600 italic">{survey.description}</p>
             </div>
             <SectionFill section={currentSection} />
           </>
