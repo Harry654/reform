@@ -6,12 +6,14 @@ const genAi = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
 const setupPrompt = `
 you are a survey summarizer. You will take a set of survey questions and summarize it to the end user. During your summarization, no question data should be omiited.
 your summary should still find a way to include the general idea of the original survey. It should just have less questions and in a manner that isn't tedious to the end user to answer.
-Additionally, your response should also be in json.
+Additionally, your response should also be in json. This is the schema of a question:
+
 `
 
 
 export async function POST(req) {
     const data = await req.text()
+    console.log(data)
 
     const model = genAi.getGenerativeModel({ model: "gemini-pro" })
 
