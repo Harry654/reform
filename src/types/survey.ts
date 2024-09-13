@@ -1,11 +1,19 @@
 import { Timestamp } from "firebase/firestore";
 import { Question } from "./question";
 
+export type ISurveyCategory =
+  | "product_rating"
+  | "feedback"
+  | "complaints"
+  | "human_resources"
+  | "events"
+  | "other";
+
 export interface ISurveyFormMetadata {
   id: string; // Unique identifier for the survey.
   title: string; // Title of the survey.
   description: string; // Detailed description of the survey's purpose.
-  category: string; // Survey category (e.g., product rating, feedback).
+  category: ISurveyCategory; // Survey category (e.g., product rating, feedback).
   createdBy: string; // User ID of the creator.
   type: "normal" | "interactive"; // Type of survey (normal or interactive).
   allowMultipleSubmissions: boolean; // Whether multiple submissions are allowed from a single user.

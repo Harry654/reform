@@ -12,17 +12,23 @@ import SectionCreate from "@/components/create/SectionCreate";
 import SurveySettings from "@/components/SurveySettings";
 import AddQuestionModal from "@/components/AddQuestionModal";
 import AddIcon from "@/components/icons/AddIcon";
+import { useSearchParams } from "next/navigation";
+import { templates } from "@/constants/template_data";
+import { survey_categories } from "@/constants/survey_categories";
 
 export default function SurveyCreator() {
   const { user } = useAuth();
   const {
     formMetadata,
     setFormMetadata,
+    setTemplate,
     sections,
     resetSurvey,
     addSection,
     addQuestion,
   } = useQuestion();
+  const searchParams = useSearchParams();
+  const t_id = searchParams.get("t_id");
 
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -32,6 +38,13 @@ export default function SurveyCreator() {
       createdBy: user?.uid || "",
     }));
   }, [user]);
+
+  useEffect(() => {
+    const template = templates.find((template) => template.id === t_id);
+    if (!template) return;
+
+    setTemplate(template);
+  }, [t_id]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -179,10 +192,11 @@ export default function SurveyCreator() {
                 required
               >
                 <option value="">Select the primary aim</option>
-                <option value="product_rating">Product Rating</option>
-                <option value="feedback">General Feedback</option>
-                <option value="complaints">Complaints</option>
-                <option value="other">Other</option>
+                {survey_categories.map(({ title, label }) => (
+                  <option id={title} value={title}>
+                    {label}
+                  </option>
+                ))}
               </select>
             </div>
 

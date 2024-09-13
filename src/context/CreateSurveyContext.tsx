@@ -1,14 +1,22 @@
 "use client";
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from "react";
 import { Question, QuestionType } from "@/types/question";
 import { v4 as uuidv4 } from "uuid";
-import { ISurveyFormMetadata, ISection } from "@/types/survey";
+import { ISurveyFormMetadata, ISection, ISurveyCategory } from "@/types/survey";
 import { useAuth } from "./AuthContext";
+import { ITemplate } from "@/types/template";
 
 // Define the shape of your context
 interface CreateSurveyContextType {
   formMetadata: ISurveyFormMetadata;
   setFormMetadata: React.Dispatch<React.SetStateAction<ISurveyFormMetadata>>;
+  setTemplate: React.Dispatch<React.SetStateAction<ITemplate | null>>;
   // questions: Question[];
   sections: ISection[];
   addSection: () => void;
@@ -28,11 +36,12 @@ const CreateSurveyContext = createContext<CreateSurveyContextType | undefined>(
 // CreateSurveyProvider component
 export const CreateSurveyProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
+
   const initialFormMetaData: ISurveyFormMetadata = {
     id: uuidv4(),
     title: "",
     description: "",
-    category: "",
+    category: "feedback",
     createdBy: user?.uid || "",
     type: "normal",
     allowAnonymousResponses: false,
@@ -60,6 +69,8 @@ export const CreateSurveyProvider = ({ children }: { children: ReactNode }) => {
   const [formMetadata, setFormMetadata] =
     useState<ISurveyFormMetadata>(initialFormMetaData);
   const [sections, setSections] = useState<ISection[]>([mainSection]);
+  const [template, setTemplate] = useState<ITemplate | null>(null);
+
   // const [questions, setQuestions] = useState<Question[]>([]);
 
   const addSection = () => {
@@ -288,11 +299,20 @@ export const CreateSurveyProvider = ({ children }: { children: ReactNode }) => {
     setSections([mainSection]);
   };
 
+  useEffect(() => {
+    if (!template) return;
+
+    const { title, description, category, sections } = template.survey_data;
+    setFormMetadata({ ...initialFormMetaData, title, description, category });
+    setSections(sections);
+  }, [template?.id]);
+
   return (
     <CreateSurveyContext.Provider
       value={{
         formMetadata,
         setFormMetadata,
+        setTemplate,
         // questions,
         sections,
         addSection,
