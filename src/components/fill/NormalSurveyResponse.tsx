@@ -56,7 +56,7 @@ export const NormalSurveyResponse: React.FC<NormalSurveyResponseProps> = ({
 
     const newCurrentSection = survey.sections[currentSectionIndex + 1];
     setCurrentSection(newCurrentSection);
-    console.log("nextttttttttttttttt");
+    window.scrollY = 0;
   };
 
   const handlePrevSection = () => {
@@ -135,7 +135,7 @@ export const NormalSurveyResponse: React.FC<NormalSurveyResponseProps> = ({
     // compute the survey response
     const response: TSurveyResponse = {
       surveyId: survey?.id || "",
-      userId: user?.uid || "",
+      userId: survey.allowAnonymousResponses ? "" : user?.uid || "",
       responseId: uuidv4(),
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
@@ -179,7 +179,7 @@ export const NormalSurveyResponse: React.FC<NormalSurveyResponseProps> = ({
     <>
       <Navbar />
 
-      <form onSubmit={handleSubmitDisabled} className="max-w-2xl mx-auto mt-5">
+      <form onSubmit={handleSubmitDisabled} className="max-w-2xl mx-auto my-5">
         {currentSection?.isMainSection && (
           <>
             <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md border mt-5">

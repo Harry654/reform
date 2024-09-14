@@ -5,16 +5,17 @@ import { useQuestion } from "@/context/CreateSurveyContext";
 import { ISurvey } from "@/types/survey";
 import React, { useEffect, useState } from "react";
 import { doc, setDoc, Timestamp } from "firebase/firestore";
-import { db } from "@/lib/firebase/config"; // Import Firestore instance
+import { db } from "@/lib/firebase/config";
 import { BeatLoader } from "react-spinners";
-import Sidebar from "@/components/Sidebar"; // Import the Sidebar component
+import Sidebar from "@/components/Sidebar";
 import SectionCreate from "@/components/create/SectionCreate";
 import SurveySettings from "@/components/SurveySettings";
 import AddQuestionModal from "@/components/AddQuestionModal";
 import AddIcon from "@/components/icons/AddIcon";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { templates } from "@/constants/template_data";
 import { survey_categories } from "@/constants/survey_categories";
+import AccessURLModal from "@/components/AccessURLModal";
 
 export default function SurveyCreator() {
   const { user } = useAuth();
@@ -23,14 +24,15 @@ export default function SurveyCreator() {
     setFormMetadata,
     setTemplate,
     sections,
-    resetSurvey,
     addSection,
     addQuestion,
+    resetSurvey,
   } = useQuestion();
   const searchParams = useSearchParams();
   const t_id = searchParams.get("t_id");
-
+  const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
+  const [showAccessURLModal, setShowAccessURLModal] = useState<boolean>(false);
 
   useEffect(() => {
     setFormMetadata((prevFormMetadata) => ({
@@ -108,9 +110,10 @@ export default function SurveyCreator() {
       setLoading(true);
       // Add survey form data to Firestore
       await setDoc(doc(db, "surveys", formMetadata.id), SurveyFormData);
-      alert("Survey created successfully!");
       setLoading(false);
-      resetSurvey();
+
+      // display the survey url
+      setShowAccessURLModal(true);
     } catch (error) {
       setLoading(false);
       console.error("Error adding survey to Firestore: ", error);
@@ -121,8 +124,12 @@ export default function SurveyCreator() {
   return (
     <div className="flex h-screen overflow-hidden bg-white text-black">
       {/* Sidebar */}
-      <Sidebar />
-
+      <Sidebar currentPage="/create" />
+      <AccessURLModal
+        accessUrl={`${process.env.NEXT_PUBLIC_BASE_URL}/s/${formMetadata.id}`}
+        isOpen={showAccessURLModal}
+        onClose={resetSurvey}
+      />
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-y-auto h-screen">
         <div className="max-w-2xl mx-auto p-6 border rounded-lg shadow-md">

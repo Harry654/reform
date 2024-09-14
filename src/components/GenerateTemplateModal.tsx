@@ -1,13 +1,18 @@
 import React, { useState } from "react";
-import { Dialog, Transition } from "@headlessui/react";
+import {
+  Dialog,
+  Transition,
+  DialogTitle,
+  DialogPanel,
+} from "@headlessui/react";
 import { Fragment } from "react";
 import { X } from "lucide-react";
 
-interface PromptModalProps {
+interface GenerateTemplateModalProps {
   onGenerateTemplate: (prompt: string) => void;
 }
 
-const PromptModal: React.FC<PromptModalProps> = ({ onGenerateTemplate }) => {
+const GenerateTemplateModal: React.FC<GenerateTemplateModalProps> = ({ onGenerateTemplate }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [prompt, setPrompt] = useState("");
 
@@ -56,8 +61,8 @@ const PromptModal: React.FC<PromptModalProps> = ({ onGenerateTemplate }) => {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                  <Dialog.Title
+                <DialogPanel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                  <DialogTitle
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900 flex justify-between items-center"
                   >
@@ -68,7 +73,7 @@ const PromptModal: React.FC<PromptModalProps> = ({ onGenerateTemplate }) => {
                     >
                       <X size={20} />
                     </button>
-                  </Dialog.Title>
+                  </DialogTitle>
                   <form onSubmit={handleSubmit} className="mt-4">
                     <textarea
                       value={prompt}
@@ -86,7 +91,7 @@ const PromptModal: React.FC<PromptModalProps> = ({ onGenerateTemplate }) => {
                       </button>
                     </div>
                   </form>
-                </Dialog.Panel>
+                </DialogPanel>
               </Transition.Child>
             </div>
           </div>
@@ -96,4 +101,4 @@ const PromptModal: React.FC<PromptModalProps> = ({ onGenerateTemplate }) => {
   );
 };
 
-export default PromptModal;
+export default GenerateTemplateModal;

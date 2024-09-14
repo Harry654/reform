@@ -180,7 +180,7 @@ const SurveySettings: React.FC<SurveySettingsProps> = ({
                         disabled={formMetadata.allowAnonymousResponses}
                       />
                       <span className="text-sm text-gray-700">
-                        Allow Multiple Submissions
+                        Allow Multiple Submissions from a user
                       </span>
                     </label>
                   </div>

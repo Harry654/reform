@@ -11,7 +11,9 @@ export default function Navbar() {
   return (
     <header className="container mx-auto px-4 py-8 text-black">
       <nav className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-blue-600">Reform</h1>
+        <Link href="/" className="text-3xl font-bold text-blue-600">
+          Reform
+        </Link>
         {user ? (
           <div className="flex items-center space-x-4">
             <span className="text-sm font-medium text-gray-700">

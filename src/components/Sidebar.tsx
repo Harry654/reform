@@ -12,8 +12,19 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
+import Link from "next/link";
 
-const Sidebar: React.FC = () => {
+interface Props {
+  currentPage:
+    | "/dashboard"
+    | "/create"
+    | "/templates"
+    | "/audience"
+    | "/analytics"
+    | "/settings";
+}
+
+const Sidebar: React.FC<Props> = ({ currentPage }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { user, logout } = useAuth();
@@ -48,21 +59,47 @@ const Sidebar: React.FC = () => {
         {/* Sidebar Navigation */}
         <nav className="mt-8">
           {[
-            { icon: <Home className="h-5 w-5 mr-2" />, label: "Dashboard" },
-            { icon: <FileText className="h-5 w-5 mr-2" />, label: "Surveys" },
-            { icon: <Users className="h-5 w-5 mr-2" />, label: "Audience" },
-            { icon: <BarChart className="h-5 w-5 mr-2" />, label: "Analytics" },
-            { icon: <Settings className="h-5 w-5 mr-2" />, label: "Settings" },
+            {
+              icon: <Home className="h-5 w-5 mr-2" />,
+              label: "dashboard",
+              route: "/dashboard",
+            },
+            {
+              icon: <FileText className="h-5 w-5 mr-2" />,
+              label: "create a survey",
+              route: "/create",
+            },
+            {
+              icon: <FileText className="h-5 w-5 mr-2" />,
+              label: "templates",
+              route: "/templates",
+            },
+            {
+              icon: <Users className="h-5 w-5 mr-2" />,
+              label: "audience",
+              route: "/audience",
+            },
+            {
+              icon: <BarChart className="h-5 w-5 mr-2" />,
+              label: "analytics",
+              route: "/analytics",
+            },
+            {
+              icon: <Settings className="h-5 w-5 mr-2" />,
+              label: "settings",
+              route: "/settings",
+            },
           ].map((item, index) => (
-            <button
+            <Link
               key={index}
-              className={`w-full flex items-center px-4 py-2 text-left hover:bg-gray-300 hover:text-black transition-colors mb-2 ${
-                item.label === "Surveys" ? "bg-gray-300 text-black" : ""
+              href={item.route}
+              className={`w-full flex items-center px-4 py-2 text-left hover:bg-gray-300 hover:text-black transition-colors mb-2 capitalize ${
+                item.route === currentPage ? "bg-gray-300 text-black" : ""
               }`}
             >
               {item.icon}
               {isSidebarOpen && <span>{item.label}</span>}
-            </button>
+            </Link>
           ))}
         </nav>
       </div>

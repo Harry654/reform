@@ -294,17 +294,24 @@ export const CreateSurveyProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const resetSurvey = () => {
+    // if were using a template, the set it up
+    if (template) return mountTemplate();
+
+    // reset form meta data and sections
     setFormMetadata(initialFormMetaData);
-    // setQuestions([]);
     setSections([mainSection]);
   };
 
-  useEffect(() => {
+  const mountTemplate = () => {
     if (!template) return;
 
     const { title, description, category, sections } = template.survey_data;
     setFormMetadata({ ...initialFormMetaData, title, description, category });
     setSections(sections);
+  };
+
+  useEffect(() => {
+    mountTemplate();
   }, [template?.id]);
 
   return (

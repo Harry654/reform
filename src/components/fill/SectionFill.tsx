@@ -28,7 +28,7 @@ const SectionFill: React.FC<Props> = ({ section }) => {
           <h1 className="font-bold text-2xl py-2 border-gray-400">
             {section.title}
           </h1>
-          <p className="text-md py-2 border-gray-400">{section.description}</p>
+          <p className="text-md py-2 border-gray-400 italic">{section.description}</p>
         </div>
       )}
 
