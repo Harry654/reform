@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import { Question, QuestionType } from "@/types/question";
 import { v4 as uuidv4 } from "uuid";
-import { ISurveyFormMetadata, ISection, ISurveyCategory } from "@/types/survey";
+import { ISurveyFormMetadata, ISection } from "@/types/survey";
 import { useAuth } from "./AuthContext";
 import { ITemplate } from "@/types/template";
 

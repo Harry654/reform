@@ -30,7 +30,6 @@ export default function SurveyCreator() {
   } = useQuestion();
   const searchParams = useSearchParams();
   const t_id = searchParams.get("t_id");
-  const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
   const [showAccessURLModal, setShowAccessURLModal] = useState<boolean>(false);
 
@@ -200,7 +199,7 @@ export default function SurveyCreator() {
               >
                 <option value="">Select the primary aim</option>
                 {survey_categories.map(({ title, label }) => (
-                  <option id={title} value={title}>
+                  <option key={title} id={title} value={title}>
                     {label}
                   </option>
                 ))}
