@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 import {
   BarChart,
   PieChart,
@@ -11,7 +11,7 @@ import {
   LogOut,
   Home,
   ChevronDown,
-} from 'lucide-react';
+} from "lucide-react";
 
 export default function Dashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
@@ -21,24 +21,28 @@ export default function Dashboard() {
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
   const navItems = [
-    { icon: <Home className="h-5 w-5 mr-2" />, label: 'Dashboard' },
-    { icon: <FileText className="h-5 w-5 mr-2" />, label: 'Surveys' },
-    { icon: <Users className="h-5 w-5 mr-2" />, label: 'Audience' },
-    { icon: <BarChart className="h-5 w-5 mr-2" />, label: 'Analytics' },
-    { icon: <Settings className="h-5 w-5 mr-2" />, label: 'Settings' },
+    { icon: <Home className="h-5 w-5 mr-2" />, label: "Dashboard" },
+    { icon: <FileText className="h-5 w-5 mr-2" />, label: "Surveys" },
+    { icon: <Users className="h-5 w-5 mr-2" />, label: "Audience" },
+    { icon: <BarChart className="h-5 w-5 mr-2" />, label: "Analytics" },
+    { icon: <Settings className="h-5 w-5 mr-2" />, label: "Settings" },
   ];
 
   const dashboardItems = [
-    { title: 'Active Surveys', value: '5', buttonText: 'View All' },
-    { title: 'Total Responses', value: '1,234', buttonText: 'Analyze' },
-    { title: 'Real-Time Insights', icon: <Activity className="w-16 h-16 text-blue-500" />, buttonText: 'View Insights' },
+    { title: "Active Surveys", value: "5", buttonText: "View All" },
+    { title: "Total Responses", value: "1,234", buttonText: "Analyze" },
+    {
+      title: "Real-Time Insights",
+      icon: <Activity className="w-16 h-16 text-blue-500" />,
+      buttonText: "View Insights",
+    },
   ];
 
   const buttonsSectionItems = [
-    { icon: <BarChart className="w-8 h-8 mb-2" />, label: 'Data Analysis' },
-    { icon: <PieChart className="w-8 h-8 mb-2" />, label: 'Visualizations' },
-    { icon: <Users className="w-8 h-8 mb-2" />, label: 'User Segmentation' },
-    { icon: <FileText className="w-8 h-8 mb-2" />, label: 'Survey Templates' },
+    { icon: <BarChart className="w-8 h-8 mb-2" />, label: "Data Analysis" },
+    { icon: <PieChart className="w-8 h-8 mb-2" />, label: "Visualizations" },
+    { icon: <Users className="w-8 h-8 mb-2" />, label: "User Sectionation" },
+    { icon: <FileText className="w-8 h-8 mb-2" />, label: "Survey Templates" },
   ];
 
   return (
@@ -46,20 +50,24 @@ export default function Dashboard() {
       {/* Sidebar */}
       <aside
         className={`${
-          isSidebarOpen ? 'w-64' : 'w-20'
+          isSidebarOpen ? "w-64" : "w-20"
         } flex flex-col justify-between bg-gray-200 text-gray-900 transition-all duration-300 ease-in-out`}
       >
         <div>
           {/* Sidebar Header */}
           <div className="p-4 flex flex-col items-center">
-            <h2 className={`text-2xl font-bold ${isSidebarOpen ? '' : 'hidden'}`}>Reform</h2>
+            <h2
+              className={`text-2xl font-bold ${isSidebarOpen ? "" : "hidden"}`}
+            >
+              Reform
+            </h2>
             <button
               className="mt-4 p-2 rounded-full hover:bg-gray-300"
               onClick={toggleSidebar}
             >
               <ChevronDown
                 className={`h-6 w-6 transition-transform ${
-                  isSidebarOpen ? 'rotate-0' : '-rotate-90'
+                  isSidebarOpen ? "rotate-0" : "-rotate-90"
                 }`}
               />
             </button>

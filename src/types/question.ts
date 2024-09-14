@@ -18,7 +18,7 @@ export interface BaseQuestion {
   type: QuestionType;
   text: string;
   required: boolean;
-  segment_id: string;
+  section_id: string;
 }
 
 export interface MCQQuestion extends BaseQuestion {

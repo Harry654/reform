@@ -1,17 +1,22 @@
 import React, { useState } from "react";
-import { Dialog, Transition, TransitionChild } from "@headlessui/react";
+import {
+  Dialog,
+  DialogPanel,
+  DialogTitle,
+  Transition,
+  TransitionChild,
+} from "@headlessui/react";
 import { Fragment } from "react";
 import { Settings, X } from "lucide-react";
+import { ISurveyFormMetadata } from "@/types/survey";
 
 interface SurveySettingsProps {
-  allowAnonymousResponses: boolean;
-  allowMultipleSubmissions: boolean;
+  formMetadata: ISurveyFormMetadata;
   onSettingsChange: (setting: string, value: boolean | string) => void;
 }
 
 const SurveySettings: React.FC<SurveySettingsProps> = ({
-  allowAnonymousResponses,
-  allowMultipleSubmissions,
+  formMetadata,
   onSettingsChange,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -61,8 +66,8 @@ const SurveySettings: React.FC<SurveySettingsProps> = ({
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                  <Dialog.Title
+                <DialogPanel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                  <DialogTitle
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900 flex justify-between items-center"
                   >
@@ -73,12 +78,82 @@ const SurveySettings: React.FC<SurveySettingsProps> = ({
                     >
                       <X size={20} />
                     </button>
-                  </Dialog.Title>
-                  <div className="mt-4 space-y-4">
+                  </DialogTitle>
+                  <div className="mt-4 space-y-8">
+                    <div>
+                      <label
+                        htmlFor="surveyType"
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                      >
+                        Survey Type
+                      </label>
+                      <div className="flex space-x-4">
+                        <div className="flex items-center">
+                          <input
+                            type="radio"
+                            id="normal"
+                            name="type"
+                            value="normal"
+                            checked={formMetadata.type === "normal"}
+                            onChange={() => onSettingsChange("type", "normal")}
+                            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                            required
+                          />
+                          <label
+                            htmlFor="normal"
+                            className="ml-2 block text-sm font-medium text-gray-700"
+                          >
+                            Normal
+                          </label>
+                        </div>
+
+                        <div className="flex items-center">
+                          <input
+                            type="radio"
+                            id="interactive"
+                            name="type"
+                            value="interactive"
+                            checked={formMetadata.type === "interactive"}
+                            onChange={() =>
+                              onSettingsChange("type", "interactive")
+                            }
+                            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                            required
+                          />
+                          <label
+                            htmlFor="interactive"
+                            className="ml-2 block text-sm font-medium text-gray-700"
+                          >
+                            Interactive
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="successMessage"
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                      >
+                        Success Message (Optional)
+                      </label>
+                      <input
+                        type="text"
+                        id="successMessage"
+                        name="successMessage"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-transparent text-sm"
+                        placeholder="Enter a custom message to display after the response has been recorded"
+                        value={formMetadata.successMessage || ""}
+                        onChange={(e) =>
+                          onSettingsChange("successMessage", e.target.value)
+                        }
+                      />
+                    </div>
+
                     <label className="flex items-center space-x-2">
                       <input
                         type="checkbox"
-                        checked={allowAnonymousResponses}
+                        checked={formMetadata.allowAnonymousResponses}
                         onChange={(e) =>
                           onSettingsChange(
                             "allowAnonymousResponses",
@@ -94,7 +169,7 @@ const SurveySettings: React.FC<SurveySettingsProps> = ({
                     <label className="flex items-center space-x-2">
                       <input
                         type="checkbox"
-                        checked={allowMultipleSubmissions}
+                        checked={formMetadata.allowMultipleSubmissions}
                         onChange={(e) =>
                           onSettingsChange(
                             "allowMultipleSubmissions",
@@ -102,10 +177,10 @@ const SurveySettings: React.FC<SurveySettingsProps> = ({
                           )
                         }
                         className="form-checkbox h-4 w-4 text-blue-600 rounded"
-                        disabled={allowAnonymousResponses}
+                        disabled={formMetadata.allowAnonymousResponses}
                       />
                       <span className="text-sm text-gray-700">
-                        Allow Multiple Submissions
+                        Allow Multiple Submissions from a user
                       </span>
                     </label>
                   </div>
@@ -119,7 +194,7 @@ const SurveySettings: React.FC<SurveySettingsProps> = ({
                       Close
                     </button>
                   </div>
-                </Dialog.Panel>
+                </DialogPanel>
               </TransitionChild>
             </div>
           </div>

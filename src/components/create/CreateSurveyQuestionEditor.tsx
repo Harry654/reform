@@ -17,14 +17,14 @@ import {
   ImageChoiceQuestionComponent,
 } from "./QuestionComponents";
 import { useQuestion } from "@/context/CreateSurveyContext";
-import { ISegment } from "@/types/survey";
+import { ISection } from "@/types/survey";
 import DeleteIcon from "../icons/DeleteIcon";
 
 interface Props {
-  segment: ISegment | null;
+  section: ISection | null;
 }
 
-const CreateSurveyQuestionEditor: React.FC<Props> = ({ segment }) => {
+const CreateSurveyQuestionEditor: React.FC<Props> = ({ section }) => {
   const { updateQuestion, removeQuestion } = useQuestion();
 
   const renderQuestion = (question: Question) => {
@@ -122,12 +122,12 @@ const CreateSurveyQuestionEditor: React.FC<Props> = ({ segment }) => {
     }
   };
 
-  if (!segment) return null;
+  if (!section) return null;
 
   return (
     <div className="max-w-4xl mx-auto p-6">
       <AnimatePresence>
-        {segment.questions.map((question) => (
+        {section.questions.map((question) => (
           <motion.div
             key={question.id}
             initial={{ opacity: 1, height: "auto" }}
@@ -138,7 +138,7 @@ const CreateSurveyQuestionEditor: React.FC<Props> = ({ segment }) => {
             {renderQuestion(question)}
             <DeleteIcon
               color="red"
-              onClick={() => removeQuestion(question.id, question.segment_id)}
+              onClick={() => removeQuestion(question.id, question.section_id)}
               className="ms-auto hover:scale-110 duration-200 cursor-pointer"
             />
           </motion.div>

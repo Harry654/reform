@@ -6,13 +6,13 @@ import { surveyQuestions } from "@/constants/question_types";
 import AddIcon from "./icons/AddIcon";
 
 interface AddQuestionModalProps {
-  onAddQuestion: (type: QuestionType, segment_id: string) => void;
-  segment_id: string;
+  onAddQuestion: (type: QuestionType, section_id: string) => void;
+  section_id: string;
 }
 
 export default function AddQuestionModal({
   onAddQuestion,
-  segment_id,
+  section_id,
 }: AddQuestionModalProps) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -68,7 +68,7 @@ export default function AddQuestionModal({
                   </Dialog.Title>
                   <div className="mt-2">
                     <p className="text-sm text-gray-500">
-                      Select the type of question you'd like to add to your
+                      Select the type of question you&apos;d like to add to your
                       survey.
                     </p>
                   </div>
@@ -79,7 +79,7 @@ export default function AddQuestionModal({
                         key={questionType.type}
                         className="w-full text-left px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-opacity-75"
                         onClick={() => {
-                          onAddQuestion(questionType.type, segment_id);
+                          onAddQuestion(questionType.type, section_id);
                           closeModal();
                         }}
                       >
