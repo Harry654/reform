@@ -12,7 +12,7 @@ import SectionCreate from "@/components/create/SectionCreate";
 import SurveySettings from "@/components/SurveySettings";
 import AddQuestionModal from "@/components/AddQuestionModal";
 import AddIcon from "@/components/icons/AddIcon";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { templates } from "@/constants/template_data";
 import { survey_categories } from "@/constants/survey_categories";
 import AccessURLModal from "@/components/AccessURLModal";
