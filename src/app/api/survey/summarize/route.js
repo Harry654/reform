@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server"
-import { GoogleGenerativeAI } from "@google/generative-ai"
+import { NextResponse } from "next/server";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const genAi = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
+const genAi = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 const setupPrompt = `
 you are a survey summarizer. You will take a list of survey questions and provide a shorter version of it to the end user. 
@@ -109,23 +109,22 @@ export type Question =
   | FileUploadQuestion
   | YesNoQuestion
   | ImageChoiceQuestion;
-`
-
+`;
 
 export async function POST(req) {
-    const data = await req.text()
-    console.log(data)
+  const data = await req.text();
+  console.log(data);
 
-    const model = genAi.getGenerativeModel({ model: "gemini-pro" })
+  const model = genAi.getGenerativeModel({ model: "gemini-pro" });
 
-    try {
-        const result = await model.generateContent([setupPrompt, data])
-        const text = result.response.text()
-        console.log(text)
+  try {
+    const result = await model.generateContent([setupPrompt, data]);
+    const text = result.response.text();
+    console.log(text);
 
-        return NextResponse.json(text)
-    } catch (error) {
-        console.error("Error generating: ", error)
-        return NextResponse.json({ error: "error generating" }, { status: 500 })
-    }
+    return NextResponse.json(text);
+  } catch (error) {
+    console.error("Error generating: ", error);
+    return NextResponse.json({ error: "error generating" }, { status: 500 });
+  }
 }
