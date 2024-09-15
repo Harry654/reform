@@ -1,4 +1,4 @@
-import { ISegment } from "@/types/survey";
+import { ISection } from "@/types/survey";
 import React, { useState } from "react";
 import CreateSurveyQuestionEditor from "./CreateSurveyQuestionEditor";
 import { useQuestion } from "@/context/CreateSurveyContext";
@@ -7,55 +7,55 @@ import DownArrowIcon from "../icons/DownArrowIcon";
 import AddQuestionModal from "../AddQuestionModal";
 
 interface Props {
-  segment: ISegment;
+  section: ISection;
 }
 
-const SegmentCreate: React.FC<Props> = ({ segment }) => {
-  const [segmentOpen, setSegmentOpen] = useState<boolean>(true);
-  const { updateSegment, removeSegment, addQuestion } = useQuestion();
+const SectionCreate: React.FC<Props> = ({ section }) => {
+  const [sectionOpen, setSectionOpen] = useState<boolean>(true);
+  const { updateSection, removeSection, addQuestion } = useQuestion();
 
-  const toggleSegmentOpen = () => setSegmentOpen(!segmentOpen);
+  const toggleSectionOpen = () => setSectionOpen(!sectionOpen);
 
   const handleTitleChange = (e: React.FormEvent<HTMLElement>) => {
     const newTitle = e.currentTarget.textContent || "";
     if (newTitle === "") {
-      e.currentTarget.textContent = segment.title;
+      e.currentTarget.textContent = section.title;
       return;
     }
-    updateSegment({ ...segment, title: newTitle });
+    updateSection({ ...section, title: newTitle });
   };
 
   const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    updateSegment({ ...segment, description: value });
+    updateSection({ ...section, description: value });
   };
   return (
-    <section>
+    <section className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md border mt-5">
       <div className="flex items-center sticky top-0 z-10 backdrop-blur-md">
         <DownArrowIcon
-          onClick={toggleSegmentOpen}
-          className={`duration-500 ${segmentOpen ? "rotate-0" : "-rotate-90"}`}
+          onClick={toggleSectionOpen}
+          className={`duration-500 ${sectionOpen ? "rotate-0" : "-rotate-90"}`}
         />
         <h1
           contentEditable={true}
           suppressContentEditableWarning={true}
           onBlur={handleTitleChange}
-          className="font-bold text-2xl p-2 focus:border-b focus:border-gray-400 outline-none"
+          className="font-bold text-2xl p-2 border-b border-gray-400 outline-none"
         >
-          {segment.title}
+          {section.title}
         </h1>
 
         <div className="ms-auto space-x-5 flex items-center">
           <AddQuestionModal
-            onAddQuestion={(type, segment_id) => {
-              addQuestion(type, segment_id);
-              setSegmentOpen(true);
+            onAddQuestion={(type, section_id) => {
+              addQuestion(type, section_id);
+              setSectionOpen(true);
             }}
-            segment_id={segment.id}
+            section_id={section.id}
           />
           <DeleteIcon
             color="red"
-            onClick={() => removeSegment(segment.id)}
+            onClick={() => removeSection(section.id)}
             className="hover:scale-110 duration-200"
           />
         </div>
@@ -63,7 +63,7 @@ const SegmentCreate: React.FC<Props> = ({ segment }) => {
 
       <div
         className={`${
-          segmentOpen ? "segment-expanded" : "segment-collapsed"
+          sectionOpen ? "section-expanded" : "section-collapsed"
         } duration-500 overflow-hidden`}
       >
         <input
@@ -72,13 +72,13 @@ const SegmentCreate: React.FC<Props> = ({ segment }) => {
           name="description"
           className="mt-5 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none bg-transparent"
           placeholder="Describe this section"
-          value={segment.description}
+          value={section.description}
           onChange={handleDescriptionChange}
         />
-        <CreateSurveyQuestionEditor segment={segment} />
+        <CreateSurveyQuestionEditor section={section} />
       </div>
     </section>
   );
 };
 
-export default SegmentCreate;
+export default SectionCreate;

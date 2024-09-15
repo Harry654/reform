@@ -5,26 +5,33 @@ import { useQuestion } from "@/context/CreateSurveyContext";
 import { ISurvey } from "@/types/survey";
 import React, { useEffect, useState } from "react";
 import { doc, setDoc, Timestamp } from "firebase/firestore";
-import { db } from "@/lib/firebase/config"; // Import Firestore instance
+import { db } from "@/lib/firebase/config";
 import { BeatLoader } from "react-spinners";
-import Sidebar from "@/components/Sidebar"; // Import the Sidebar component
-import SegmentCreate from "@/components/create/SegmentCreate";
+import Sidebar from "@/components/Sidebar";
+import SectionCreate from "@/components/create/SectionCreate";
 import SurveySettings from "@/components/SurveySettings";
 import AddQuestionModal from "@/components/AddQuestionModal";
 import AddIcon from "@/components/icons/AddIcon";
+import { useSearchParams } from "next/navigation";
+import { templates } from "@/constants/template_data";
+import { survey_categories } from "@/constants/survey_categories";
+import AccessURLModal from "@/components/AccessURLModal";
 
 export default function SurveyCreator() {
   const { user } = useAuth();
   const {
     formMetadata,
     setFormMetadata,
-    segments,
-    resetSurvey,
-    addSegment,
+    setTemplate,
+    sections,
+    addSection,
     addQuestion,
+    resetSurvey,
   } = useQuestion();
-
+  const searchParams = useSearchParams();
+  const t_id = searchParams.get("t_id");
   const [loading, setLoading] = useState<boolean>(false);
+  const [showAccessURLModal, setShowAccessURLModal] = useState<boolean>(false);
 
   useEffect(() => {
     setFormMetadata((prevFormMetadata) => ({
@@ -32,6 +39,13 @@ export default function SurveyCreator() {
       createdBy: user?.uid || "",
     }));
   }, [user]);
+
+  useEffect(() => {
+    const template = templates.find((template) => template.id === t_id);
+    if (!template) return;
+
+    setTemplate(template);
+  }, [t_id]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -61,17 +75,17 @@ export default function SurveyCreator() {
     e.preventDefault();
     if (loading) return;
 
-    const main_segment = segments.find((segment) => segment.isMainSegment);
+    const main_section = sections.find((section) => section.isMainSection);
 
     // if there are no questions added
-    if (segments.length === 1 && !main_segment?.questions.length)
+    if (sections.length === 1 && !main_section?.questions.length)
       return alert("Add at least one question");
 
     if (!formMetadata.createdBy)
       return alert("Please login to create a survey");
 
-    const questionCount = segments.reduce(
-      (sum, segment) => sum + segment.questions.length,
+    const questionCount = sections.reduce(
+      (sum, section) => sum + section.questions.length,
       0
     );
     const SurveyFormData: ISurvey = {
@@ -79,7 +93,7 @@ export default function SurveyCreator() {
       questionCount,
       expired: false,
       access_url: `${process.env.NEXT_PUBLIC_BASE_URL}/s/${formMetadata.id}`,
-      segments,
+      sections,
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
       startDate: Timestamp.now(),
@@ -95,9 +109,10 @@ export default function SurveyCreator() {
       setLoading(true);
       // Add survey form data to Firestore
       await setDoc(doc(db, "surveys", formMetadata.id), SurveyFormData);
-      alert("Survey created successfully!");
       setLoading(false);
-      resetSurvey();
+
+      // display the survey url
+      setShowAccessURLModal(true);
     } catch (error) {
       setLoading(false);
       console.error("Error adding survey to Firestore: ", error);
@@ -108,15 +123,18 @@ export default function SurveyCreator() {
   return (
     <div className="flex h-screen overflow-hidden bg-white text-black">
       {/* Sidebar */}
-      <Sidebar />
-
+      <Sidebar currentPage="/create" />
+      <AccessURLModal
+        accessUrl={`${process.env.NEXT_PUBLIC_BASE_URL}/s/${formMetadata.id}`}
+        isOpen={showAccessURLModal}
+        onClose={resetSurvey}
+      />
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-y-auto h-screen">
         <div className="max-w-2xl mx-auto p-6 border rounded-lg shadow-md">
           <div className="w-full flex justify-end">
             <SurveySettings
-              allowAnonymousResponses={formMetadata.allowAnonymousResponses}
-              allowMultipleSubmissions={formMetadata.allowMultipleSubmissions}
+              formMetadata={formMetadata}
               onSettingsChange={handleSettingsChanged}
             />
           </div>
@@ -180,90 +198,25 @@ export default function SurveyCreator() {
                 required
               >
                 <option value="">Select the primary aim</option>
-                <option value="product_rating">Product Rating</option>
-                <option value="feedback">General Feedback</option>
-                <option value="complaints">Complaints</option>
-                <option value="other">Other</option>
+                {survey_categories.map(({ title, label }) => (
+                  <option key={title} id={title} value={title}>
+                    {label}
+                  </option>
+                ))}
               </select>
             </div>
 
-            <div>
-              <label
-                htmlFor="surveyType"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Survey Type
-              </label>
-              <div className="flex space-x-4">
-                <div className="flex items-center">
-                  <input
-                    type="radio"
-                    id="normal"
-                    name="type"
-                    value="normal"
-                    checked={formMetadata.type === "normal"}
-                    onChange={handleChange}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
-                    required
-                  />
-                  <label
-                    htmlFor="normal"
-                    className="ml-2 block text-sm font-medium text-gray-700"
-                  >
-                    Normal
-                  </label>
-                </div>
-
-                <div className="flex items-center">
-                  <input
-                    type="radio"
-                    id="interactive"
-                    name="type"
-                    value="interactive"
-                    checked={formMetadata.type === "interactive"}
-                    onChange={handleChange}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
-                    required
-                  />
-                  <label
-                    htmlFor="interactive"
-                    className="ml-2 block text-sm font-medium text-gray-700"
-                  >
-                    Interactive
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <label
-                htmlFor="successMessage"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Success Message (Optional)
-              </label>
-              <input
-                type="text"
-                id="successMessage"
-                name="successMessage"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-transparent"
-                placeholder="Enter a custom message to display after the response has been recorded"
-                value={formMetadata.successMessage || ""}
-                onChange={handleChange}
-              />
-            </div>
-
-            {/* render the questions for the main segment */}
+            {/* render the questions for the main section */}
             <div>
               <div className="sticky top-0 backdrop-blur-md">
                 <AddQuestionModal
                   onAddQuestion={addQuestion}
-                  segment_id="main_segment"
+                  section_id="main_section"
                 />
               </div>
               <CreateSurveyQuestionEditor
-                segment={
-                  segments.find((segment) => segment.isMainSegment) || null
+                section={
+                  sections.find((section) => section.isMainSection) || null
                 }
               />
             </div>
@@ -271,17 +224,17 @@ export default function SurveyCreator() {
             <button
               type="button"
               className="w-min whitespace-nowrap flex items-center gap-2 border border-gray-400 rounded-3xl py-1 px-2 text-sm cursor-pointer hover:scale-105 duration-200"
-              onClick={addSegment}
+              onClick={addSection}
               disabled={loading}
             >
               <AddIcon />
-              Add Segment
+              Add Section
             </button>
 
-            {segments
-              .filter((segment) => !segment.isMainSegment)
-              .map((segment) => (
-                <SegmentCreate key={segment.id} segment={segment} />
+            {sections
+              .filter((section) => !section.isMainSection)
+              .map((section) => (
+                <SectionCreate key={section.id} section={section} />
               ))}
 
             <button
