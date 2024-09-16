@@ -66,7 +66,7 @@ export default function Countdown() {
             Get ready for an AI-powered survey platform that keeps your users
             interactively engaged throughout the survey process.
           </p>
-          <div className="flex justify-center space-x-4 sm:space-x-8 mb-12">
+          {/* <div className="flex justify-center space-x-4 sm:space-x-8 mb-12">
             {Object.entries(timeLeft).map(([unit, value]) => (
               <div key={unit} className="flex flex-col items-center">
                 <span className="text-4xl sm:text-5xl font-bold text-purple-600">
@@ -75,7 +75,7 @@ export default function Countdown() {
                 <span className="text-gray-500 capitalize">{unit}</span>
               </div>
             ))}
-          </div>
+          </div> */}
 
           <form
             onSubmit={handleSubmit}
