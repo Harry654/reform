@@ -5,7 +5,14 @@ import TabNavigation from "./TabNavigation";
 import SurveyEditView from "./SurveyEditView";
 import ResponsesView from "./ResponsesView";
 import { TSurveyResponse } from "@/types/response";
-import { collection, query, where, onSnapshot } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  onSnapshot,
+  getDoc,
+  doc,
+} from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import { ISurvey } from "@/types/survey";
 import { useParams } from "next/navigation";
@@ -15,19 +22,44 @@ export type TQuestionResponse = {
   answer: string;
 };
 
-// Mock function to fetch survey data
-const fetchSurveyData = async (id: string): Promise<ISurvey> => {
-  // Replace this with actual API call
-  return {
-    id,
-    title: "Sample Survey",
-    description: "This is a sample survey description.",
-    category: "feedback",
-    // ... other survey properties
-  };
+const fetchSurveyData = async (id: string): Promise<ISurvey | null> => {
+  const docRef = doc(db, "surveys", id); // Reference to the survey document
+  const docSnap = await getDoc(docRef);
+
+  if (docSnap.exists()) {
+    const data = docSnap.data();
+
+    const survey: ISurvey = {
+      id: docSnap.id,
+      title: data.title,
+      description: data.description,
+      category: data.category,
+      createdBy: data.createdBy,
+      type: data.type,
+      allowMultipleSubmissions: data.allowMultipleSubmissions,
+      allowAnonymousResponses: data.allowAnonymousResponses,
+      successMessage: data.successMessage,
+      questionCount: data.questionCount,
+      expired: data.expired,
+      access_url: data.access_url,
+      sections: data.sections, // Assuming sections is an array of ISection
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
+      startDate: data.startDate,
+      endDate: data.endDate,
+      status: data.status,
+      visibility: data.visibility,
+      responsesCount: data.responsesCount,
+      maxResponses: data.maxResponses ?? null, // Handle null values
+      tags: data.tags,
+    };
+
+    return survey;
+  } else {
+    // Document doesn't exist
+    return null;
+  }
 };
-
-
 
 const fetchSurveyResponses = (
   surveyId: string,
@@ -68,10 +100,10 @@ const SurveyManagement: React.FC = () => {
   const [responses, setResponses] = useState<TSurveyResponse[]>([]);
 
   useEffect(() => {
-    // Fetch survey data once
-    fetchSurveyData(id).then(setSurvey);
-    
     if (typeof id === "string") {
+      // Fetch survey data once
+      fetchSurveyData(id).then(setSurvey);
+
       // Set up real-time listener for survey responses
       const unsubscribe = fetchSurveyResponses(id, setResponses); // Updates state in real-time
 
