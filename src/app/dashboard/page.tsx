@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useId } from "react";
 import { useRouter } from "next/router";
 import {
   BarChart,
@@ -24,11 +24,27 @@ interface Survey {
 
 // Mock function to fetch surveys (replace with actual API call)
 const fetchSurveys = async (userId: string): Promise<Survey[]> => {
+  console.log(useId);
   // This should be replaced with an actual API call
   return [
-    { id: "1", title: "Customer Satisfaction Survey", createdAt: "2023-06-01", responsesCount: 150 },
-    { id: "2", title: "Employee Engagement Survey", createdAt: "2023-06-15", responsesCount: 75 },
-    { id: "3", title: "Product Feedback Survey", createdAt: "2023-06-30", responsesCount: 200 },
+    {
+      id: "1",
+      title: "Customer Satisfaction Survey",
+      createdAt: "2023-06-01",
+      responsesCount: 150,
+    },
+    {
+      id: "2",
+      title: "Employee Engagement Survey",
+      createdAt: "2023-06-15",
+      responsesCount: 75,
+    },
+    {
+      id: "3",
+      title: "Product Feedback Survey",
+      createdAt: "2023-06-30",
+      responsesCount: 200,
+    },
   ];
 };
 
@@ -44,7 +60,7 @@ export default function Dashboard() {
   useEffect(() => {
     const loadSurveys = async () => {
       // Replace 'user123' with actual user ID from authentication
-      const userSurveys = await fetchSurveys('user123');
+      const userSurveys = await fetchSurveys("user123");
       setSurveys(userSurveys);
     };
 
@@ -60,8 +76,18 @@ export default function Dashboard() {
   ];
 
   const dashboardItems = [
-    { title: "Active Surveys", value: surveys.length.toString(), buttonText: "View All" },
-    { title: "Total Responses", value: surveys.reduce((sum, survey) => sum + survey.responsesCount, 0).toString(), buttonText: "Analyze" },
+    {
+      title: "Active Surveys",
+      value: surveys.length.toString(),
+      buttonText: "View All",
+    },
+    {
+      title: "Total Responses",
+      value: surveys
+        .reduce((sum, survey) => sum + survey.responsesCount, 0)
+        .toString(),
+      buttonText: "Analyze",
+    },
     {
       title: "Real-Time Insights",
       icon: <Activity className="w-16 h-16 text-blue-500" />,
@@ -193,8 +219,12 @@ export default function Dashboard() {
                   onClick={() => router.push(`/survey/${survey.id}`)}
                 >
                   <h3 className="text-lg font-semibold mb-2">{survey.title}</h3>
-                  <p className="text-sm text-gray-600">Created: {new Date(survey.createdAt).toLocaleDateString()}</p>
-                  <p className="text-sm text-gray-600">Responses: {survey.responsesCount}</p>
+                  <p className="text-sm text-gray-600">
+                    Created: {new Date(survey.createdAt).toLocaleDateString()}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    Responses: {survey.responsesCount}
+                  </p>
                 </div>
               ))}
             </div>
