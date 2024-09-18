@@ -9,8 +9,8 @@ export default function Navbar() {
   const { user, logout } = useAuth();
 
   return (
-    <header className="container mx-auto px-4 py-8 text-black">
-      <nav className="flex justify-between items-center">
+    <header className="container mx-auto px-4 h-20 text-black">
+      <nav className="h-full w-full flex justify-between items-center">
         <Link href="/" className="text-3xl font-bold text-blue-600">
           Reform
         </Link>
@@ -55,5 +55,5 @@ export default function Navbar() {
         )}
       </nav>
     </header>
-  );
+  );  
 }

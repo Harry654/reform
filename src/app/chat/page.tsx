@@ -86,6 +86,7 @@ export default function ChatSurvey() {
   };
 
   const getAIResponse = (userInput: string): string => {
+    console.log(userInput);
     // Placeholder for actual AI logic
     const responses = [
       "That's interesting! Can you tell me more about that?",

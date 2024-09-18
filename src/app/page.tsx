@@ -10,8 +10,11 @@ export default function LandingPage() {
     <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white">
       <Navbar />
 
-      <main className="container mx-auto px-4 text-black">
-        <section className="text-center py-20">
+      <main className="container mx-auto  text-black">
+        <section
+          className="flex flex-col justify-center items-center text-center py-20"
+          style={{ minHeight: "calc(100vh - 5rem)" }}
+        >
           <h2 className="text-3xl md:text-5xl font-bold mb-4">
             Revolutionize Your Surveys with AI
           </h2>
@@ -65,7 +68,12 @@ export default function LandingPage() {
                   "Intuitive interface for both creators and respondents.",
               },
             ].map((feature, index) => (
-              <Slide key={index} direction="up" delay={index * 100}>
+              <Slide
+                key={index}
+                direction="up"
+                delay={index * 100}
+                triggerOnce={true}
+              >
                 <div className="border border-gray-200 rounded-lg p-6 text-center shadow-lg">
                   <feature.icon className="h-10 w-10 text-blue-500 mb-4 mx-auto" />
                   <h4 className="text-xl font-bold mb-2">{feature.title}</h4>
@@ -110,7 +118,12 @@ export default function LandingPage() {
                 ],
               },
             ].map((plan, index) => (
-              <Slide key={index} direction="right" delay={index * 100}>
+              <Slide
+                key={index}
+                direction="right"
+                delay={index * 100}
+                triggerOnce={true}
+              >
                 <div
                   key={index}
                   className={`border border-gray-200 rounded-lg p-6 shadow-lg ${
