@@ -139,7 +139,6 @@ export const NormalSurveyResponse: React.FC<NormalSurveyResponseProps> = ({
       responseId: uuidv4(),
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
-      allowAnonymousResponses: false,
       answers: responses,
     };
 
