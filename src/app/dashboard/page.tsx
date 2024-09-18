@@ -24,7 +24,7 @@ interface Survey {
 
 // Mock function to fetch surveys (replace with actual API call)
 const fetchSurveys = async (userId: string): Promise<Survey[]> => {
-  console.log(useId);
+  console.log(userId);
   // This should be replaced with an actual API call
   return [
     {
