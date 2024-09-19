@@ -25,3 +25,17 @@ export type TSurveyResponse = {
   // allowAnonymousResponses: boolean; // Whether the user chose to respond anonymously
   answers: TQuestionResponse[];
 };
+
+export type TChart =
+  | "bar-chart"
+  | "pie-chart"
+  | "donut-chart"
+  | "stacked-bar-chart"
+  | "line-graph"
+  | "heat-map"
+  | "radar-chart"
+  | "word-cloud"
+  | "bubble-chart"
+  | "histogram"
+  | "gauge-chart"
+  | "likert-scale-chart";
