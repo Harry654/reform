@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import BarChart from "@/components/response_display/BarChart";
 import PieChart from "@/components/response_display/PieChart";
 import DonutChart from "@/components/response_display/DonutChart";
-import StackedBarChart from "@/components/response_display/StackedBarChart";
+// import StackedBarChart from "@/components/response_display/StackedBarChart";
 import LineGraph from "@/components/response_display/LineGraph";
 import HeatMap from "@/components/response_display/HeatMap";
 import RadarChart from "@/components/response_display/RadarChart";

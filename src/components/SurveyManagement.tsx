@@ -16,7 +16,7 @@ import {
 import { db } from "@/lib/firebase/config";
 import { ISurvey } from "@/types/survey";
 import { useParams } from "next/navigation";
-import { Question, QuestionType } from "@/types/question";
+import { Question } from "@/types/question";
 
 const SurveyManagement: React.FC = () => {
   const { id } = useParams();
