@@ -116,7 +116,8 @@ const ResponsesView: React.FC<ResponsesViewProps> = ({ questions }) => {
       case "donut-chart":
         return <DonutChart data={chartData} />;
       case "stacked-bar-chart":
-        return <StackedBarChart data={chartData} keys={Object.keys(data)} />;
+        return null;
+      // <StackedBarChart data={chartData} keys={Object.keys(data)} />;
       case "line-graph":
         return <LineGraph data={chartData} />;
       case "heat-map":
@@ -130,7 +131,11 @@ const ResponsesView: React.FC<ResponsesViewProps> = ({ questions }) => {
         }));
         return <WordCloud words={wordData} />;
       case "histogram":
-        return <Histogram data={chartData} />;
+        const histogramData = chartData.map(({ name, value }) => ({
+          bin: name,
+          frequency: value,
+        }));
+        return <Histogram data={histogramData} />;
       case "gauge-chart":
         // You'll need to calculate an average or aggregate value for gauge charts
         const totalResponses = chartData.reduce(
