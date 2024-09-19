@@ -1,12 +1,21 @@
-import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import React from "react";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 
 interface StackedBarChartProps {
-  data: Array<{ name: string; [key: string]: number }>;
+  data: Array<{ name: string } & { [key: string]: number }>;
   keys: string[];
 }
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
+const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8"];
 
 const StackedBarChart: React.FC<StackedBarChartProps> = ({ data, keys }) => {
   return (
@@ -18,7 +27,12 @@ const StackedBarChart: React.FC<StackedBarChartProps> = ({ data, keys }) => {
         <Tooltip />
         <Legend />
         {keys.map((key, index) => (
-          <Bar key={key} dataKey={key} stackId="a" fill={COLORS[index % COLORS.length]} />
+          <Bar
+            key={key}
+            dataKey={key}
+            stackId="a"
+            fill={COLORS[index % COLORS.length]}
+          />
         ))}
       </BarChart>
     </ResponsiveContainer>
