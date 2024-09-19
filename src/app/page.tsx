@@ -4,13 +4,20 @@ import Navbar from "@/components/NavBar";
 import { CheckCircle, MessageCircle, BarChart2, Users } from "lucide-react";
 import Link from "next/link";
 import { Slide } from "react-awesome-reveal";
+import { ReactTyped } from "react-typed";
 
 export default function LandingPage() {
+  const typedStrings = [
+    "Engage your audience with adaptive, chat-based surveys powered by artificial intelligence.",
+    "Create personalized survey experiences with AI-driven conversations.",
+    "Gather deeper insights through intelligent, interactive questionnaires.",
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white">
       <Navbar />
 
-      <main className="container mx-auto  text-black">
+      <main className="container mx-auto text-black">
         <section
           className="flex flex-col justify-center items-center text-center py-20"
           style={{ minHeight: "calc(100vh - 5rem)" }}
@@ -18,10 +25,17 @@ export default function LandingPage() {
           <h2 className="text-3xl md:text-5xl font-bold mb-4">
             Revolutionize Your Surveys with AI
           </h2>
-          <p className="text-lg md:text-xl mb-8">
-            Engage your audience with adaptive, chat-based surveys powered by
-            artificial intelligence.
-          </p>
+          <div className="h-20 md:h-16">
+            {/* Fixed height container for the typing effect */}
+            <ReactTyped
+              strings={typedStrings}
+              typeSpeed={50}
+              backSpeed={10}
+              backDelay={1000}
+              loop
+              className="text-lg md:text-xl mb-8 inline-block"
+            />
+          </div>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link
               href="/create"
@@ -125,7 +139,6 @@ export default function LandingPage() {
                 triggerOnce={true}
               >
                 <div
-                  key={index}
                   className={`border border-gray-200 rounded-lg p-6 shadow-lg ${
                     index === 1 ? "border-blue-500" : ""
                   } text-black`}

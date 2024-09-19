@@ -197,7 +197,8 @@ export const NormalSurveyResponse: React.FC<NormalSurveyResponseProps> = ({
               <></>
             )
           )}
-        {!currentSection?.isMainSection && (
+      <div className="w-min p-6 whitespace-nowrap ms-auto">
+      {!currentSection?.isMainSection && (
           <button
             type="button"
             className={`bg-transparent hover:bg-gray-400 text-black font-bold py-2 px-4 ms-auto mt-5 rounded focus:outline-none focus:shadow-outline border mr-2`}
@@ -228,6 +229,7 @@ export const NormalSurveyResponse: React.FC<NormalSurveyResponseProps> = ({
             Next
           </button>
         )}
+      </div>
       </form>
     </>
   );
