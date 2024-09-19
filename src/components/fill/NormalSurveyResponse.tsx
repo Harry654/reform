@@ -14,6 +14,7 @@ import { BeatLoader } from "react-spinners";
 import SectionFill from "./SectionFill";
 import { Question } from "@/types/question";
 import Navbar from "../NavBar";
+import FullPageLoader from "../FullPageLoader";
 interface NormalSurveyResponseProps {
   surveyData: ISurvey;
 }
@@ -172,7 +173,7 @@ export const NormalSurveyResponse: React.FC<NormalSurveyResponseProps> = ({
     }
   };
 
-  if (!survey) return <div>Loading survey...</div>;
+  if (!survey) return <FullPageLoader />;
 
   return (
     <>
@@ -197,39 +198,39 @@ export const NormalSurveyResponse: React.FC<NormalSurveyResponseProps> = ({
               <></>
             )
           )}
-      <div className="w-min p-6 whitespace-nowrap ms-auto">
-      {!currentSection?.isMainSection && (
-          <button
-            type="button"
-            className={`bg-transparent hover:bg-gray-400 text-black font-bold py-2 px-4 ms-auto mt-5 rounded focus:outline-none focus:shadow-outline border mr-2`}
-            onClick={handlePrevSection}
-          >
-            Back
-          </button>
-        )}
+        <div className="w-min p-6 whitespace-nowrap ms-auto">
+          {!currentSection?.isMainSection && (
+            <button
+              type="button"
+              className={`bg-transparent hover:bg-gray-400 text-black font-bold py-2 px-4 ms-auto mt-5 rounded focus:outline-none focus:shadow-outline border mr-2`}
+              onClick={handlePrevSection}
+            >
+              Back
+            </button>
+          )}
 
-        {getSectionIndex(currentSection?.id || "") ===
-        survey.sections.length - 1 ? (
-          <button
-            type="button"
-            className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ms-auto mt-5 rounded focus:outline-none focus:shadow-outline ${
-              loading && "opacity-20"
-            }`}
-            disabled={loading}
-            onClick={handleSubmit}
-          >
-            {!loading ? "Submit" : <BeatLoader size={10} color="#fff" />}
-          </button>
-        ) : (
-          <button
-            type="button"
-            className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ms-auto mt-5 rounded focus:outline-none focus:shadow-outline `}
-            onClick={handleNextSection}
-          >
-            Next
-          </button>
-        )}
-      </div>
+          {getSectionIndex(currentSection?.id || "") ===
+          survey.sections.length - 1 ? (
+            <button
+              type="button"
+              className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ms-auto mt-5 rounded focus:outline-none focus:shadow-outline ${
+                loading && "opacity-20"
+              }`}
+              disabled={loading}
+              onClick={handleSubmit}
+            >
+              {!loading ? "Submit" : <BeatLoader size={10} color="#fff" />}
+            </button>
+          ) : (
+            <button
+              type="button"
+              className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ms-auto mt-5 rounded focus:outline-none focus:shadow-outline `}
+              onClick={handleNextSection}
+            >
+              Next
+            </button>
+          )}
+        </div>
       </form>
     </>
   );

@@ -12,6 +12,7 @@ import GaugeChart from "@/components/response_display/GaugeChart";
 import { responseVisualizations } from "@/constants/responseVisualizations";
 import { TQuestionResponse } from "@/types/response";
 import { BaseQuestion } from "@/types/question";
+import { surveyQuestions } from "@/constants/question_types";
 
 export type ChartQuestion = BaseQuestion & { responses: TQuestionResponse[] };
 
@@ -110,7 +111,7 @@ const ResponsesView: React.FC<ResponsesViewProps> = ({ questions }) => {
 
     switch (chartType) {
       case "bar-chart":
-        return <BarChart data={chartData} />;
+        return <BarChart data={chartData} yAxisLabel="Number of Respondents" />;
       case "pie-chart":
         return <PieChart data={chartData} />;
       case "donut-chart":
@@ -164,7 +165,11 @@ const ResponsesView: React.FC<ResponsesViewProps> = ({ questions }) => {
             <h2 className="text-xl font-bold mb-2">{question.text}</h2>
             <div className="flex justify-between items-center mb-4">
               <p className="text-sm text-gray-500">
-                Question Type: {question.type}
+                Type:{" "}
+                {
+                  surveyQuestions.find(({ type }) => type === question.type)
+                    ?.label
+                }
               </p>
               <select
                 value={currentChartType}

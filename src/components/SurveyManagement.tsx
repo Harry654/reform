@@ -17,6 +17,8 @@ import { db } from "@/lib/firebase/config";
 import { ISurvey } from "@/types/survey";
 import { useParams } from "next/navigation";
 import { Question } from "@/types/question";
+import FullPageLoader from "./FullPageLoader";
+import Navbar from "./NavBar";
 
 const SurveyManagement: React.FC = () => {
   const { id } = useParams();
@@ -97,6 +99,7 @@ const SurveyManagement: React.FC = () => {
         (section) => section.questions
       );
 
+      //   merge each question with its responses
       const chart_questions: ChartQuestion[] = all_questions.map(
         ({ id, type, text, required, section_id }) => ({
           id,
@@ -143,23 +146,28 @@ const SurveyManagement: React.FC = () => {
   };
 
   if (!survey) {
-    return <div>Loading...</div>;
+    return <FullPageLoader />;
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">{survey.title}</h1>
-      <TabNavigation
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        responseCount={responses.length}
-      />
-      <div className="mt-6">
-        {activeTab === "survey" ? (
-          <SurveyEditView survey={survey} onSave={handleSaveSurvey} />
-        ) : (
-          <ResponsesView questions={chartQuestions} />
-        )}
+    <div className="min-h-screen bg-[#FFFFFF]">
+      <Navbar />
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-6">
+          {survey.title}
+        </h1>
+        <TabNavigation
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          responseCount={responses.length}
+        />
+        <div className="mt-6">
+          {activeTab === "survey" ? (
+            <SurveyEditView survey={survey} onSave={handleSaveSurvey} />
+          ) : (
+            <ResponsesView questions={chartQuestions} />
+          )}
+        </div>
       </div>
     </div>
   );

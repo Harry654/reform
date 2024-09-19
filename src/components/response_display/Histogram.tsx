@@ -13,7 +13,7 @@ const Histogram: React.FC<HistogramProps> = ({ data }) => {
         <XAxis dataKey="bin" />
         <YAxis />
         <Tooltip />
-        <Bar dataKey="frequency" fill="#8884d8" />
+        <Bar dataKey="frequency" fill="#544a47" />
       </BarChart>
     </ResponsiveContainer>
   );

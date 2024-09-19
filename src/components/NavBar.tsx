@@ -44,9 +44,9 @@ export default function Navbar() {
   const toggleDropdown = () => setShowDropdown(!showDropdown);
 
   return (
-    <header className="container mx-auto px-4 h-20 text-black relative z-50">
-      <nav className="h-full w-full flex justify-between items-center">
-        <Link href="/" className="text-3xl font-bold text-blue-600">
+    <header className="h-20 text-black bg-[#0052CC] z-50 sticky top-0">
+      <nav className="container mx-auto h-full w-full flex justify-between items-center">
+        <Link href="/" className="text-3xl font-bold text-white">
           Reform
         </Link>
 
@@ -58,7 +58,7 @@ export default function Navbar() {
                 onClick={toggleDropdown}
                 className="flex items-center space-x-2 focus:outline-none"
               >
-                <span className="text-sm font-medium text-gray-700">
+                <span className="text-sm font-medium text-white">
                   {`${user.firstName} ${user.lastName}`}
                 </span>
                 <Image
