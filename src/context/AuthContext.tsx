@@ -5,6 +5,7 @@ import React, {
   useEffect,
   useState,
   ReactNode,
+  Suspense,
 } from "react";
 import { onAuthStateChanged, signOut, User } from "firebase/auth";
 import { auth, db } from "@/lib/firebase/config";
@@ -76,7 +77,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <AuthContext.Provider value={{ user, setUser, loading, logout }}>
-      {!loading ? children : <FullPageLoader />}
+      <Suspense fallback={<FullPageLoader />}>
+        {!loading ? children : <FullPageLoader />}
+      </Suspense>
     </AuthContext.Provider>
   );
 };
