@@ -123,7 +123,7 @@ export default function Navbar() {
             <div>
               <Link
                 href={loginUrl}
-                className="mr-2 px-4 py-2 bg-transparent border border-blue-600 text-blue-600 rounded-md hover:bg-blue-100"
+                className="mr-2 px-4 py-2 border border-blue-600 text-blue-600 rounded-md bg-blue-100"
               >
                 Log In
               </Link>

@@ -2,13 +2,13 @@ import { TPricingPlan } from "@/types/pricing";
 
 export const pricingPlans: TPricingPlan[] = [
   {
-    title: "Basic",
+    title: "basic",
     priceLabel: "₦2000/mo",
     price: 2000,
     features: ["100 survey responses/mo", "Basic AI features", "Email support"],
   },
   {
-    title: "Pro",
+    title: "pro",
     priceLabel: "₦3500/mo",
     price: 3500,
     features: [
@@ -18,7 +18,7 @@ export const pricingPlans: TPricingPlan[] = [
     ],
   },
   {
-    title: "Enterprise",
+    title: "enterprise",
     priceLabel: "₦5000/mo",
     price: 5000,
     features: [

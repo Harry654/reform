@@ -12,6 +12,8 @@ interface SurveyResponseContextType {
   updateResponse: (question: Question, answer: TAnswer) => void;
   skippedQuestion: Question | null;
   setSkippedQuestion: React.Dispatch<React.SetStateAction<Question | null>>;
+  surveySubmitted: boolean;
+  setSurveySubmitted: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const SurveyResponseContext = createContext<
@@ -24,6 +26,7 @@ export const SurveyResponseProvider: React.FC<{ children: ReactNode }> = ({
   const [survey, setSurvey] = useState<ISurvey | null>(null);
   const [responses, setSurveyResponses] = useState<TQuestionResponse[]>([]);
   const [skippedQuestion, setSkippedQuestion] = useState<Question | null>(null);
+  const [surveySubmitted, setSurveySubmitted] = useState<boolean>(false);
 
   const updateResponse = (question: Question, answer: TAnswer) => {
     setSkippedQuestion(null);
@@ -53,6 +56,8 @@ export const SurveyResponseProvider: React.FC<{ children: ReactNode }> = ({
         updateResponse,
         skippedQuestion,
         setSkippedQuestion,
+        surveySubmitted,
+        setSurveySubmitted,
       }}
     >
       {children}

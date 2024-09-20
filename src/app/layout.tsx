@@ -4,6 +4,8 @@ import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import { CreateSurveyProvider } from "@/context/CreateSurveyContext";
 import { SurveyResponseProvider } from "@/context/SurveyResponseContext";
+import { useEffect } from "react";
+import SubscriptionWrapper from "@/wrappers/SubscriptionWrapper";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -33,9 +35,11 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AuthProvider>
-          <CreateSurveyProvider>
-            <SurveyResponseProvider>{children}</SurveyResponseProvider>
-          </CreateSurveyProvider>
+          <SubscriptionWrapper>
+            <CreateSurveyProvider>
+              <SurveyResponseProvider>{children}</SurveyResponseProvider>
+            </CreateSurveyProvider>
+          </SubscriptionWrapper>
         </AuthProvider>
       </body>
     </html>

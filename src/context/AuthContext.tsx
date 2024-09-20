@@ -11,6 +11,8 @@ import { auth, db } from "@/lib/firebase/config";
 import { TFirestoreUser } from "@/types/user";
 import { doc, getDoc } from "firebase/firestore";
 import FullPageLoader from "@/components/FullPageLoader";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { isRouteProtected } from "@/constants/protectedRoutes";
 
 // Define the shape of your context
 interface AuthContextType {
@@ -27,6 +29,21 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<TFirestoreUser | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const router = useRouter();
+
+  const pathname = usePathname(); // Get the current path, e.g., "/dashboard"
+  const searchParams = useSearchParams(); // Get the current query parameters
+
+  // Construct query parameters string
+  const params = new URLSearchParams(searchParams);
+
+  // Build the redirect URL: path + query params
+  const redirect_url = `${pathname}?${params.toString()}`;
+
+  // Construct the login URL with the redirect_url
+  const loginUrl = `/auth/login?redirect_url=${encodeURIComponent(
+    redirect_url
+  )}&${params.toString()}`;
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(
@@ -40,11 +57,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           if (userDoc.exists()) {
             setUser(userDoc.data() as TFirestoreUser); // Cast to FirestoreUser type
           } else {
-            console.error("No such user document!");
             setUser(null);
+            if (isRouteProtected(pathname)) router.push(loginUrl);
           }
         } else {
           setUser(null);
+          if (isRouteProtected(pathname)) router.push(loginUrl);
         }
 
         setLoading(false);
@@ -54,9 +72,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => unsubscribe();
   }, []);
 
-  const logout = () => {
-    signOut(auth);
-  };
+  const logout = () => signOut(auth);
 
   return (
     <AuthContext.Provider value={{ user, setUser, loading, logout }}>

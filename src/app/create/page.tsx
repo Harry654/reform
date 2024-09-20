@@ -16,6 +16,7 @@ import { useSearchParams } from "next/navigation";
 import { templates } from "@/constants/template_data";
 import { survey_categories } from "@/constants/survey_categories";
 import AccessURLModal from "@/components/AccessURLModal";
+import FullPageLoader from "@/components/FullPageLoader";
 
 export default function SurveyCreator() {
   const { user } = useAuth();
@@ -119,6 +120,8 @@ export default function SurveyCreator() {
       alert("There was an error submitting the survey. Please try again.");
     }
   };
+
+  if (!user) return <FullPageLoader />;
 
   return (
     <div className="flex h-screen overflow-hidden bg-white text-black">

@@ -15,7 +15,6 @@ import SectionFill from "./SectionFill";
 import { Question } from "@/types/question";
 import Navbar from "../layout/NavBar";
 import FullPageLoader from "../FullPageLoader";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 interface NormalSurveyResponseProps {
   surveyData: ISurvey;
@@ -24,29 +23,18 @@ interface NormalSurveyResponseProps {
 export const NormalSurveyResponse: React.FC<NormalSurveyResponseProps> = ({
   surveyData,
 }) => {
-  const { survey, setSurvey, responses, setSkippedQuestion } = useSurvey();
+  const {
+    survey,
+    setSurvey,
+    responses,
+    setSkippedQuestion,
+    setSurveySubmitted,
+  } = useSurvey();
   const { user } = useAuth();
-  const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
   const [currentSection, setCurrentSection] = useState<ISection | null>(null);
 
-  const pathname = usePathname(); // Get the current path, e.g., "/dashboard"
-  const searchParams = useSearchParams(); // Get the current query parameters
-
-  // Construct query parameters string
-  const params = new URLSearchParams(searchParams);
-
-  // Build the redirect URL: path + query params
-  const redirect_url = `${pathname}?${params.toString()}`;
-
-  // Construct the login URL with the redirect_url
-  const loginUrl = `/auth/login?redirect_url=${encodeURIComponent(
-    redirect_url
-  )}&${params.toString()}`;
-
   useEffect(() => {
-    if (!surveyData.allowAnonymousResponses && !user)
-      return router.push(loginUrl);
     setSurvey(surveyData);
   }, [surveyData, setSurvey, user]);
 
@@ -184,7 +172,7 @@ export const NormalSurveyResponse: React.FC<NormalSurveyResponseProps> = ({
       // Commit the batch
       await batch.commit();
 
-      alert(survey?.successMessage);
+      setSurveySubmitted(true);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -213,9 +201,9 @@ export const NormalSurveyResponse: React.FC<NormalSurveyResponseProps> = ({
         )}
         {survey.sections
           .filter((section) => !section.isMainSection)
-          .map((section) =>
+          .map((section, index) =>
             currentSection?.id === section.id ? (
-              <SectionFill key={section.id} section={section} />
+              <SectionFill key={index} section={section} />
             ) : (
               <></>
             )

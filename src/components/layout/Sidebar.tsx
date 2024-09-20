@@ -36,28 +36,33 @@ const Sidebar: React.FC<Props> = ({ currentPage }) => {
     <aside
       className={`${
         isSidebarOpen ? "w-64" : "w-20"
-      } flex flex-col justify-between bg-gray-200 text-gray-900 transition-all duration-300 ease-in-out overflow-y-auto h-screen`}
+      } flex flex-col justify-between bg-[#121211] text-gray-900 transition-all duration-300 ease-in-out overflow-y-auto h-screen`}
     >
       <div>
         {/* Sidebar Header */}
-        <div className="p-4 flex flex-col items-center">
-          <h2 className={`text-2xl font-bold ${isSidebarOpen ? "" : "hidden"}`}>
+        <div className="p-4 flex justify-between items-center">
+          <h2
+            className={`text-2xl text-white mr-auto font-bold ${
+              isSidebarOpen ? "" : "hidden"
+            }`}
+          >
             Reform
           </h2>
           <button
-            className="mt-4 p-2 rounded-full hover:bg-gray-300"
+            className="p-2 rounded-full hover:bg-gray-900"
             onClick={toggleSidebar}
           >
             <ChevronDown
               className={`h-6 w-6 transition-transform ${
                 isSidebarOpen ? "rotate-0" : "-rotate-90"
               }`}
+              color="#ffffff"
             />
           </button>
         </div>
 
         {/* Sidebar Navigation */}
-        <nav className="mt-8">
+        <nav className="mt-8 space-y-2">
           {[
             {
               icon: <Home className="h-5 w-5 mr-2" />,
@@ -93,9 +98,11 @@ const Sidebar: React.FC<Props> = ({ currentPage }) => {
             <Link
               key={index}
               href={item.route}
-              className={`w-full flex items-center px-4 py-2 text-left hover:bg-gray-300 hover:text-black transition-colors mb-2 capitalize ${
-                item.route === currentPage ? "bg-gray-300 text-black" : ""
-              }`}
+              className={`w-11/12 flex items-center px-4 py-2 text-left hover:ps-8 duration-500 capitalize ${
+                item.route === currentPage
+                  ? "font-bold text-white"
+                  : "text-slate-400"
+              } ${isSidebarOpen ? "justify-start" : "justify-center"} mx-auto`}
             >
               {item.icon}
               {isSidebarOpen && <span>{item.label}</span>}
