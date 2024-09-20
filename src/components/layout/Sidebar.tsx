@@ -66,7 +66,7 @@ const Sidebar: React.FC<Props> = ({ currentPage }) => {
             },
             {
               icon: <FileText className="h-5 w-5 mr-2" />,
-              label: "create a survey",
+              label: "new survey",
               route: "/create",
             },
             {

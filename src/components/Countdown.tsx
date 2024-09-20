@@ -1,4 +1,5 @@
 "use client";
+
 import { addToBrevo } from "@/helpers/addToBrevo";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -23,18 +24,19 @@ export default function Countdown() {
       const now = new Date().getTime();
       const difference = launchDate - now;
 
-      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-      const hours = Math.floor(
-        (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-      );
-      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-
-      setTimeLeft({ days, hours, minutes, seconds });
-
       if (difference < 0) {
         clearInterval(timer);
         setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+      } else {
+        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+        const hours = Math.floor(
+          (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        );
+        const minutes = Math.floor(
+          (difference % (1000 * 60 * 60)) / (1000 * 60)
+        );
+        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+        setTimeLeft({ days, hours, minutes, seconds });
       }
     }, 1000);
 
@@ -44,19 +46,22 @@ export default function Countdown() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+
     const success = await addToBrevo(email);
+
     if (success) {
       toast.success("Successfully added to waitlist!");
     } else {
       toast.error("Failed to save email.");
     }
+
     setLoading(false);
     setEmail("");
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-600 to-blue-500 flex flex-col justify-center items-center p-4">
-      <ToastContainer /> {/* Toast container for notifications */}
+      <ToastContainer />
       <div className="max-w-4xl w-full bg-white rounded-lg shadow-2xl overflow-hidden">
         <div className="p-8 sm:p-12">
           <h1 className="text-4xl sm:text-5xl font-bold text-center text-gray-800 mb-4">
@@ -66,6 +71,9 @@ export default function Countdown() {
             Get ready for an AI-powered survey platform that keeps your users
             interactively engaged throughout the survey process.
           </p>
+
+          {/* Countdown Timer Section */}
+          {/* Uncomment below if you want to display the timer */}
           <div className="flex justify-center space-x-4 sm:space-x-8 mb-12">
             {Object.entries(timeLeft).map(([unit, value]) => (
               <div key={unit} className="flex flex-col items-center">
@@ -88,17 +96,17 @@ export default function Countdown() {
               onChange={(e) => setEmail(e.target.value)}
               className="w-full sm:w-auto px-4 py-2 text-gray-700 bg-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-600"
               required
-              disabled={loading} // Disable input when loading
+              disabled={loading}
             />
             <button
               type="submit"
               className={`w-full sm:w-auto px-6 py-2 text-white bg-purple-600 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-opacity-20 transition duration-300 ${
-                loading ? "opacity-20 cursor-not-allowed" : ""
+                loading ? "opacity-50 cursor-not-allowed" : ""
               }`}
               disabled={loading}
             >
               {loading ? (
-                <span>
+                <span className="flex items-center">
                   <span
                     style={{
                       display: "inline-block",
@@ -112,6 +120,7 @@ export default function Countdown() {
                       verticalAlign: "middle",
                     }}
                   />
+                  Processing...
                   <style jsx>{`
                     @keyframes spin {
                       0% {
@@ -122,7 +131,6 @@ export default function Countdown() {
                       }
                     }
                   `}</style>
-                  Processing...
                 </span>
               ) : (
                 "Notify Me"

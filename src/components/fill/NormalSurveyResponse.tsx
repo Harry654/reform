@@ -13,7 +13,10 @@ import { db } from "@/lib/firebase/config";
 import { BeatLoader } from "react-spinners";
 import SectionFill from "./SectionFill";
 import { Question } from "@/types/question";
-import Navbar from "../NavBar";
+import Navbar from "../layout/NavBar";
+import FullPageLoader from "../FullPageLoader";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+
 interface NormalSurveyResponseProps {
   surveyData: ISurvey;
 }
@@ -23,12 +26,29 @@ export const NormalSurveyResponse: React.FC<NormalSurveyResponseProps> = ({
 }) => {
   const { survey, setSurvey, responses, setSkippedQuestion } = useSurvey();
   const { user } = useAuth();
+  const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
   const [currentSection, setCurrentSection] = useState<ISection | null>(null);
 
+  const pathname = usePathname(); // Get the current path, e.g., "/dashboard"
+  const searchParams = useSearchParams(); // Get the current query parameters
+
+  // Construct query parameters string
+  const params = new URLSearchParams(searchParams);
+
+  // Build the redirect URL: path + query params
+  const redirect_url = `${pathname}?${params.toString()}`;
+
+  // Construct the login URL with the redirect_url
+  const loginUrl = `/auth/login?redirect_url=${encodeURIComponent(
+    redirect_url
+  )}&${params.toString()}`;
+
   useEffect(() => {
+    if (!surveyData.allowAnonymousResponses && !user)
+      return router.push(loginUrl);
     setSurvey(surveyData);
-  }, [surveyData, setSurvey]);
+  }, [surveyData, setSurvey, user]);
 
   useEffect(() => {
     const mainSection: ISection | undefined = surveyData.sections.find(
@@ -135,11 +155,10 @@ export const NormalSurveyResponse: React.FC<NormalSurveyResponseProps> = ({
     // compute the survey response
     const response: TSurveyResponse = {
       surveyId: survey?.id || "",
-      userId: survey.allowAnonymousResponses ? "" : user?.uid || "",
+      userId: survey.allowAnonymousResponses ? null : user?.uid || "",
       responseId: uuidv4(),
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
-      allowAnonymousResponses: false,
       answers: responses,
     };
 
@@ -173,13 +192,16 @@ export const NormalSurveyResponse: React.FC<NormalSurveyResponseProps> = ({
     }
   };
 
-  if (!survey) return <div>Loading survey...</div>;
+  if (!survey) return <FullPageLoader />;
 
   return (
     <>
       <Navbar />
 
-      <form onSubmit={handleSubmitDisabled} className="max-w-2xl mx-auto my-5">
+      <form
+        onSubmit={handleSubmitDisabled}
+        className="max-w-2xl mx-auto my-5 px-6"
+      >
         {currentSection?.isMainSection && (
           <>
             <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md border mt-5">
@@ -198,37 +220,39 @@ export const NormalSurveyResponse: React.FC<NormalSurveyResponseProps> = ({
               <></>
             )
           )}
-        {!currentSection?.isMainSection && (
-          <button
-            type="button"
-            className={`bg-transparent hover:bg-gray-400 text-black font-bold py-2 px-4 ms-auto mt-5 rounded focus:outline-none focus:shadow-outline border mr-2`}
-            onClick={handlePrevSection}
-          >
-            Back
-          </button>
-        )}
+        <div className="w-min py-6 whitespace-nowrap ms-auto">
+          {!currentSection?.isMainSection && (
+            <button
+              type="button"
+              className={`bg-transparent hover:bg-gray-400 text-black font-bold py-2 px-4 ms-auto mt-5 rounded focus:outline-none focus:shadow-outline border mr-2`}
+              onClick={handlePrevSection}
+            >
+              Back
+            </button>
+          )}
 
-        {getSectionIndex(currentSection?.id || "") ===
-        survey.sections.length - 1 ? (
-          <button
-            type="button"
-            className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ms-auto mt-5 rounded focus:outline-none focus:shadow-outline ${
-              loading && "opacity-20"
-            }`}
-            disabled={loading}
-            onClick={handleSubmit}
-          >
-            {!loading ? "Submit" : <BeatLoader size={10} color="#fff" />}
-          </button>
-        ) : (
-          <button
-            type="button"
-            className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ms-auto mt-5 rounded focus:outline-none focus:shadow-outline `}
-            onClick={handleNextSection}
-          >
-            Next
-          </button>
-        )}
+          {getSectionIndex(currentSection?.id || "") ===
+          survey.sections.length - 1 ? (
+            <button
+              type="button"
+              className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ms-auto mt-5 rounded focus:outline-none focus:shadow-outline ${
+                loading && "opacity-20"
+              }`}
+              disabled={loading}
+              onClick={handleSubmit}
+            >
+              {!loading ? "Submit" : <BeatLoader size={10} color="#fff" />}
+            </button>
+          ) : (
+            <button
+              type="button"
+              className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ms-auto mt-5 rounded focus:outline-none focus:shadow-outline `}
+              onClick={handleNextSection}
+            >
+              Next
+            </button>
+          )}
+        </div>
       </form>
     </>
   );

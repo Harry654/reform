@@ -10,6 +10,7 @@ import { onAuthStateChanged, signOut, User } from "firebase/auth";
 import { auth, db } from "@/lib/firebase/config";
 import { TFirestoreUser } from "@/types/user";
 import { doc, getDoc } from "firebase/firestore";
+import FullPageLoader from "@/components/FullPageLoader";
 
 // Define the shape of your context
 interface AuthContextType {
@@ -59,7 +60,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <AuthContext.Provider value={{ user, setUser, loading, logout }}>
-      {!loading && children}
+      {!loading ? children : <FullPageLoader />}
     </AuthContext.Provider>
   );
 };

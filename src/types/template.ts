@@ -4,6 +4,7 @@ export interface ITemplate {
   id: string;
   title: string;
   description: string;
+  isFree: boolean;
   survey_data: {
     title: string;
     description: string;

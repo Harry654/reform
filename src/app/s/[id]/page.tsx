@@ -6,6 +6,7 @@ import { db } from "@/lib/firebase/config";
 import { ISurvey } from "@/types/survey";
 import { NormalSurveyResponse } from "@/components/fill/NormalSurveyResponse";
 import { useParams } from "next/navigation";
+import FullPageLoader from "@/components/FullPageLoader";
 
 const Survey = () => {
   const [surveyData, setSurveyData] = useState<ISurvey | null>(null);
@@ -39,7 +40,7 @@ const Survey = () => {
     }
   }, [id]);
 
-  if (loading) return <p>Loading surveyData...</p>;
+  if (loading) return <FullPageLoader />;
   if (error) return <p>{error}</p>;
 
   return (

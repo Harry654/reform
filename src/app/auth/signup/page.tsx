@@ -9,7 +9,7 @@ import {
 import { auth } from "@/lib/firebase/config";
 import { doc, getDoc, setDoc, Timestamp } from "firebase/firestore"; // Import Firestore methods
 import { db } from "@/lib/firebase/config"; // Import Firestore instance
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation"; // Import useSearchParams
 import { BeatLoader } from "react-spinners";
 import { useAuth } from "@/context/AuthContext";
 import { TFirestoreUser } from "@/types/user";
@@ -25,6 +25,9 @@ export default function SignupPage() {
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
   const { setUser } = useAuth();
+  const searchParams = useSearchParams(); // Get the query params
+
+  const redirectUrl = searchParams.get("redirect_url") || "/"; // Get redirect_url or default to "/"
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -59,7 +62,7 @@ export default function SignupPage() {
         lastName,
         email: user.email,
         createdAt: new Date(),
-        subscriptionPlan: null, // or set to a default plan ID if applicable
+        subscriptionPlan: null,
         subscriptionStartDate: null,
         subscriptionEndDate: null,
         subscriptionStatus: "inactive", // default status
@@ -109,7 +112,7 @@ export default function SignupPage() {
           lastName: user.displayName?.split(" ")[1] || "",
           email: user.email,
           createdAt: Timestamp.now(),
-          subscriptionPlan: null, // or set to a default plan ID if applicable
+          subscriptionPlan: null,
           subscriptionStartDate: null,
           subscriptionEndDate: null,
           subscriptionStatus: "inactive", // default status
@@ -133,7 +136,7 @@ export default function SignupPage() {
     }
   };
 
-  const redirect = () => router.push("/");
+  const redirect = () => router.push(redirectUrl); // Redirect to the URL
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -254,37 +257,29 @@ export default function SignupPage() {
                 className="ml-2 block text-sm text-gray-900"
               >
                 I agree to the{" "}
-                <a
-                  href="/terms"
-                  target="_blank"
-                  className="text-indigo-600 hover:text-indigo-500"
-                >
-                  Terms and Conditions
+                <a href="#" className="text-indigo-600 hover:text-indigo-500">
+                  Terms & Conditions
                 </a>{" "}
                 and{" "}
-                <a
-                  target="_blank"
-                  href="/privacy"
-                  className="text-indigo-600 hover:text-indigo-500"
-                >
+                <a href="#" className="text-indigo-600 hover:text-indigo-500">
                   Privacy Policy
                 </a>
               </label>
             </div>
 
-            {error && <div className="text-red-600 text-sm">{error}</div>}
-
-            <div>
+            {error && <p className="text-red-500">{error}</p>}
+            {loading ? (
+              <div className="flex justify-center">
+                <BeatLoader size={10} color="#4A90E2" />
+              </div>
+            ) : (
               <button
                 type="submit"
-                className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
-                  loading && "opacity-20"
-                }`}
-                disabled={loading}
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
-                {!loading ? "Sign Up" : <BeatLoader size={10} color="#fff" />}
+                Sign up
               </button>
-            </div>
+            )}
           </form>
 
           <div className="mt-6">
@@ -335,7 +330,9 @@ export default function SignupPage() {
               <p className="text-sm text-gray-600">
                 Already have an account?{" "}
                 <a
-                  href="/auth/login"
+                  href={`/auth/login?redirect_url=${encodeURIComponent(
+                    redirectUrl
+                  )}`}
                   className="text-indigo-600 hover:text-indigo-500"
                 >
                   Log in here

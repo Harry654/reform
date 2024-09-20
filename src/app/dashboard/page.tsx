@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import {
   BarChart,
   PieChart,
@@ -12,13 +13,79 @@ import {
   Home,
   ChevronDown,
 } from "lucide-react";
+import Sidebar from "@/components/layout/Sidebar";
+import { useAuth } from "@/context/AuthContext";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { db } from "@/lib/firebase/config";
+import { ISurvey } from "@/types/survey";
+import { formatTimestampDate } from "@/helpers/formatTimestampDate";
+import Link from "next/link";
+
+// Assuming you have a type for Survey
+
+// Mock function to fetch surveys (replace with actual API call)
+const fetchSurveys = async (userId: string): Promise<ISurvey[]> => {
+  try {
+    // Reference to the surveys collection in Firestore
+    const surveysRef = collection(db, "surveys");
+
+    // Query to fetch surveys created by the specific user
+    const q = query(surveysRef, where("createdBy", "==", userId));
+
+    // Execute the query and fetch the documents
+    const querySnapshot = await getDocs(q);
+
+    // Map Firestore documents to the ISurvey type
+    const surveys: ISurvey[] = querySnapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        title: data.title,
+        description: data.description,
+        category: data.category,
+        createdBy: data.createdBy,
+        type: data.type,
+        allowMultipleSubmissions: data.allowMultipleSubmissions,
+        allowAnonymousResponses: data.allowAnonymousResponses,
+        successMessage: data.successMessage,
+        questionCount: data.sections?.length || 0,
+        expired: data.endDate.toMillis() < Date.now(),
+        access_url: data.access_url,
+        sections: data.sections,
+        createdAt: data.createdAt,
+        updatedAt: data.updatedAt,
+        startDate: data.startDate,
+        endDate: data.endDate,
+        status: data.status,
+        visibility: data.visibility,
+        responsesCount: data.responsesCount,
+        maxResponses: data.maxResponses,
+        tags: data.tags || [],
+      };
+    });
+
+    return surveys;
+  } catch (error) {
+    console.error("Error fetching surveys:", error);
+    return [];
+  }
+};
 
 export default function Dashboard() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
-  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+  const [surveys, setSurveys] = useState<ISurvey[]>([]);
+  const router = useRouter();
+  const { user } = useAuth();
 
-  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
-  const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
+  useEffect(() => {
+    if (!user) return;
+    const loadSurveys = async () => {
+      // Replace 'user123' with actual user ID from authentication
+      const userSurveys = await fetchSurveys(user.uid);
+      setSurveys(userSurveys);
+    };
+
+    loadSurveys();
+  }, [user]);
 
   const navItems = [
     { icon: <Home className="h-5 w-5 mr-2" />, label: "Dashboard" },
@@ -29,8 +96,18 @@ export default function Dashboard() {
   ];
 
   const dashboardItems = [
-    { title: "Active Surveys", value: "5", buttonText: "View All" },
-    { title: "Total Responses", value: "1,234", buttonText: "Analyze" },
+    {
+      title: "Active Surveys",
+      value: surveys.length.toString(),
+      buttonText: "View All",
+    },
+    {
+      title: "Total Responses",
+      value: surveys
+        .reduce((sum, survey) => sum + survey.responsesCount, 0)
+        .toString(),
+      buttonText: "Analyze",
+    },
     {
       title: "Real-Time Insights",
       icon: <Activity className="w-16 h-16 text-blue-500" />,
@@ -38,94 +115,10 @@ export default function Dashboard() {
     },
   ];
 
-  const buttonsSectionItems = [
-    { icon: <BarChart className="w-8 h-8 mb-2" />, label: "Data Analysis" },
-    { icon: <PieChart className="w-8 h-8 mb-2" />, label: "Visualizations" },
-    { icon: <Users className="w-8 h-8 mb-2" />, label: "User Sectionation" },
-    { icon: <FileText className="w-8 h-8 mb-2" />, label: "Survey Templates" },
-  ];
-
   return (
     <div className="flex h-screen bg-white text-black">
       {/* Sidebar */}
-      <aside
-        className={`${
-          isSidebarOpen ? "w-64" : "w-20"
-        } flex flex-col justify-between bg-gray-200 text-gray-900 transition-all duration-300 ease-in-out`}
-      >
-        <div>
-          {/* Sidebar Header */}
-          <div className="p-4 flex flex-col items-center">
-            <h2
-              className={`text-2xl font-bold ${isSidebarOpen ? "" : "hidden"}`}
-            >
-              Reform
-            </h2>
-            <button
-              className="mt-4 p-2 rounded-full hover:bg-gray-300"
-              onClick={toggleSidebar}
-            >
-              <ChevronDown
-                className={`h-6 w-6 transition-transform ${
-                  isSidebarOpen ? "rotate-0" : "-rotate-90"
-                }`}
-              />
-            </button>
-          </div>
-
-          {/* Sidebar Navigation */}
-          <nav className="mt-8">
-            {navItems.map((item, index) => (
-              <button
-                key={index}
-                className="w-full flex items-center px-4 py-2 text-left hover:bg-gray-300 hover:text-black transition-colors mb-2"
-              >
-                {item.icon}
-                {isSidebarOpen && <span>{item.label}</span>}
-              </button>
-            ))}
-          </nav>
-        </div>
-
-        {/* Account Button */}
-        <div className="relative p-4">
-          <button
-            className="w-full flex items-center px-4 py-2 text-left hover:bg-gray-300 hover:text-black transition-colors"
-            onClick={toggleDropdown}
-          >
-            <img
-              src="/avatars/01.png"
-              alt="@username"
-              className="h-8 w-8 rounded-full mr-2"
-            />
-            {isSidebarOpen && <span>John Doe</span>}
-          </button>
-
-          {/* Dropdown Menu */}
-          {isDropdownOpen && (
-            <div className="absolute bottom-12 left-0 w-56 bg-white border rounded-lg shadow-lg">
-              <div className="p-4">
-                <p className="text-sm font-medium">John Doe</p>
-                <p className="text-xs text-gray-500">john@example.com</p>
-              </div>
-              <hr />
-              <button className="flex items-center w-full px-4 py-2 text-left hover:bg-gray-300 hover:text-black">
-                <Settings className="mr-2 h-4 w-4" />
-                Account settings
-              </button>
-              <button className="flex items-center w-full px-4 py-2 text-left hover:bg-gray-300 hover:text-black">
-                <Settings className="mr-2 h-4 w-4" />
-                AI settings
-              </button>
-              <hr />
-              <button className="flex items-center w-full px-4 py-2 text-left hover:bg-gray-300 hover:text-black">
-                <LogOut className="mr-2 h-4 w-4" />
-                Log out
-              </button>
-            </div>
-          )}
-        </div>
-      </aside>
+      <Sidebar currentPage="/dashboard" />
 
       {/* Main content */}
       <main className="flex-1 overflow-hidden">
@@ -151,17 +144,26 @@ export default function Dashboard() {
             ))}
           </div>
 
-          {/* Buttons Section */}
-          <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
-            {buttonsSectionItems.map((item, index) => (
-              <button
-                key={index}
-                className="flex flex-col items-center justify-center h-24 px-4 py-2 bg-white border border-gray-200 rounded-md hover:bg-gray-100 hover:text-black"
-              >
-                {item.icon}
-                {item.label}
-              </button>
-            ))}
+          {/* Surveys Section */}
+          <div className="mt-8">
+            <h2 className="text-2xl font-bold mb-4">Your Surveys</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {surveys.map((survey) => (
+                <Link
+                  key={survey.id}
+                  className="border border-gray-200 rounded-lg p-4 cursor-pointer hover:bg-gray-50"
+                  href={`/survey/${survey.id}`}
+                >
+                  <h3 className="text-lg font-semibold mb-2">{survey.title}</h3>
+                  <p className="text-sm text-gray-600">
+                    Created: {formatTimestampDate(survey.createdAt)}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    Responses: {survey.responsesCount}
+                  </p>
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </main>

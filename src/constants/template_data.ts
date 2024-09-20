@@ -6,6 +6,7 @@ export const templates: ITemplate[] = [
     title: "Customer Feedback Survey",
     description:
       "Gather feedback from customers to improve products and services.",
+    isFree: true,
     survey_data: {
       title: "Customer Feedback",
       description:
@@ -89,6 +90,7 @@ export const templates: ITemplate[] = [
     title: "Employee Engagement Survey",
     description:
       "Assess employee satisfaction, motivation, and engagement within the organization.",
+    isFree: false,
     survey_data: {
       title: "Employee Engagement",
       description:
@@ -171,6 +173,7 @@ export const templates: ITemplate[] = [
     title: "Event Feedback Survey",
     description:
       "Gather feedback from attendees about their experience at your event.",
+    isFree: true,
     survey_data: {
       title: "Event Feedback",
       description:
@@ -239,6 +242,7 @@ export const templates: ITemplate[] = [
     id: "f8c7e9d6-3b2a-4f1c-9e5d-1a2b3c4d5e6f",
     title: "Product Launch Feedback Survey",
     description: "Gather feedback on a newly launched product or feature.",
+    isFree: true,
     survey_data: {
       title: "New Product Feedback",
       description:
@@ -313,6 +317,7 @@ export const templates: ITemplate[] = [
     id: "a7b8c9d0-e1f2-3g4h-5i6j-7k8l9m0n1o2",
     title: "Website Usability Survey",
     description: "Evaluate the user experience and usability of a website.",
+    isFree: true,
     survey_data: {
       title: "Website Usability Feedback",
       description:
@@ -393,6 +398,7 @@ export const templates: ITemplate[] = [
     id: "x5y6z7a8-b9c0-d1e2-f3g4-h5i6j7k8l9m0",
     title: "Customer Service Complaint Survey",
     description: "Gather details about customer service issues and complaints.",
+    isFree: true,
     survey_data: {
       title: "Customer Service Complaint Form",
       description:
@@ -468,6 +474,7 @@ export const templates: ITemplate[] = [
     id: "v3w4x5y6-z7a8-b9c0-d1e2-f3g4h5i6j7k8",
     title: "Employee Training Needs Assessment",
     description: "Identify training needs and preferences among employees.",
+    isFree: true,
     survey_data: {
       title: "Employee Training Needs Assessment",
       description:
@@ -550,6 +557,7 @@ export const templates: ITemplate[] = [
     title: "Conference Feedback Survey",
     description:
       "Gather feedback from attendees about various aspects of a conference.",
+    isFree: true,
     survey_data: {
       title: "Conference Feedback",
       description:
@@ -625,6 +633,7 @@ export const templates: ITemplate[] = [
     title: "Restaurant Customer Satisfaction Survey",
     description:
       "Gather feedback from diners about their restaurant experience.",
+    isFree: true,
     survey_data: {
       title: "Dining Experience Feedback",
       description:
@@ -715,6 +724,7 @@ export const templates: ITemplate[] = [
     title: "Product Return Feedback Survey",
     description:
       "Gather information about product returns and customer satisfaction with the return process.",
+    isFree: true,
     survey_data: {
       title: "Product Return Feedback",
       description:
@@ -790,6 +800,7 @@ export const templates: ITemplate[] = [
     title: "Market Feasibility Survey for Startup Product",
     description:
       "Assess market demand and feasibility for a new product or service before development.",
+    isFree: true,
     survey_data: {
       title: "Product Market Feasibility Study",
       description:

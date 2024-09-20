@@ -7,7 +7,7 @@ import {
   GoogleAuthProvider,
 } from "firebase/auth";
 import { auth, db } from "@/lib/firebase/config";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { BeatLoader } from "react-spinners";
 import { doc, getDoc, setDoc, Timestamp } from "firebase/firestore";
 import { useAuth } from "@/context/AuthContext";
@@ -20,6 +20,10 @@ export default function LoginComponent() {
   const [error, setError] = useState("");
   const router = useRouter();
   const { setUser } = useAuth();
+  const searchParams = useSearchParams();
+
+  // Get the redirect_url param or default to '/'
+  const redirectUrl = searchParams.get("redirect_url") || "/";
 
   const handleSignInWithEmailAndPassword = async (
     e: React.FormEvent<HTMLFormElement>
@@ -91,7 +95,7 @@ export default function LoginComponent() {
     }
   };
 
-  const redirect = () => router.push("/landing");
+  const redirect = () => router.push(redirectUrl);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -190,12 +194,14 @@ export default function LoginComponent() {
 
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
-              Don&apos; have an account?{" "}
+              Don't have an account?{" "}
               <a
-                href="/auth/signup"
+                href={`/auth/signup?redirect_url=${encodeURIComponent(
+                  redirectUrl
+                )}`}
                 className="text-indigo-600 hover:text-indigo-500"
               >
-                Sign Up here
+                Sign up
               </a>
             </p>
           </div>
