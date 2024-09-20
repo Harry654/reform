@@ -13,8 +13,10 @@ import { db } from "@/lib/firebase/config";
 import { BeatLoader } from "react-spinners";
 import SectionFill from "./SectionFill";
 import { Question } from "@/types/question";
-import Navbar from "../NavBar";
+import Navbar from "../layout/NavBar";
 import FullPageLoader from "../FullPageLoader";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+
 interface NormalSurveyResponseProps {
   surveyData: ISurvey;
 }
@@ -24,12 +26,29 @@ export const NormalSurveyResponse: React.FC<NormalSurveyResponseProps> = ({
 }) => {
   const { survey, setSurvey, responses, setSkippedQuestion } = useSurvey();
   const { user } = useAuth();
+  const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
   const [currentSection, setCurrentSection] = useState<ISection | null>(null);
 
+  const pathname = usePathname(); // Get the current path, e.g., "/dashboard"
+  const searchParams = useSearchParams(); // Get the current query parameters
+
+  // Construct query parameters string
+  const params = new URLSearchParams(searchParams);
+
+  // Build the redirect URL: path + query params
+  const redirect_url = `${pathname}?${params.toString()}`;
+
+  // Construct the login URL with the redirect_url
+  const loginUrl = `/auth/login?redirect_url=${encodeURIComponent(
+    redirect_url
+  )}&${params.toString()}`;
+
   useEffect(() => {
+    if (!surveyData.allowAnonymousResponses && !user)
+      return router.push(loginUrl);
     setSurvey(surveyData);
-  }, [surveyData, setSurvey]);
+  }, [surveyData, setSurvey, user]);
 
   useEffect(() => {
     const mainSection: ISection | undefined = surveyData.sections.find(
@@ -136,7 +155,7 @@ export const NormalSurveyResponse: React.FC<NormalSurveyResponseProps> = ({
     // compute the survey response
     const response: TSurveyResponse = {
       surveyId: survey?.id || "",
-      userId: survey.allowAnonymousResponses ? "" : user?.uid || "",
+      userId: survey.allowAnonymousResponses ? null : user?.uid || "",
       responseId: uuidv4(),
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
@@ -179,7 +198,10 @@ export const NormalSurveyResponse: React.FC<NormalSurveyResponseProps> = ({
     <>
       <Navbar />
 
-      <form onSubmit={handleSubmitDisabled} className="max-w-2xl mx-auto my-5">
+      <form
+        onSubmit={handleSubmitDisabled}
+        className="max-w-2xl mx-auto my-5 px-6"
+      >
         {currentSection?.isMainSection && (
           <>
             <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md border mt-5">
@@ -198,7 +220,7 @@ export const NormalSurveyResponse: React.FC<NormalSurveyResponseProps> = ({
               <></>
             )
           )}
-        <div className="w-min p-6 whitespace-nowrap ms-auto">
+        <div className="w-min py-6 whitespace-nowrap ms-auto">
           {!currentSection?.isMainSection && (
             <button
               type="button"

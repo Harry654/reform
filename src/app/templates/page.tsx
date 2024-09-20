@@ -6,7 +6,7 @@ import SearchBar from "@/components/SearchBar";
 import TemplateCard from "@/components/TemplateCard";
 import { templates } from "@/constants/template_data";
 import { ITemplate } from "@/types/template";
-import Sidebar from "@/components/Sidebar";
+import Sidebar from "@/components/layout/Sidebar";
 
 const SurveyTemplates: React.FC = () => {
   const [searchResults, setSearchResults] = useState<ITemplate[]>(templates);
@@ -23,18 +23,18 @@ const SurveyTemplates: React.FC = () => {
     setSearchResults(filtered);
   };
 
-//   const handleGenerateTemplate = (prompt: string) => {
-//     // Here you would typically send the prompt to an API to generate a new template
-//     console.log("Generating template with prompt:", prompt);
-//     // For now, we'll just add a dummy template to the list
-//     // const newTemplate: Template = {
-//     //   id: String(templates.length + 1),
-//     //   title: `Custom Template: ${prompt.slice(0, 20)}...`,
-//     //   description: prompt,
-//     //   tags: ["Custom"],
-//     // };
-//     // setSearchResults([newTemplate, ...searchResults]);
-//   };
+  //   const handleGenerateTemplate = (prompt: string) => {
+  //     // Here you would typically send the prompt to an API to generate a new template
+  //     console.log("Generating template with prompt:", prompt);
+  //     // For now, we'll just add a dummy template to the list
+  //     // const newTemplate: Template = {
+  //     //   id: String(templates.length + 1),
+  //     //   title: `Custom Template: ${prompt.slice(0, 20)}...`,
+  //     //   description: prompt,
+  //     //   tags: ["Custom"],
+  //     // };
+  //     // setSearchResults([newTemplate, ...searchResults]);
+  //   };
 
   return (
     <div className="flex h-screen overflow-hidden bg-white text-black">

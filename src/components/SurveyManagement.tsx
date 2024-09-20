@@ -10,33 +10,40 @@ import {
   query,
   where,
   onSnapshot,
-  getDoc,
-  doc,
+  getDocs,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import { ISurvey } from "@/types/survey";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Question } from "@/types/question";
 import FullPageLoader from "./FullPageLoader";
-import Navbar from "./NavBar";
+import Navbar from "./layout/NavBar";
+import { useAuth } from "@/context/AuthContext";
 
 const SurveyManagement: React.FC = () => {
   const { id } = useParams();
+  const { user } = useAuth();
+  const router = useRouter();
 
   const [activeTab, setActiveTab] = useState<"survey" | "responses">("survey");
   const [survey, setSurvey] = useState<ISurvey | null>(null);
   const [responses, setResponses] = useState<TSurveyResponse[]>([]);
   const [chartQuestions, setChartQuestions] = useState<ChartQuestion[]>([]);
 
-  const fetchSurveyData = async (id: string): Promise<ISurvey | null> => {
-    const docRef = doc(db, "surveys", id); // Reference to the survey document
-    const docSnap = await getDoc(docRef);
+  const fetchSurveyData = async (id: string): Promise<ISurvey[]> => {
+    if (!user) return [];
+    const surveysRef = collection(db, "surveys", id);
+    const q = query(surveysRef, where("createdBy", "==", user.uid)); // Query for surveys created by the user
+    const querySnapshot = await getDocs(q);
 
-    if (docSnap.exists()) {
-      const data = docSnap.data();
+    if (querySnapshot.docs.length === 0) router.push("/not-found");
 
+    const surveys: ISurvey[] = [];
+
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
       const survey: ISurvey = {
-        id: docSnap.id,
+        id: doc.id,
         title: data.title,
         description: data.description,
         category: data.category,
@@ -60,11 +67,10 @@ const SurveyManagement: React.FC = () => {
         tags: data.tags,
       };
 
-      return survey;
-    } else {
-      // Document doesn't exist
-      return null;
-    }
+      surveys.push(survey);
+    });
+
+    return surveys;
   };
 
   const fetchSurveyResponses = (
@@ -126,7 +132,7 @@ const SurveyManagement: React.FC = () => {
   useEffect(() => {
     if (typeof id === "string") {
       // Fetch survey data once
-      fetchSurveyData(id).then(setSurvey);
+      fetchSurveyData(id).then((surveys) => setSurvey(surveys[0]));
     }
   }, [id]);
 

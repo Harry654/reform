@@ -1,6 +1,7 @@
 import React from "react";
 import { ITemplate } from "@/types/template";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 interface TemplateCardProps {
   template: ITemplate;
@@ -8,7 +9,15 @@ interface TemplateCardProps {
 
 const TemplateCard: React.FC<TemplateCardProps> = ({ template }) => {
   const router = useRouter();
+  const { user } = useAuth();
 
+  const userCanUseTemplate = () => {
+    if (user?.subscriptionPlan !== "free") return true;
+
+    if (user?.subscriptionPlan === "free" && template.isFree) return true;
+
+    return false;
+  };
   return (
     <div className="bg-white shadow-md rounded-lg overflow-hidden">
       <div className="p-4">
@@ -30,7 +39,7 @@ const TemplateCard: React.FC<TemplateCardProps> = ({ template }) => {
           className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           onClick={() => router.push(`/create?t_id=${template.id}`)}
         >
-          Use Template
+          {userCanUseTemplate() ? "Use Template" : "Upgrade Plan"}
         </button>
       </div>
     </div>

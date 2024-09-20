@@ -18,7 +18,7 @@ export type TQuestionResponse = {
 
 export type TSurveyResponse = {
   surveyId: string; // Reference to the survey
-  userId?: string; // Optional, if the user is authenticated
+  userId: string | null; // Optional, if the user is authenticated
   responseId: string; // Unique ID for this response
   createdAt: Timestamp; // Timestamp when the response was submitted
   updatedAt: Timestamp; // Timestamp for any updates

@@ -7,7 +7,7 @@ import React, { useEffect, useState } from "react";
 import { doc, setDoc, Timestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import { BeatLoader } from "react-spinners";
-import Sidebar from "@/components/Sidebar";
+import Sidebar from "@/components/layout/Sidebar";
 import SectionCreate from "@/components/create/SectionCreate";
 import SurveySettings from "@/components/SurveySettings";
 import AddQuestionModal from "@/components/AddQuestionModal";

@@ -6,6 +6,7 @@ import Link from "next/link";
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { UserIcon, LogOutIcon, MenuIcon, XIcon } from "lucide-react";
+import { usePathname, useSearchParams } from "next/navigation";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -43,9 +44,28 @@ export default function Navbar() {
   const toggleMenu = () => setIsOpen(!isOpen);
   const toggleDropdown = () => setShowDropdown(!showDropdown);
 
+  const pathname = usePathname(); // Get the current path, e.g., "/dashboard"
+  const searchParams = useSearchParams(); // Get the current query parameters
+
+  // Construct query parameters string
+  const params = new URLSearchParams(searchParams);
+
+  // Build the redirect URL: path + query params
+  const redirect_url = `${pathname}?${params.toString()}`;
+
+  // Construct the login URL with the redirect_url
+  const loginUrl = `/auth/login?redirect_url=${encodeURIComponent(
+    redirect_url
+  )}&${params.toString()}`;
+
+  // Construct the signup URL with the redirect_url
+  const signupUrl = `/auth/signup?redirect_url=${encodeURIComponent(
+    redirect_url
+  )}&${params.toString()}`;
+
   return (
-    <header className="h-20 text-black bg-[#0052CC] z-50 sticky top-0">
-      <nav className="container mx-auto h-full w-full flex justify-between items-center">
+    <header className="h-20 text-black bg-blue-600 z-50 sticky top-0">
+      <nav className="container px-4 mx-auto h-full w-full flex justify-between items-center">
         <Link href="/" className="text-3xl font-bold text-white">
           Reform
         </Link>
@@ -102,13 +122,13 @@ export default function Navbar() {
           ) : (
             <div>
               <Link
-                href="/auth/login"
+                href={loginUrl}
                 className="mr-2 px-4 py-2 bg-transparent border border-blue-600 text-blue-600 rounded-md hover:bg-blue-100"
               >
                 Log In
               </Link>
               <Link
-                href="/auth/signup"
+                href={signupUrl}
                 className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
               >
                 Sign Up
@@ -122,7 +142,7 @@ export default function Navbar() {
           <div className="md:hidden">
             <button
               onClick={toggleMenu}
-              className="text-gray-500 hover:text-gray-600 focus:outline-none focus:text-gray-600 z-50 relative"
+              className="text-white hover:text-white focus:outline-none focus:text-white z-50 relative"
               aria-label="toggle menu"
             >
               <MenuIcon className="h-6 w-6" />
@@ -190,14 +210,14 @@ export default function Navbar() {
               ) : (
                 <>
                   <Link
-                    href="/auth/login"
+                    href={loginUrl}
                     className="px-6 py-3 bg-transparent border-2 border-blue-600 text-blue-600 rounded-md text-lg font-medium hover:bg-blue-100"
                     onClick={toggleMenu}
                   >
                     Log In
                   </Link>
                   <Link
-                    href="/auth/signup"
+                    href={signupUrl}
                     className="px-6 py-3 bg-blue-600 text-white rounded-md text-lg font-medium hover:bg-blue-700"
                     onClick={toggleMenu}
                   >

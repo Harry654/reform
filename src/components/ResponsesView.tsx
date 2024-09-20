@@ -190,8 +190,13 @@ const ResponsesView: React.FC<ResponsesViewProps> = ({ questions }) => {
                 ))}
               </select>
             </div>
-            <div className="h-64">
-              {renderChart(question, currentChartType)}
+
+            <div className="h-64 flex items-center justify-center">
+              {question.responses.length ? (
+                renderChart(question, currentChartType)
+              ) : (
+                <p className="italic w-min whitespace-nowrap">No responses yet</p>
+              )}
             </div>
           </div>
         );
