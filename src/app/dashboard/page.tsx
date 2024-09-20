@@ -1,18 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import {
-  BarChart,
-  PieChart,
-  Activity,
-  Users,
-  FileText,
-  Settings,
-  LogOut,
-  Home,
-  ChevronDown,
-} from "lucide-react";
+import { Activity } from "lucide-react";
 import Sidebar from "@/components/layout/Sidebar";
 import { useAuth } from "@/context/AuthContext";
 import { collection, getDocs, query, where } from "firebase/firestore";
@@ -73,7 +62,6 @@ const fetchSurveys = async (userId: string): Promise<ISurvey[]> => {
 
 export default function Dashboard() {
   const [surveys, setSurveys] = useState<ISurvey[]>([]);
-  const router = useRouter();
   const { user } = useAuth();
 
   useEffect(() => {
@@ -86,14 +74,6 @@ export default function Dashboard() {
 
     loadSurveys();
   }, [user]);
-
-  const navItems = [
-    { icon: <Home className="h-5 w-5 mr-2" />, label: "Dashboard" },
-    { icon: <FileText className="h-5 w-5 mr-2" />, label: "Surveys" },
-    { icon: <Users className="h-5 w-5 mr-2" />, label: "Audience" },
-    { icon: <BarChart className="h-5 w-5 mr-2" />, label: "Analytics" },
-    { icon: <Settings className="h-5 w-5 mr-2" />, label: "Settings" },
-  ];
 
   const dashboardItems = [
     {

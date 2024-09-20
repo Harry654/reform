@@ -4,7 +4,6 @@ import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import { CreateSurveyProvider } from "@/context/CreateSurveyContext";
 import { SurveyResponseProvider } from "@/context/SurveyResponseContext";
-import { useEffect } from "react";
 import SubscriptionWrapper from "@/wrappers/SubscriptionWrapper";
 
 const geistSans = localFont({

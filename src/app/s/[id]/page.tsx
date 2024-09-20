@@ -21,7 +21,6 @@ import {
 import FullPageLoader from "@/components/FullPageLoader";
 import { InteractiveSurveyResponse } from "@/components/fill/InteractiveSurveyResponse";
 import { useAuth } from "@/context/AuthContext";
-import Link from "next/link";
 import { useSurvey } from "@/context/SurveyResponseContext";
 import AuthenticationRequired from "@/components/AuthenticationRequired";
 import FormSubmissionSuccess from "@/components/FormSubmissionSuccess";
