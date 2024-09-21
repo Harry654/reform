@@ -5,7 +5,7 @@ import { TPlan } from "@/types/pricing";
 import { CheckCircle } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
-import { FadeLoader } from "react-spinners";
+import { BeatLoader } from "react-spinners";
 
 interface Props {
   plan: TPlan;
@@ -58,6 +58,7 @@ const PricingPlan: React.FC<Props> = ({ plan, isMostPopularPlan }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          uid: user.uid,
           email: user.email,
           amount: plan.amount,
           plan: plan.plan_code,
@@ -65,7 +66,6 @@ const PricingPlan: React.FC<Props> = ({ plan, isMostPopularPlan }) => {
       });
 
       const { data } = await response.json();
-      console.log(data);
       setSubscribing(false);
       if (response.ok) router.push(data.authorization_url);
     } catch (error) {
@@ -107,7 +107,7 @@ const PricingPlan: React.FC<Props> = ({ plan, isMostPopularPlan }) => {
           onClick={() => initializeTransaction(plan)}
           disabled={subscribing}
         >
-          {!subscribing ? "Select Plan" : <FadeLoader color="#ffffff" />}
+          {!subscribing ? "Select Plan" : <BeatLoader color="#ffffff" />}
         </button>
       ) : (
         <button

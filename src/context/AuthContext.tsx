@@ -7,10 +7,10 @@ import React, {
   ReactNode,
   Suspense,
 } from "react";
-import { onAuthStateChanged, signOut, User } from "firebase/auth";
+import { getAuth, onAuthStateChanged, signOut, User } from "firebase/auth";
 import { auth, db } from "@/lib/firebase/config";
 import { TFirestoreUser } from "@/types/user";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import FullPageLoader from "@/components/FullPageLoader";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { isRouteProtected } from "@/constants/protectedRoutes";
@@ -46,34 +46,39 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     redirect_url
   )}&${params.toString()}`;
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(
-      auth,
-      async (firebaseUser: User | null) => {
-        if (firebaseUser) {
-          // Fetch user data from Firestore
-          const userDocRef = doc(db, "users", firebaseUser.uid);
-          const userDoc = await getDoc(userDocRef);
+  const logout = () => signOut(auth);
 
-          if (userDoc.exists()) {
-            setUser(userDoc.data() as TFirestoreUser); // Cast to FirestoreUser type
-          } else {
-            setUser(null);
-            if (isRouteProtected(pathname)) router.push(loginUrl);
-          }
+  useEffect(() => {
+    const unsubscribeAuth = onAuthStateChanged(
+      auth,
+      (firebaseUser: User | null) => {
+        if (firebaseUser) {
+          const userDocRef = doc(db, "users", firebaseUser.uid);
+
+          // Listen to real-time updates of the user's Firestore document
+          const unsubscribeFirestore = onSnapshot(userDocRef, (docSnapshot) => {
+            if (docSnapshot.exists()) {
+              setUser(docSnapshot.data() as TFirestoreUser); // Update user state with real-time data
+            } else {
+              setUser(null);
+              if (isRouteProtected(pathname)) router.push(loginUrl);
+            }
+            setLoading(false);
+          });
+
+          return () => {
+            unsubscribeFirestore(); // Unsubscribe from Firestore listener
+          };
         } else {
           setUser(null);
           if (isRouteProtected(pathname)) router.push(loginUrl);
+          setLoading(false);
         }
-
-        setLoading(false);
       }
     );
 
-    return () => unsubscribe();
-  }, []);
-
-  const logout = () => signOut(auth);
+    return () => unsubscribeAuth(); // Unsubscribe from auth state listener
+  }, [pathname, router]);
 
   return (
     <Suspense fallback={<FullPageLoader />}>

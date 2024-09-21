@@ -31,7 +31,6 @@ function PricingPlans() {
       const convertedPlans = plans as TPlan[];
       const sortedPlans = convertedPlans.sort((a, b) => a.amount - b.amount);
       setPlans(sortedPlans);
-      console.log(sortedPlans);
 
       setLoadingPlans(false);
     } catch (error) {

@@ -3,7 +3,12 @@
 import https from "https";
 import { NextRequest, NextResponse } from "next/server";
 
+const secret =
+  (process.env.MODE === "production"
+    ? process.env.PAYSTACK_SECRET_KEY_PRODUCTION
+    : process.env.PAYSTACK_SECRET_KEY_DEVELOPMENT) || "";
 interface PaystackRequestBody {
+  uid: string;
   email: string;
   amount: string;
   plan: string;
@@ -11,7 +16,7 @@ interface PaystackRequestBody {
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
-    const { email, amount, plan }: PaystackRequestBody = await req.json();
+    const { uid, email, amount, plan }: PaystackRequestBody = await req.json();
 
     // Prepare Paystack parameters
     const params = JSON.stringify({
@@ -26,12 +31,20 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       path: "/transaction/initialize",
       method: "POST",
       headers: {
-        Authorization: `Bearer ${
-          process.env.MODE === "production"
-            ? process.env.PAYSTACK_SECRET_KEY_PRODUCTION
-            : process.env.PAYSTACK_SECRET_KEY_DEVELOPMENT
-        }`,
+        Authorization: `Bearer ${secret}`,
         "Content-Type": "application/json",
+      },
+      metadata: {
+        custom_fields: [
+          {
+            display_name: "Customer ID",
+            variable_name: "uid",
+            value: uid,
+          },
+        ],
+        custom_filters: {
+          recurring: true,
+        },
       },
     };
 
