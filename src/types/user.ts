@@ -16,4 +16,5 @@ export type TFirestoreUser = {
   paymentMethod: string | null; // Payment method used
   tosAgreedAt: Timestamp;
   privacyPolicyAgreedAt: Timestamp;
+  paystack_id?: string;
 };

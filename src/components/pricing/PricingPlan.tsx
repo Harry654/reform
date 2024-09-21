@@ -1,8 +1,11 @@
 import { useAuth } from "@/context/AuthContext";
+import { getIntervalAbbreviation } from "@/helpers/getIntervalAbbreviation";
+import { createCustomer } from "@/helpers/paystack/createCustomer";
 import { TPlan } from "@/types/pricing";
 import { CheckCircle } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
+import { FadeLoader } from "react-spinners";
 
 interface Props {
   plan: TPlan;
@@ -11,6 +14,8 @@ interface Props {
 const PricingPlan: React.FC<Props> = ({ plan, isMostPopularPlan }) => {
   const { user } = useAuth();
   const router = useRouter();
+
+  const [subscribing, setSubscribing] = useState<boolean>(false);
 
   const pathname = usePathname(); // Get the current path, e.g., "/dashboard"
   const searchParams = useSearchParams(); // Get the current query parameters
@@ -27,23 +32,46 @@ const PricingPlan: React.FC<Props> = ({ plan, isMostPopularPlan }) => {
   )}&${params.toString()}`;
 
   const initializeTransaction = async (plan: TPlan) => {
-    if (!user) router.push(loginUrl);
+    if (subscribing) return;
+    if (!user) return router.push(loginUrl);
 
-    const response = await fetch("/api/paystack/initialize", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        uid: user?.uid,
-        email: user?.email,
-        amount: plan.amount,
-        currency: plan.currency,
-      }),
-    });
+    try {
+      setSubscribing(true);
+      let paystack_id = user.paystack_id || "";
+      if (!user.paystack_id) {
+        const response = await createCustomer(
+          user.uid,
+          user.email,
+          user.firstName,
+          user.lastName
+        );
 
-    const data = await response.json();
-    console.log(data);
+        if (!response.success) return;
+        paystack_id = response.data?.customer_code;
+      }
+
+      console.log(paystack_id);
+
+      const response = await fetch("/api/paystack/initialize", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: user.email,
+          amount: plan.amount,
+          plan: plan.plan_code,
+        }),
+      });
+
+      const { data } = await response.json();
+      console.log(data);
+      setSubscribing(false);
+      if (response.ok) router.push(data.authorization_url);
+    } catch (error) {
+      setSubscribing(false);
+      console.log(error);
+    }
   };
 
   return (
@@ -54,7 +82,7 @@ const PricingPlan: React.FC<Props> = ({ plan, isMostPopularPlan }) => {
         <h4 className="text-2xl font-bold mb-2 capitalize">{plan.name}</h4>
         <p className="text-xl italic mb-4">{`${plan.currency} ${
           plan.amount / 100
-        }`}</p>
+        }${getIntervalAbbreviation(plan.interval)}`}</p>
       </div>
       {isMostPopularPlan && (
         <p className="text-blue-500 font-semibold">Most Popular</p>
@@ -73,10 +101,13 @@ const PricingPlan: React.FC<Props> = ({ plan, isMostPopularPlan }) => {
       )}
       {user?.subscriptionPlan !== plan.name ? (
         <button
-          className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          className={`w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 ${
+            subscribing && "opacity-20"
+          }`}
           onClick={() => initializeTransaction(plan)}
+          disabled={subscribing}
         >
-          Select Plan
+          {!subscribing ? "Select Plan" : <FadeLoader color="#ffffff" />}
         </button>
       ) : (
         <button

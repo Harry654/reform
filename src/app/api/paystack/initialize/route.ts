@@ -1,22 +1,23 @@
 // app/api/paystack/initialize/route.ts
+
 import https from "https";
 import { NextRequest, NextResponse } from "next/server";
 
 interface PaystackRequestBody {
   email: string;
   amount: string;
+  plan: string;
 }
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
-    const { email, amount }: PaystackRequestBody = await req.json();
-
-    console.log(email, amount);
+    const { email, amount, plan }: PaystackRequestBody = await req.json();
 
     // Prepare Paystack parameters
     const params = JSON.stringify({
       email,
       amount,
+      plan,
     });
 
     const options = {
