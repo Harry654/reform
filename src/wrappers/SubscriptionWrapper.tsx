@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext"; // Assuming you're using an auth context
 import { isRouteProtected } from "@/constants/protectedRoutes";
+import FullPageLoader from "@/components/FullPageLoader";
 
 interface SubscriptionWrapperProps {
   children: React.ReactNode;
@@ -30,7 +31,7 @@ const SubscriptionWrapper: React.FC<SubscriptionWrapperProps> = ({
   //     return null; // Optionally render nothing while redirecting
   //   }
 
-  return <>{children}</>; // Render wrapped content if user has a subscription plan
+  return <Suspense fallback={<FullPageLoader />}>{children}</Suspense>; // Render wrapped content if user has a subscription plan
 };
 
 export default SubscriptionWrapper;

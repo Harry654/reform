@@ -64,7 +64,7 @@ export default function Navbar() {
   )}&${params.toString()}`;
 
   return (
-    <header className="h-20 text-black bg-blue-600 z-50 sticky top-0">
+    <header className="h-20 text-black bg-[#121211] z-50 sticky top-0">
       <nav className="container px-4 mx-auto h-full w-full flex justify-between items-center">
         <Link href="/" className="text-3xl font-bold text-white">
           Reform
@@ -123,13 +123,13 @@ export default function Navbar() {
             <div>
               <Link
                 href={loginUrl}
-                className="mr-2 px-4 py-2 border border-blue-600 text-blue-600 rounded-md bg-blue-100"
+                className="mr-2 px-4 py-2 border text-blue-600 rounded-full bg-blue-100"
               >
                 Log In
               </Link>
               <Link
                 href={signupUrl}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                className="px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700"
               >
                 Sign Up
               </Link>
@@ -211,14 +211,14 @@ export default function Navbar() {
                 <>
                   <Link
                     href={loginUrl}
-                    className="px-6 py-3 bg-transparent border-2 border-blue-600 text-blue-600 rounded-md text-lg font-medium hover:bg-blue-100"
+                    className="px-6 py-3 bg-transparent border-2  text-blue-600 rounded-full text-lg font-medium hover:bg-blue-100"
                     onClick={toggleMenu}
                   >
                     Log In
                   </Link>
                   <Link
                     href={signupUrl}
-                    className="px-6 py-3 bg-blue-600 text-white rounded-md text-lg font-medium hover:bg-blue-700"
+                    className="px-6 py-3 bg-blue-600 text-white rounded-full text-lg font-medium hover:bg-blue-700"
                     onClick={toggleMenu}
                   >
                     Sign Up

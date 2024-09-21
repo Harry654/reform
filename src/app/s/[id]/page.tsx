@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import {
   collection,
   doc,
@@ -103,21 +103,31 @@ const Survey = () => {
 
   // if user requires authentication to fill out the survey
   if (!surveyData.allowAnonymousResponses && !user)
-    return <AuthenticationRequired loginUrl={loginUrl} signupUrl={signupUrl} />;
+    return (
+      <Suspense fallback={<FullPageLoader />}>
+        <AuthenticationRequired loginUrl={loginUrl} signupUrl={signupUrl} />;
+      </Suspense>
+    );
 
   // if the form has been submitted
   if (surveySubmitted)
     return (
-      <FormSubmissionSuccess
-        allowMultipleSubmissions={surveyData.allowMultipleSubmissions}
-        successMessage={surveyData.successMessage}
-      />
+      <Suspense fallback={<FullPageLoader />}>
+        <FormSubmissionSuccess
+          allowMultipleSubmissions={surveyData.allowMultipleSubmissions}
+          successMessage={surveyData.successMessage}
+        />
+      </Suspense>
     );
 
-  return surveyData.type === "normal" ? (
-    <NormalSurveyResponse surveyData={surveyData} />
-  ) : (
-    <InteractiveSurveyResponse surveyData={surveyData} />
+  return (
+    <Suspense fallback={<FullPageLoader />}>
+      {surveyData.type === "normal" ? (
+        <NormalSurveyResponse surveyData={surveyData} />
+      ) : (
+        <InteractiveSurveyResponse surveyData={surveyData} />
+      )}
+    </Suspense>
   );
 };
 

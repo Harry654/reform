@@ -13,6 +13,7 @@ import { useRouter, useSearchParams } from "next/navigation"; // Import useSearc
 import { BeatLoader } from "react-spinners";
 import { useAuth } from "@/context/AuthContext";
 import { TFirestoreUser } from "@/types/user";
+import Link from "next/link";
 
 export default function SignupPage() {
   const [firstName, setFirstName] = useState("");
@@ -257,13 +258,21 @@ export default function SignupPage() {
                 className="ml-2 block text-sm text-gray-900"
               >
                 I agree to the{" "}
-                <a href="#" className="text-indigo-600 hover:text-indigo-500">
+                <Link
+                  href="/terms"
+                  target="_blank"
+                  className="text-indigo-600 hover:text-indigo-500"
+                >
                   Terms & Conditions
-                </a>{" "}
+                </Link>{" "}
                 and{" "}
-                <a href="#" className="text-indigo-600 hover:text-indigo-500">
+                <Link
+                  href="/privacy"
+                  target="_blank"
+                  className="text-indigo-600 hover:text-indigo-500"
+                >
                   Privacy Policy
-                </a>
+                </Link>
               </label>
             </div>
 

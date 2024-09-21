@@ -76,11 +76,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = () => signOut(auth);
 
   return (
-    <AuthContext.Provider value={{ user, setUser, loading, logout }}>
-      <Suspense fallback={<FullPageLoader />}>
+    <Suspense fallback={<FullPageLoader />}>
+      <AuthContext.Provider value={{ user, setUser, loading, logout }}>
         {!loading ? children : <FullPageLoader />}
-      </Suspense>
-    </AuthContext.Provider>
+      </AuthContext.Provider>
+    </Suspense>
   );
 };
 
