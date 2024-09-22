@@ -35,6 +35,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         "Content-Type": "application/json",
       },
       metadata: {
+        uid,
         cancel_action: `${process.env.NEXT_PUBLIC_BASE_URL}/payment/cancelled`,
         custom_filters: {
           recurring: true,

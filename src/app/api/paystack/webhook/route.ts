@@ -38,6 +38,7 @@ export async function POST(req: NextRequest) {
 
       // Update the user's document with the plan information
       await updateDoc(userDocRef, {
+        paystack_id: event.data.customer.customer_code,
         subscriptionPlan: event.data.plan.name,
         subscriptionStartDate: new Date(),
         subscriptionStatus: "active",

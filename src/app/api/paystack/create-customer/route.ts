@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import https from "https";
 
 export async function POST(req: Request): Promise<NextResponse> {
   const { email, first_name, last_name } = await req.json();
@@ -25,7 +26,6 @@ export async function POST(req: Request): Promise<NextResponse> {
   };
 
   return new Promise((resolve, reject) => {
-    const https = require("https");
     const request = https.request(options, (res: any) => {
       let data = "";
 

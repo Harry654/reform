@@ -1,6 +1,5 @@
 import { useAuth } from "@/context/AuthContext";
 import { getIntervalAbbreviation } from "@/helpers/getIntervalAbbreviation";
-import { createCustomer } from "@/helpers/paystack/createCustomer";
 import { TPlan } from "@/types/pricing";
 import { CheckCircle } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -37,18 +36,6 @@ const PricingPlan: React.FC<Props> = ({ plan, isMostPopularPlan }) => {
 
     try {
       setSubscribing(true);
-      let paystack_id = user.paystack_id || "";
-      if (!user.paystack_id) {
-        const response = await createCustomer(
-          user.uid,
-          user.email,
-          user.firstName,
-          user.lastName
-        );
-
-        if (!response.success) return;
-        paystack_id = response.data?.customer_code;
-      }
 
       const response = await fetch("/api/paystack/initialize", {
         method: "POST",
