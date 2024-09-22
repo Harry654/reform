@@ -23,7 +23,7 @@ const SubscriptionWrapper: React.FC<SubscriptionWrapperProps> = ({
 
     if (!user) return; // Wait until user is loaded
     if (user.subscriptionStatus === "not-started") {
-      router.push("/pricing"); // Redirect to pricing if no subscription plan
+      router.push("/plans"); // Redirect to pricing if no subscription plan
     }
   }, [user, router, pathname]);
 
@@ -31,7 +31,7 @@ const SubscriptionWrapper: React.FC<SubscriptionWrapperProps> = ({
   //     return null; // Optionally render nothing while redirecting
   //   }
 
-  return <Suspense fallback={<FullPageLoader />}>{children}</Suspense>; // Render wrapped content if user has a subscription plan
+  return children; // Render wrapped content if user has a subscription plan
 };
 
 export default SubscriptionWrapper;

@@ -1,9 +1,9 @@
 import { useAuth } from "@/context/AuthContext";
 import { getIntervalAbbreviation } from "@/helpers/getIntervalAbbreviation";
 import { createCustomer } from "@/helpers/paystack/createCustomer";
-import { TPlan } from "@/types/pricing";
+import { TPlan } from "@/types/plans";
 import { CheckCircle } from "lucide-react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { BeatLoader } from "react-spinners";
 
@@ -12,24 +12,10 @@ interface Props {
   isMostPopularPlan: boolean;
 }
 const PricingPlan: React.FC<Props> = ({ plan, isMostPopularPlan }) => {
-  const { user } = useAuth();
+  const { user, loginUrl } = useAuth();
   const router = useRouter();
 
   const [subscribing, setSubscribing] = useState<boolean>(false);
-
-  const pathname = usePathname(); // Get the current path, e.g., "/dashboard"
-  const searchParams = useSearchParams(); // Get the current query parameters
-
-  // Construct query parameters string
-  const params = new URLSearchParams(searchParams);
-
-  // Build the redirect URL: path + query params
-  const redirect_url = `${pathname}?${params.toString()}`;
-
-  // Construct the login URL with the redirect_url
-  const loginUrl = `/auth/login?redirect_url=${encodeURIComponent(
-    redirect_url
-  )}&${params.toString()}`;
 
   const initializeTransaction = async (plan: TPlan) => {
     if (subscribing) return;

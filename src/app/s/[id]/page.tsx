@@ -12,12 +12,7 @@ import {
 import { db } from "@/lib/firebase/config";
 import { ISurvey } from "@/types/survey";
 import { NormalSurveyResponse } from "@/components/fill/NormalSurveyResponse";
-import {
-  useParams,
-  useRouter,
-  usePathname,
-  useSearchParams,
-} from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import FullPageLoader from "@/components/FullPageLoader";
 import { InteractiveSurveyResponse } from "@/components/fill/InteractiveSurveyResponse";
 import { useAuth } from "@/context/AuthContext";
@@ -31,26 +26,8 @@ const Survey = () => {
 
   const { id } = useParams();
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, loginUrl, signupUrl } = useAuth();
   const { surveySubmitted, setSurveySubmitted } = useSurvey();
-
-  const pathname = usePathname(); // Get the current path, e.g., "/dashboard"
-  const searchParams = useSearchParams(); // Get the current query parameters
-
-  // Construct query parameters string
-  const params = new URLSearchParams(searchParams);
-
-  // Build the redirect URL: path + query params
-  const redirect_url = `${pathname}?${params.toString()}`;
-
-  // Construct the login URL with the redirect_url
-  const loginUrl = `/auth/login?redirect_url=${encodeURIComponent(
-    redirect_url
-  )}&${params.toString()}`;
-
-  const signupUrl = `/auth/signup?redirect_url=${encodeURIComponent(
-    redirect_url
-  )}&${params.toString()}`;
 
   const fetchPrevSurveyResponse = async (surveyData: ISurvey) => {
     if (typeof surveyData.id === "string" && user?.uid) {

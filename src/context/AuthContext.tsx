@@ -12,14 +12,16 @@ import { auth, db } from "@/lib/firebase/config";
 import { TFirestoreUser } from "@/types/user";
 import { doc, onSnapshot } from "firebase/firestore";
 import FullPageLoader from "@/components/FullPageLoader";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { isRouteProtected } from "@/constants/protectedRoutes";
+import { usePathname, useSearchParams } from "next/navigation";
 
 // Define the shape of your context
 interface AuthContextType {
   user: TFirestoreUser | null;
   setUser: React.Dispatch<React.SetStateAction<TFirestoreUser | null>>;
   loading: boolean;
+  loginUrl: string;
+  signupUrl: string;
+  updateUserProfile: (user: Partial<TFirestoreUser>) => void;
   logout: () => void;
 }
 
@@ -30,7 +32,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<TFirestoreUser | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const router = useRouter();
 
   const pathname = usePathname(); // Get the current path, e.g., "/dashboard"
   const searchParams = useSearchParams(); // Get the current query parameters
@@ -46,12 +47,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     redirect_url
   )}&${params.toString()}`;
 
+  // Construct the login URL with the redirect_url
+  const signupUrl = `/auth/signup?redirect_url=${encodeURIComponent(
+    redirect_url
+  )}&${params.toString()}`;
+
+  const updateUserProfile = (user: Partial<TFirestoreUser>) => {
+    console.log(user);
+  };
+
   const logout = () => signOut(auth);
 
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(
       auth,
       (firebaseUser: User | null) => {
+        setLoading(true);
         if (firebaseUser) {
           const userDocRef = doc(db, "users", firebaseUser.uid);
 
@@ -61,7 +72,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
               setUser(docSnapshot.data() as TFirestoreUser); // Update user state with real-time data
             } else {
               setUser(null);
-              if (isRouteProtected(pathname)) router.push(loginUrl);
             }
             setLoading(false);
           });
@@ -71,18 +81,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           };
         } else {
           setUser(null);
-          if (isRouteProtected(pathname)) router.push(loginUrl);
           setLoading(false);
         }
       }
     );
 
     return () => unsubscribeAuth(); // Unsubscribe from auth state listener
-  }, [pathname, router]);
+  }, []);
 
   return (
     <Suspense fallback={<FullPageLoader />}>
-      <AuthContext.Provider value={{ user, setUser, loading, logout }}>
+      <AuthContext.Provider
+        value={{
+          user,
+          setUser,
+          loading,
+          loginUrl,
+          signupUrl,
+          updateUserProfile,
+          logout,
+        }}
+      >
         {!loading ? children : <FullPageLoader />}
       </AuthContext.Provider>
     </Suspense>

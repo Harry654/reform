@@ -5,6 +5,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import { CreateSurveyProvider } from "@/context/CreateSurveyContext";
 import { SurveyResponseProvider } from "@/context/SurveyResponseContext";
 import SubscriptionWrapper from "@/wrappers/SubscriptionWrapper";
+import ProtectedRoute from "@/wrappers/ProtectedRoute";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -34,11 +35,13 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AuthProvider>
-          <SubscriptionWrapper>
-            <CreateSurveyProvider>
-              <SurveyResponseProvider>{children}</SurveyResponseProvider>
-            </CreateSurveyProvider>
-          </SubscriptionWrapper>
+          <ProtectedRoute>
+            <SubscriptionWrapper>
+              <CreateSurveyProvider>
+                <SurveyResponseProvider>{children}</SurveyResponseProvider>
+              </CreateSurveyProvider>
+            </SubscriptionWrapper>
+          </ProtectedRoute>
         </AuthProvider>
       </body>
     </html>

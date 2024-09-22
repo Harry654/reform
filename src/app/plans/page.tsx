@@ -2,7 +2,7 @@
 
 import FullPageLoader from "@/components/FullPageLoader";
 import Navbar from "@/components/layout/NavBar";
-import PricingPlans from "@/components/pricing/PricingPlans";
+import PricingPlans from "@/components/plans/PricingPlans";
 import React, { Suspense } from "react";
 
 function page() {

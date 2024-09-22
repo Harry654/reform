@@ -8,6 +8,7 @@ import { templates } from "@/constants/template_data";
 import { ITemplate } from "@/types/template";
 import Sidebar from "@/components/layout/Sidebar";
 import FullPageLoader from "@/components/FullPageLoader";
+import Frame from "@/components/layout/Frame";
 
 const SurveyTemplates: React.FC = () => {
   const [searchResults, setSearchResults] = useState<ITemplate[]>(templates);
@@ -39,28 +40,22 @@ const SurveyTemplates: React.FC = () => {
 
   return (
     <Suspense fallback={<FullPageLoader />}>
-      <div className="flex h-screen overflow-hidden bg-white text-black">
-        {/* Sidebar */}
-        <Sidebar currentPage="/templates" />
-
-        {/* Main Content */}
-        <div className="flex-1 flex flex-col overflow-y-auto h-screen">
-          <div className="container mx-auto px-4 py-8">
-            <h1 className="text-3xl font-bold text-center mb-8">
-              Sample Templates
-            </h1>
-            <div className="flex justify-between items-center mb-8">
-              <SearchBar onSearch={handleSearch} />
-              {/* <GenerateTemplateModal onGenerateTemplate={handleGenerateTemplate} /> */}
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {searchResults.map((template) => (
-                <TemplateCard key={template.id} template={template} />
-              ))}
-            </div>
+      <Frame>
+        <div className="container mx-auto px-4 py-8">
+          {/* <h1 className="text-3xl font-bold text-center mb-8">
+            Sample Templates
+          </h1> */}
+          <div className="flex justify-between items-center mb-8">
+            <SearchBar onSearch={handleSearch} />
+            {/* <GenerateTemplateModal onGenerateTemplate={handleGenerateTemplate} /> */}
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {searchResults.map((template) => (
+              <TemplateCard key={template.id} template={template} />
+            ))}
           </div>
         </div>
-      </div>
+      </Frame>
     </Suspense>
   );
 };

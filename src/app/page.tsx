@@ -3,7 +3,7 @@
 import FullPageLoader from "@/components/FullPageLoader";
 import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/NavBar";
-import PricingPlans from "@/components/pricing/PricingPlans";
+import PricingPlans from "@/components/plans/PricingPlans";
 import { useAuth } from "@/context/AuthContext";
 import { CheckCircle, MessageCircle, BarChart2, Users } from "lucide-react";
 import Link from "next/link";
@@ -26,10 +26,7 @@ export default function LandingPage() {
         <Navbar />
 
         <main className="container mx-auto text-black">
-          <section
-            className="flex flex-col justify-center items-center text-center py-20"
-            style={{ minHeight: "calc(100vh - 5rem)" }}
-          >
+          <section className="flex flex-col justify-center items-center text-center py-20 h-[calc(100vh-3.5rem)]">
             <h2 className="text-3xl md:text-5xl font-bold mb-4">
               Revolutionize Your Surveys with AI
             </h2>

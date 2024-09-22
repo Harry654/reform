@@ -5,8 +5,10 @@ export const protectedRoutes: string[] = [
   "/audience",
   "/analytics",
   "/settings",
-  "/pricing",
+  "/plans",
   "/survey/[id]", // Dynamic route pattern
+  "/profile",
+  "/billing",
 ];
 
 // Helper function to check if the route matches a protected route with dynamic segments

@@ -6,10 +6,9 @@ import Link from "next/link";
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { UserIcon, LogOutIcon, MenuIcon, XIcon } from "lucide-react";
-import { usePathname, useSearchParams } from "next/navigation";
 
 export default function Navbar() {
-  const { user, logout } = useAuth();
+  const { user, loginUrl, signupUrl, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -44,29 +43,10 @@ export default function Navbar() {
   const toggleMenu = () => setIsOpen(!isOpen);
   const toggleDropdown = () => setShowDropdown(!showDropdown);
 
-  const pathname = usePathname(); // Get the current path, e.g., "/dashboard"
-  const searchParams = useSearchParams(); // Get the current query parameters
-
-  // Construct query parameters string
-  const params = new URLSearchParams(searchParams);
-
-  // Build the redirect URL: path + query params
-  const redirect_url = `${pathname}?${params.toString()}`;
-
-  // Construct the login URL with the redirect_url
-  const loginUrl = `/auth/login?redirect_url=${encodeURIComponent(
-    redirect_url
-  )}&${params.toString()}`;
-
-  // Construct the signup URL with the redirect_url
-  const signupUrl = `/auth/signup?redirect_url=${encodeURIComponent(
-    redirect_url
-  )}&${params.toString()}`;
-
   return (
-    <header className="h-20 text-black bg-[#121211] z-50 sticky top-0">
-      <nav className="container px-4 mx-auto h-full w-full flex justify-between items-center">
-        <Link href="/" className="text-3xl font-bold text-white">
+    <header className="h-14 text-black bg-[#121211] z-50 sticky top-0 px-4">
+      <nav className="mx-auto h-full w-full flex justify-between items-center">
+        <Link href="/" className="text-xl font-bold text-white">
           Reform
         </Link>
 

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import PricingPlan from "./PricingPlan";
 import { Slide } from "react-awesome-reveal";
 import { FadeLoader } from "react-spinners";
-import { TPlan } from "@/types/pricing";
+import { TPlan } from "@/types/plans";
 
 function PricingPlans() {
   const [plans, setPlans] = useState<TPlan[]>([]);
