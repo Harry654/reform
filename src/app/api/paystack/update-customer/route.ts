@@ -2,12 +2,9 @@ import { NextResponse } from "next/server";
 import https from "https";
 
 export async function POST(req: Request): Promise<NextResponse> {
-  const { uid: userId, email, first_name, last_name } = await req.json();
+  const { uid: userId, customer_code } = await req.json();
 
   const params = JSON.stringify({
-    email,
-    first_name,
-    last_name,
     metadata: {
       userId,
     },
@@ -16,8 +13,8 @@ export async function POST(req: Request): Promise<NextResponse> {
   const options = {
     hostname: "api.paystack.co",
     port: 443,
-    path: "/customer",
-    method: "POST",
+    path: `/customer/${customer_code}`,
+    method: "PUT",
     headers: {
       Authorization: `Bearer ${
         process.env.MODE === "production"

@@ -1,5 +1,7 @@
 import { useAuth } from "@/context/AuthContext";
 import { getIntervalAbbreviation } from "@/helpers/getIntervalAbbreviation";
+import { createCustomer } from "@/helpers/paystack/createCustomer";
+import { updateCustomer } from "@/helpers/paystack/updateCustomer";
 import { TPlan } from "@/types/pricing";
 import { CheckCircle } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -36,6 +38,8 @@ const PricingPlan: React.FC<Props> = ({ plan, isMostPopularPlan }) => {
 
     try {
       setSubscribing(true);
+
+      // updateCustomer(user.uid, user.email);
 
       const response = await fetch("/api/paystack/initialize", {
         method: "POST",
@@ -87,16 +91,20 @@ const PricingPlan: React.FC<Props> = ({ plan, isMostPopularPlan }) => {
       {user?.subscriptionPlan !== plan.name ? (
         <button
           className={`w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 ${
-            subscribing && "opacity-20"
+            subscribing && "opacity-70"
           }`}
           onClick={() => initializeTransaction(plan)}
           disabled={subscribing}
         >
-          {!subscribing ? "Select Plan" : <BeatLoader color="#ffffff" />}
+          {!subscribing ? (
+            "Select Plan"
+          ) : (
+            <BeatLoader color="#ffffff" size={10} />
+          )}
         </button>
       ) : (
         <button
-          className="w-full px-4 py-2 bg-gray-600 text-white rounded-md opacity-20 italic"
+          className="w-full px-4 py-2 bg-gray-600 text-white rounded-md opacity-70 italic"
           disabled={true}
         >
           Current Plan

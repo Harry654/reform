@@ -16,13 +16,19 @@ interface PaystackRequestBody {
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
-    const { uid, email, amount, plan }: PaystackRequestBody = await req.json();
+    const {
+      uid: userId,
+      email,
+      amount,
+      plan,
+    }: PaystackRequestBody = await req.json();
 
     // Prepare Paystack parameters
     const params = JSON.stringify({
       email,
       amount,
       plan,
+      metadata: { userId },
     });
 
     const options = {
@@ -33,13 +39,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       headers: {
         Authorization: `Bearer ${secret}`,
         "Content-Type": "application/json",
-      },
-      metadata: {
-        uid,
-        cancel_action: `${process.env.NEXT_PUBLIC_BASE_URL}/payment/cancelled`,
-        custom_filters: {
-          recurring: true,
-        },
       },
     };
 

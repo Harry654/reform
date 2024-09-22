@@ -27,14 +27,14 @@ export async function POST(req: NextRequest) {
     return new NextResponse("Unauthorized", { status: 401 });
 
   if (!event) return;
+  // console.log(event);
   // Handle the event
   switch (event.event) {
     case "charge.success":
-      const userId = "mxfNXEjUuVULDd4vFPHSAsrwsgs1";
       console.log("charge.success was successful!");
 
       // Reference the user's document in Firestore
-      const userDocRef = doc(db, "users", userId);
+      const userDocRef = doc(db, "users", event.data.metadata.userId);
 
       // Update the user's document with the plan information
       await updateDoc(userDocRef, {

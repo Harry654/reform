@@ -4,8 +4,8 @@ import { doc, updateDoc } from "firebase/firestore";
 export const createCustomer = async (
   uid: string,
   email: string,
-  first_name: string | undefined,
-  last_name: string | undefined
+  first_name: string | undefined = undefined,
+  last_name: string | undefined = undefined
 ) => {
   const customerData = { uid, email, first_name, last_name };
 
