@@ -26,7 +26,7 @@ export async function POST(req: Request): Promise<NextResponse> {
   };
 
   return new Promise((resolve, reject) => {
-    const request = https.request(options, (res: any) => {
+    const request = https.request(options, (res) => {
       let data = "";
 
       res.on("data", (chunk: string) => {
@@ -39,7 +39,7 @@ export async function POST(req: Request): Promise<NextResponse> {
       });
     });
 
-    request.on("error", (error: any) => {
+    request.on("error", (error) => {
       reject(NextResponse.json({ error: error.message }));
     });
 
