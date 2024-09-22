@@ -27,7 +27,7 @@ function PricingPlans() {
       });
 
       const { data: plans } = await response.json();
-
+      console.log(plans);
       const convertedPlans = plans as TPlan[];
       const sortedPlans = convertedPlans.sort((a, b) => a.amount - b.amount);
       setPlans(sortedPlans);
