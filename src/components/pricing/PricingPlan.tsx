@@ -50,8 +50,6 @@ const PricingPlan: React.FC<Props> = ({ plan, isMostPopularPlan }) => {
         paystack_id = response.data?.customer_code;
       }
 
-      console.log(paystack_id);
-
       const response = await fetch("/api/paystack/initialize", {
         method: "POST",
         headers: {

@@ -73,7 +73,6 @@ export default function LoginComponent() {
           createdAt: Timestamp.now(),
           subscriptionPlan: null, // or set to a default plan ID if applicable
           subscriptionStartDate: null,
-          subscriptionEndDate: null,
           subscriptionStatus: "inactive", // default status
           lastPaymentDate: null,
           paymentMethod: null,

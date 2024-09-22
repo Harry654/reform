@@ -1,6 +1,6 @@
 // app/api/paystack/plans/route.ts
 import https from "https";
-import { NextRequest, NextResponse } from "next/server";
+import {  NextResponse } from "next/server";
 
 export async function GET(): Promise<NextResponse> {
   const options = {

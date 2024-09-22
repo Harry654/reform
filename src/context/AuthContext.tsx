@@ -7,10 +7,10 @@ import React, {
   ReactNode,
   Suspense,
 } from "react";
-import { getAuth, onAuthStateChanged, signOut, User } from "firebase/auth";
+import { onAuthStateChanged, signOut, User } from "firebase/auth";
 import { auth, db } from "@/lib/firebase/config";
 import { TFirestoreUser } from "@/types/user";
-import { doc, getDoc, onSnapshot } from "firebase/firestore";
+import { doc, onSnapshot } from "firebase/firestore";
 import FullPageLoader from "@/components/FullPageLoader";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { isRouteProtected } from "@/constants/protectedRoutes";

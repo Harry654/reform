@@ -65,7 +65,6 @@ export default function SignupPage() {
         createdAt: new Date(),
         subscriptionPlan: null,
         subscriptionStartDate: null,
-        subscriptionEndDate: null,
         subscriptionStatus: "inactive", // default status
         lastPaymentDate: null,
         paymentMethod: null,
@@ -115,7 +114,6 @@ export default function SignupPage() {
           createdAt: Timestamp.now(),
           subscriptionPlan: null,
           subscriptionStartDate: null,
-          subscriptionEndDate: null,
           subscriptionStatus: "inactive", // default status
           lastPaymentDate: null,
           paymentMethod: null,

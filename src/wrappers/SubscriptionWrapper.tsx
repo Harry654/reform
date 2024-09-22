@@ -22,7 +22,7 @@ const SubscriptionWrapper: React.FC<SubscriptionWrapperProps> = ({
     if (!isRouteProtected(pathname)) return;
 
     if (!user) return; // Wait until user is loaded
-    if (!user.subscriptionPlan) {
+    if (user.subscriptionStatus === "not-started") {
       router.push("/pricing"); // Redirect to pricing if no subscription plan
     }
   }, [user, router, pathname]);
