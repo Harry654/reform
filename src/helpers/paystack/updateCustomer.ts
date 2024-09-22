@@ -13,14 +13,14 @@ export const updateCustomer = async (uid: string, customer_code: string) => {
     const { data } = await response.json();
 
     if (response.ok) {
-      console.log("Customer updated successfully:", data);
+      // console.log("Customer updated successfully:", data);
       return {
         data: { customer_code: data.customer_code },
         statusCode: 204,
         success: true,
       };
     } else {
-      console.error("Error creating customer:", data);
+      // console.error("Error creating customer:", data);
       return { data: null, statusCode: 500, success: false };
     }
   } catch (error) {

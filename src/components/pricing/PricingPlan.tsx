@@ -39,7 +39,13 @@ const PricingPlan: React.FC<Props> = ({ plan, isMostPopularPlan }) => {
     try {
       setSubscribing(true);
 
-      // updateCustomer(user.uid, user.email);
+      if (!user.paystack_id)
+        await createCustomer(
+          user.uid,
+          user.email,
+          user.firstName,
+          user.lastName
+        );
 
       const response = await fetch("/api/paystack/initialize", {
         method: "POST",

@@ -21,7 +21,7 @@ export const createCustomer = async (
     const { data } = await response.json();
 
     if (response.ok) {
-      console.log("Customer created successfully:", data);
+      // console.log("Customer created successfully:", data);
       await updateUserPaystackId(uid, data.customer_code);
       return {
         data: { customer_code: data.customer_code },
@@ -29,7 +29,7 @@ export const createCustomer = async (
         success: true,
       };
     } else {
-      console.error("Error creating customer:", data);
+      // console.error("Error creating customer:", data);
       return { data: null, statusCode: 500, success: false };
     }
   } catch (error) {
