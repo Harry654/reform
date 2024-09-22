@@ -5,6 +5,8 @@ import { AuthProvider } from "@/context/AuthContext";
 import { CreateSurveyProvider } from "@/context/CreateSurveyContext";
 import { SurveyResponseProvider } from "@/context/SurveyResponseContext";
 import SubscriptionWrapper from "@/wrappers/SubscriptionWrapper";
+import { Suspense } from "react";
+import FullPageLoader from "@/components/FullPageLoader";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -34,11 +36,13 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AuthProvider>
-          <SubscriptionWrapper>
-            <CreateSurveyProvider>
-              <SurveyResponseProvider>{children}</SurveyResponseProvider>
-            </CreateSurveyProvider>
-          </SubscriptionWrapper>
+          <Suspense fallback={<FullPageLoader />}>
+            <SubscriptionWrapper>
+              <CreateSurveyProvider>
+                <SurveyResponseProvider>{children}</SurveyResponseProvider>
+              </CreateSurveyProvider>
+            </SubscriptionWrapper>
+          </Suspense>
         </AuthProvider>
       </body>
     </html>
