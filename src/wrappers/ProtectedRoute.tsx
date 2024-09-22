@@ -18,7 +18,6 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   useEffect(() => {
     setLoading(true);
-    console.log(user, pathname);
 
     // if the user is not logged in and the page requires authentication
     if (isRouteProtected(pathname) && !user) {

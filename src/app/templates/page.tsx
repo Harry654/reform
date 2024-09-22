@@ -6,7 +6,6 @@ import SearchBar from "@/components/SearchBar";
 import TemplateCard from "@/components/TemplateCard";
 import { templates } from "@/constants/template_data";
 import { ITemplate } from "@/types/template";
-import Sidebar from "@/components/layout/Sidebar";
 import FullPageLoader from "@/components/FullPageLoader";
 import Frame from "@/components/layout/Frame";
 

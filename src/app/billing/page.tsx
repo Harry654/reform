@@ -2,13 +2,7 @@
 
 import React from "react";
 import { useAuth } from "@/context/AuthContext";
-import {
-  CreditCard,
-  Calendar,
-  DollarSign,
-  FileText,
-  AlertCircle,
-} from "lucide-react";
+import { CreditCard, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import Frame from "@/components/layout/Frame";
 
@@ -90,13 +84,13 @@ export default function Billing() {
                 <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                   <dt className="text-sm font-medium text-gray-500">Plan</dt>
                   <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {user.subscriptionPlan || "No active plan"}
+                    {user?.subscriptionPlan || "No active plan"}
                   </dd>
                 </div>
                 <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                   <dt className="text-sm font-medium text-gray-500">Status</dt>
                   <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {user.subscriptionStatus}
+                    {user?.subscriptionStatus}
                   </dd>
                 </div>
                 <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -104,10 +98,10 @@ export default function Billing() {
                     Next billing date
                   </dt>
                   <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {user.subscriptionStatus === "active"
+                    {user?.subscriptionStartDate
                       ? formatDate(
                           new Date(
-                            user.subscriptionStartDate.toDate().getTime() +
+                            user?.subscriptionStartDate.toDate().getTime() +
                               30 * 24 * 60 * 60 * 1000
                           )
                         )
@@ -182,7 +176,7 @@ export default function Billing() {
                     No payment history
                   </h3>
                   <p className="mt-1 text-sm text-gray-500">
-                    You haven't made any payments yet.
+                    You haven&apos;t made any payments yet.
                   </p>
                 </div>
               )}

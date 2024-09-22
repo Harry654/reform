@@ -1,10 +1,9 @@
 "use client";
 
-import { Suspense, useEffect } from "react";
+import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext"; // Assuming you're using an auth context
 import { isRouteProtected } from "@/constants/protectedRoutes";
-import FullPageLoader from "@/components/FullPageLoader";
 
 interface SubscriptionWrapperProps {
   children: React.ReactNode;

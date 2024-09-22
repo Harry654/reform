@@ -10,7 +10,6 @@ import {
   Folder,
   Mail,
   Share,
-  Book,
 } from "lucide-react";
 
 const sideNavs = [

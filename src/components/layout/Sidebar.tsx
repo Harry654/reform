@@ -1,17 +1,5 @@
-// components/Sidebar.tsx
-
 import React, { useState } from "react";
-import {
-  Home,
-  FileText,
-  Users,
-  BarChart,
-  Settings,
-  LogOut,
-  ChevronDown,
-} from "lucide-react";
-import Image from "next/image";
-import { useAuth } from "@/context/AuthContext";
+import { Settings, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import sideNavs from "@/constants/sideNavs";
 
@@ -21,11 +9,8 @@ interface Props {
 
 const Sidebar: React.FC<Props> = ({ currentPage }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const { user, logout } = useAuth();
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
-  const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
   return (
     <>

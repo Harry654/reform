@@ -2,7 +2,6 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { Activity } from "lucide-react";
-import Sidebar from "@/components/layout/Sidebar";
 import { useAuth } from "@/context/AuthContext";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
@@ -10,7 +9,6 @@ import { ISurvey } from "@/types/survey";
 import { formatTimestampDate } from "@/helpers/formatTimestampDate";
 import Link from "next/link";
 import FullPageLoader from "@/components/FullPageLoader";
-import Navbar from "@/components/layout/NavBar";
 import Frame from "@/components/layout/Frame";
 
 // Assuming you have a type for Survey

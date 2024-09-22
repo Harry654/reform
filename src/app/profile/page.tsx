@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { User, Mail, Camera, CreditCard, Calendar } from "lucide-react";
+import { Camera } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { TFirestoreUser } from "@/types/user";
