@@ -1,7 +1,6 @@
 import { useAuth } from "@/context/AuthContext";
 import { getIntervalAbbreviation } from "@/helpers/getIntervalAbbreviation";
 import { createCustomer } from "@/helpers/paystack/createCustomer";
-import { updateCustomer } from "@/helpers/paystack/updateCustomer";
 import { TPlan } from "@/types/pricing";
 import { CheckCircle } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
