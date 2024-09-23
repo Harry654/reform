@@ -15,7 +15,8 @@ export const GET = async (req, { params }) => {
     const surveyDocSnap = await getDoc(surveyDocRef);
 
     if (surveyDocSnap.exists()) {
-      return NextResponse.json(surveyDocSnap.data().sections[0].questions[0], { status: 200 });
+      const surveyData = surveyDocSnap.data()
+      return NextResponse.json({name: surveyData.title, questionCount: surveyData.questionCount, question: surveyData.sections[0].questions[0]}, { status: 200 });
     } else {
       return NextResponse.json(
         { error: "Survey does not exist" },

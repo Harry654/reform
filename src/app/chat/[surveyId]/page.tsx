@@ -1,100 +1,136 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Send, Mic, Check, ChevronLeft } from 'lucide-react';
 import { useSwipeable } from 'react-swipeable';
+import { useParams } from "next/navigation";
+
+type Response = {
+  questionId: string;
+  questionType: string;
+  questionText: string;
+  answer: string;
+};
 
 type Message = {
   id: number;
   text: string;
   sender: 'ai' | 'user';
-};
+}
 
-const MESSAGES_PER_PAGE = 20;
-const TOTAL_QUESTIONS = 5; // Adjust based on your survey length
 
 export default function ChatSurvey() {
-  const [messages, setMessages] = useState<Message[]>([
-    { id: 1, text: "Hello! I'm ReformAI. Let's start our conversation about your experience. How was your day today?", sender: 'ai' },
-  ]);
+  const defaultMessage = { id: 1, text: "Hello! I'm ReformAI. Let's begin the survey", sender: 'ai' }
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [currentQuestion, setCurrentQuestion] = useState({});
+  const [responses, setResponses] = useState([]);
+  const { surveyId } = useParams();
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [progress, setProgress] = useState(0);
   const [isSurveyComplete, setSurveyComplete] = useState(false);
-  const [page, setPage] = useState(1);
+  const [surveyInfo, setSurveyInfo] = useState({});
   const chatEndRef = useRef<HTMLDivElement>(null);
   const chatStartRef = useRef<HTMLDivElement>(null);
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const loadMoreMessages = useCallback(() => {
-    if (page * MESSAGES_PER_PAGE >= messages.length) return;
 
-    setIsLoading(true);
+  function convertToMessages(allResponses, tempQuestion) {
+    if(Boolean(tempQuestion)) {
+      const res =  allResponses.map((response, i) => {
+        return [{ id: i+"-ai", text: response.questionText, sender: "ai" }, { id: i+"-user", text: response.answer, sender: "user" }]
+      }).flat()
+      res.push({id: "temp", text: tempQuestion.text, sender: "ai"})
+      return res
+    }
+    return allResponses.map((response, i) => {
+      return [{ id: i+"-ai", text: response.questionText, sender: "ai" }, { id: i+"-user", text: response.answer, sender: "user" }]
+    }).flat()
+  }
 
-    // Simulate API call to load more messages
-    setTimeout(() => {
-      const newMessages = messages.slice((page - 1) * MESSAGES_PER_PAGE, page * MESSAGES_PER_PAGE);
-      setMessages((prevMessages) => [...newMessages, ...prevMessages]);
-      setPage((prevPage) => prevPage + 1);
-      setIsLoading(false);
-    }, 1000);
-  }, [messages, page]);
+  async function getAndOptimizeNextQuestion(questionNumber, previousResponse, updatedResponses) {
+    try {
+      const response = await fetch(`/api/survey/id/${surveyId}/question/${questionNumber}`, {
+        method: "POST",
+        "Content-Type": "application/json",
+        body: JSON.stringify({
+          previousQuestion: currentQuestion,
+          previousResponse
+        })
+      })
+      const result = await response.json()
+      console.log("Responses befores send to ai", updatedResponses)
+      setMessages([...convertToMessages(updatedResponses, result)])
+      setCurrentQuestion(result)
+      if(result?.error) {
+        throw new Error(result.error)
+      }
+    } catch(err) {
+      console.log(err)
+      setIsTyping(false)
+      alert(err.message)
+    }
+  }
+
+  async function initializeSurvey() {
+    if(messages.length>0)return
+    try {
+      setIsTyping(true)
+      const response = await fetch("/api/survey/start/"+surveyId)
+      const result = await response.json()
+      // console.log(result)
+      if(result?.error) {
+        throw new Error(result.error)
+      }
+      setSurveyInfo({title: result.name, questionCount: result.questionCount})
+      setMessages(convertToMessages([], result.question))
+      setCurrentQuestion(result.question)
+      setIsTyping(false)
+    } catch (err) {
+      console.log(err)
+      setIsTyping(false)
+      alert(err.message)
+    }
+  }
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && !isLoading) {
-          loadMoreMessages();
-        }
-      },
-      { threshold: 1 }
-    );
+    initializeSurvey()
+  }, [])
 
-    if (chatStartRef.current) {
-      observer.observe(chatStartRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, [loadMoreMessages, isLoading]);
-
-  const handleSend = () => {
+  const handleSend = async () => {
+    if(isTyping)return
     if (input.trim()) {
-      const newMessage: Message = { id: messages.length + 1, text: input, sender: 'user' };
-      setMessages([...messages, newMessage]);
+      const newResponse = {
+        questionId: currentQuestion.id,
+        questionType: currentQuestion.type,
+        questionText: currentQuestion.text,
+        answer: input,
+      }
+
+
+      const updatedResponses = [...responses, newResponse];
+      setResponses(updatedResponses);
+      setMessages([...convertToMessages(updatedResponses, null)]);
+      console.log("updatedresponses", updatedResponses)
       setInput('');
       setIsTyping(true);
       setProgress((prev) => {
-        const newProgress = Math.min(prev + 1 / TOTAL_QUESTIONS, 1);
+        const newProgress = Math.min(prev + 1 / surveyInfo.questionCount, 1);
         if (newProgress === 1) {
           setSurveyComplete(true);
         }
         return newProgress;
       });
 
-      // Simulate AI response
-      setTimeout(() => {
-        const aiResponse: Message = { id: messages.length + 2, text: getAIResponse(input), sender: 'ai' };
-        setMessages((prev) => [...prev, aiResponse]);
-        setIsTyping(false);
-      }, 1500);
+      // AI response
+      console.log("progress", progress)
+      await getAndOptimizeNextQuestion(updatedResponses.length+1, newResponse.answer, updatedResponses)
+      setIsTyping(false);
     }
-  };
-
-  const getAIResponse = (userInput: string): string => {
-    console.log(userInput);
-    // Placeholder for actual AI logic
-    const responses = [
-      "That's interesting! Can you tell me more about that?",
-      'I see. How does that make you feel?',
-      'Thank you for sharing. On a scale of 1-10, how would you rate your experience?',
-      'I appreciate your input. Is there anything else you\'d like to add?',
-    ];
-    return responses[Math.floor(Math.random() * responses.length)];
   };
 
   const handlers = useSwipeable({
@@ -105,20 +141,23 @@ export default function ChatSurvey() {
     trackTouch: true,
   });
 
+  console.log("end messages", messages)
+  console.log("end repsonses", responses)
   return (
     <div {...handlers} className="flex flex-col h-screen bg-gray-50">
       <header className="bg-white shadow-sm p-4 flex items-center">
         <button className="mr-2 md:hidden">
           <ChevronLeft size={24} />
         </button>
-        <h1 className="text-xl md:text-2xl font-semibold text-gray-800">ReformAI-[Survey Name]</h1>
+        <h1 className="text-xl md:text-2xl font-semibold text-gray-800">ReformAI: {surveyInfo.title}</h1>
       </header>
 
       <main className="flex-1 overflow-hidden flex flex-col">
         <div className="flex-1 overflow-y-auto p-4 pb-24 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
           <div ref={chatStartRef} />
           <AnimatePresence>
-            {messages.map((message) => (
+            {[defaultMessage, ...messages].map((message) => (
+              // console.log(messages)
               <motion.div
                 key={message.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -186,7 +225,7 @@ export default function ChatSurvey() {
                 placeholder="Type your response..."
                 className="flex-1 p-2 rounded-l-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              <button type="submit" className="p-2 bg-blue-500 text-white rounded-r-lg transition-colors">
+              <button style={{cursor: isTyping && "not-allowed"}} type="submit" className="p-2 bg-blue-500 text-white rounded-r-lg transition-colors">
                 <Send size={20} />
               </button>
               <button type="button" className="p-2 ml-2 bg-gray-200 text-gray-600 rounded-lg transition-colors">
