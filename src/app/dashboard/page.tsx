@@ -126,7 +126,7 @@ export default function Dashboard() {
               <Link
                 key={survey.id}
                 className="border border-gray-200 rounded-lg p-4 cursor-pointer hover:bg-gray-50"
-                href={`/survey/${survey.id}`}
+                href={`/my-survey/${survey.id}`}
               >
                 <h3 className="text-lg font-semibold mb-2">{survey.title}</h3>
                 <p className="text-sm text-gray-600">

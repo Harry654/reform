@@ -31,9 +31,15 @@ const SurveyManagement: React.FC = () => {
   const [chartQuestions, setChartQuestions] = useState<ChartQuestion[]>([]);
 
   const fetchSurveyData = async (id: string): Promise<ISurvey[]> => {
+    console.log(id);
     if (!user) return [];
-    const surveysRef = collection(db, "surveys", id);
-    const q = query(surveysRef, where("createdBy", "==", user.uid)); // Query for surveys created by the user
+    const surveysRef = collection(db, "surveys");
+    const q = query(
+      surveysRef,
+      where("id", "==", id),
+      where("createdBy", "==", user.uid)
+    ); // Query for the survey created by the user
+
     const querySnapshot = await getDocs(q);
 
     if (querySnapshot.docs.length === 0) router.push("/not-found");
@@ -132,7 +138,13 @@ const SurveyManagement: React.FC = () => {
   useEffect(() => {
     if (typeof id === "string") {
       // Fetch survey data once
-      fetchSurveyData(id).then((surveys) => setSurvey(surveys[0]));
+      fetchSurveyData(id).then((surveys) => {
+        const survey = surveys[0];
+
+        // if the current user didn't create the survey
+        if (survey.createdBy !== user?.uid) return router.push("/not-found");
+        setSurvey(survey);
+      });
     }
   }, [id]);
 
@@ -156,24 +168,19 @@ const SurveyManagement: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#FFFFFF]">
-      <Navbar />
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-6">
-          {survey.title}
-        </h1>
-        <TabNavigation
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          responseCount={responses.length}
-        />
-        <div className="mt-6">
-          {activeTab === "survey" ? (
-            <SurveyEditView survey={survey} onSave={handleSaveSurvey} />
-          ) : (
-            <ResponsesView questions={chartQuestions} />
-          )}
-        </div>
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <h1 className="text-3xl font-bold text-gray-900 mb-6">{survey.title}</h1>
+      <TabNavigation
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        responseCount={responses.length}
+      />
+      <div className="mt-6">
+        {activeTab === "survey" ? (
+          <SurveyEditView survey={survey} onSave={handleSaveSurvey} />
+        ) : (
+          <ResponsesView questions={chartQuestions} />
+        )}
       </div>
     </div>
   );

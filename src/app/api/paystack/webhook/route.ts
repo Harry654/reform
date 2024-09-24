@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
     return new NextResponse("Unauthorized", { status: 401 });
 
   if (!event) return;
-  // console.log(event);
+  console.log(event);
   // Handle the event
   switch (event.event) {
     case "charge.success":
@@ -38,12 +38,13 @@ export async function POST(req: NextRequest) {
 
       // Update the user's document with the plan information
       await updateDoc(userDocRef, {
-        paystack_id: event.data.customer.customer_code,
-        subscriptionPlan: event.data.plan.name,
         subscriptionStartDate: new Date(),
         subscriptionStatus: "active",
+        //
+        paystack_id: event.data.customer.customer_code,
+        subscriptionPlan: event.data.plan.name,
         paymentMethod: event.data.authorization.channel,
-        lastPaymentDate: new Date(),
+        lastPaymentDate: event.data.paid_at,
       });
 
       break;

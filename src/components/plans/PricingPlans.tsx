@@ -19,10 +19,10 @@ function PricingPlans() {
     return mostPopular.name === name;
   }
 
-  const fetchPaystackPlans = async () => {
+  const fetchPicingPlans = async () => {
     setLoadingPlans(true);
     try {
-      const response = await fetch("/api/paystack/plans", {
+      const response = await fetch("/api/paystack/fetch-plans", {
         method: "GET",
       });
 
@@ -40,7 +40,7 @@ function PricingPlans() {
   };
 
   useEffect(() => {
-    fetchPaystackPlans();
+    fetchPicingPlans();
   }, []);
 
   return (

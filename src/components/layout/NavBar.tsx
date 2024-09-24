@@ -58,11 +58,8 @@ export default function Navbar() {
                 onClick={toggleDropdown}
                 className="flex items-center space-x-2 focus:outline-none"
               >
-                <span className="text-sm font-medium text-white">
-                  {`${user.firstName} ${user.lastName}`}
-                </span>
                 <Image
-                  className="h-8 w-8 rounded-full"
+                  className="h-10 w-10 rounded-full"
                   src={
                     user.photoURL ||
                     "https://firebasestorage.googleapis.com/v0/b/reform-a80a2.appspot.com/o/empty_user.png?alt=media&token=5ad8397a-1e3f-44fd-8143-31972b02f3fd"
@@ -71,6 +68,20 @@ export default function Navbar() {
                   width={32}
                   height={32}
                 />
+                <p className="flex flex-col items-start">
+                  <span className="text-sm font-medium text-white">
+                    {`${user.firstName} ${user.lastName}`}
+                  </span>
+                  <span
+                    className={`text-xs font-medium capitalize ${
+                      user.subscriptionPlan === "free"
+                        ? "text-gray-400"
+                        : "text-green-500"
+                    }`}
+                  >
+                    {user.subscriptionPlan} plan
+                  </span>
+                </p>
               </button>
               <AnimatePresence>
                 {showDropdown && (

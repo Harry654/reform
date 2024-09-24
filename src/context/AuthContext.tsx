@@ -35,6 +35,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const pathname = usePathname(); // Get the current path, e.g., "/dashboard"
   const searchParams = useSearchParams(); // Get the current query parameters
+  
 
   // Construct query parameters string
   const params = new URLSearchParams(searchParams);

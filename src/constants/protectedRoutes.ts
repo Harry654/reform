@@ -6,7 +6,7 @@ export const protectedRoutes: string[] = [
   "/analytics",
   "/settings",
   "/plans",
-  "/survey/[id]", // Dynamic route pattern
+  "/my-survey/[id]", // Dynamic route pattern
   "/profile",
   "/billing",
 ];

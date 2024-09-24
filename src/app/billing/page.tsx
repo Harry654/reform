@@ -1,54 +1,74 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { CreditCard, AlertCircle } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import Link from "next/link";
 import Frame from "@/components/layout/Frame";
-
-interface PaymentHistory {
-  id: string;
-  date: Date;
-  amount: number;
-  cardLastFour: string;
-  periodStart: Date;
-  periodEnd: Date;
-}
+import { FadeLoader } from "react-spinners";
+import PaymentHistoryItem from "@/components/PaymentHistoryItem";
+import { TPayment } from "@/types/payment";
+import { useSearchParams } from "next/navigation";
+import InvoiceModal from "@/components/InvoiceModal";
 
 export default function Billing() {
   const { user } = useAuth();
-  const [paymentHistory, setPaymentHistory] = React.useState<PaymentHistory[]>(
-    []
-  );
+  const [paymentHistory, setPaymentHistory] = useState<TPayment[]>([]);
+  const [paymentHistoryLoading, setPaymentHistoryLoading] =
+    useState<boolean>(false);
+  const [showInvoiceModal, setShowInvoiceModal] = useState(false);
+  const [selectedPayment, setSelectedPayment] = useState<TPayment | null>(null);
+  const [error, setError] = useState<string>("");
+
+  const searchParams = useSearchParams(); // Get the current query parameters
+  // Construct query parameters string
+  let params = new URLSearchParams(searchParams);
 
   // Fetch payment history
-  React.useEffect(() => {
-    // Replace this with your actual API call
-    const fetchPaymentHistory = async () => {
-      // Simulated API call
-      const history = [
-        {
-          id: "1",
-          date: new Date("2023-05-01"),
-          amount: 29.99,
-          cardLastFour: "4242",
-          periodStart: new Date("2023-05-01"),
-          periodEnd: new Date("2023-06-01"),
+  const fetchPaymentHistory = async () => {
+    setPaymentHistoryLoading(true);
+    try {
+      const response = await fetch("/api/paystack/fetch-payment-history", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-        {
-          id: "2",
-          date: new Date("2023-04-01"),
-          amount: 29.99,
-          cardLastFour: "4242",
-          periodStart: new Date("2023-04-01"),
-          periodEnd: new Date("2023-05-01"),
-        },
-      ];
-      setPaymentHistory(history);
-    };
+        body: JSON.stringify({
+          customer: user?.paystack_id,
+        }),
+      });
 
+      const { data } = await response.json();
+      const paymentHistory = data as TPayment[];
+
+      console.log(paymentHistory);
+      setPaymentHistory(paymentHistory);
+      setPaymentHistoryLoading(false);
+    } catch (error) {
+      setError("Error fetching payment history");
+      setPaymentHistoryLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchPaymentHistory();
   }, []);
+
+  useEffect(() => {
+    const action = searchParams.get("action");
+    const paymentId = searchParams.get("paymentId");
+    if (action === "show_invoice" && paymentId) {
+      const payment = paymentHistory.find((p) => p.id.toString() === paymentId);
+      console.log(payment, action, paymentId, paymentHistory);
+      if (payment) {
+        setSelectedPayment(payment);
+        setShowInvoiceModal(true);
+      }
+    } else {
+      setShowInvoiceModal(false);
+      setSelectedPayment(null);
+    }
+  }, [params.toString(), paymentHistory]);
 
   const formatDate = (date: Date) => {
     return date.toLocaleDateString("en-US", {
@@ -58,12 +78,14 @@ export default function Billing() {
     });
   };
 
-  const formatCurrency = (amount: number) => {
+  const formatCurrency = (amount: number, currency: string) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
-      currency: "USD",
+      currency,
     }).format(amount);
   };
+
+  const isUserOnFreePlan = user?.subscriptionPlan === "free";
 
   return (
     <Frame>
@@ -119,8 +141,13 @@ export default function Billing() {
             >
               Change Plan
             </Link>
-            <button className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-red-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-              Cancel Membership
+            <button
+              className={`inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-red-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 ${
+                isUserOnFreePlan && "opacity-50"
+              }`}
+              disabled={isUserOnFreePlan}
+            >
+              Cancel Subscription
             </button>
           </div>
 
@@ -130,60 +157,52 @@ export default function Billing() {
                 Payment History
               </h2>
             </div>
-            <div className="border-t border-gray-200">
-              {paymentHistory.length > 0 ? (
-                <ul className="divide-y divide-gray-200">
-                  {paymentHistory.map((payment) => (
-                    <li key={payment.id} className="px-4 py-4 sm:px-6">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center">
-                          <div className="flex-shrink-0">
-                            <CreditCard className="h-6 w-6 text-gray-400" />
-                          </div>
-                          <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900">
-                              {formatCurrency(payment.amount)}
-                            </div>
-                            <div className="text-sm text-gray-500">
-                              {formatDate(payment.date)}
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex items-center">
-                          <div className="mr-4 text-sm text-gray-500">
-                            <span className="font-medium">Card:</span> ••••{" "}
-                            {payment.cardLastFour}
-                          </div>
-                          <Link
-                            href={`/invoice/${payment.id}`}
-                            className="inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded-md shadow-sm text-blue-600 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                          >
-                            View Invoice
-                          </Link>
-                        </div>
-                      </div>
-                      <div className="mt-2 text-sm text-gray-500">
-                        Period: {formatDate(payment.periodStart)} -{" "}
-                        {formatDate(payment.periodEnd)}
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <div className="px-4 py-5 sm:px-6 text-center">
-                  <AlertCircle className="mx-auto h-12 w-12 text-gray-400" />
-                  <h3 className="mt-2 text-sm font-medium text-gray-900">
-                    No payment history
-                  </h3>
-                  <p className="mt-1 text-sm text-gray-500">
-                    You haven&apos;t made any payments yet.
-                  </p>
-                </div>
-              )}
-            </div>
+
+            {!paymentHistoryLoading ? (
+              <div className="border-t border-gray-200">
+                {!error ? (
+                  paymentHistory.length > 0 ? (
+                    <ul className="divide-y divide-gray-200">
+                      {paymentHistory.map((payment) => (
+                        <PaymentHistoryItem
+                          key={payment.id}
+                          payment={payment}
+                          formatCurrency={formatCurrency}
+                          formatDate={formatDate}
+                        />
+                      ))}
+                    </ul>
+                  ) : (
+                    <div className="px-4 py-5 sm:px-6 text-center">
+                      <AlertCircle className="mx-auto h-12 w-12 text-gray-400" />
+                      <h3 className="mt-2 text-sm font-medium text-gray-900">
+                        No payment history
+                      </h3>
+                      <p className="mt-1 text-sm text-gray-500">
+                        You haven&apos;t made any payments yet.
+                      </p>
+                    </div>
+                  )
+                ) : (
+                  <p className="text-center">{error}</p>
+                )}
+              </div>
+            ) : (
+              <div className="border-t border-gray-200 text-center">
+                <FadeLoader color="#000000" />
+              </div>
+            )}
           </div>
         </div>
       </div>
+      {/* Invoice Modal */}
+      {showInvoiceModal && selectedPayment && (
+        <InvoiceModal
+          selectedPayment={selectedPayment}
+          formatCurrency={formatCurrency}
+          formatDate={formatDate}
+        />
+      )}
     </Frame>
   );
 }
