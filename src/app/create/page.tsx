@@ -15,7 +15,6 @@ import { useSearchParams } from "next/navigation";
 import { templates } from "@/constants/template_data";
 import { survey_categories } from "@/constants/survey_categories";
 import AccessURLModal from "@/components/AccessURLModal";
-import FullPageLoader from "@/components/FullPageLoader";
 import Frame from "@/components/layout/Frame";
 
 export default function SurveyCreator() {
@@ -123,7 +122,6 @@ export default function SurveyCreator() {
     resetSurvey();
   };
 
-  if (!user) return <FullPageLoader />;
 
   return (
     <Frame>

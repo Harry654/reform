@@ -26,7 +26,7 @@ export default function LandingPage() {
         <Navbar />
 
         <main className="container mx-auto text-black">
-          <section className="flex flex-col justify-center items-center text-center py-20 h-[calc(100vh-3.5rem)]">
+          <section className="flex flex-col justify-center items-center text-center py-20 h-[calc(100dvh-3.5rem)]">
             <h2 className="text-3xl md:text-5xl font-bold mb-4">
               Revolutionize Your Surveys with AI
             </h2>

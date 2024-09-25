@@ -20,7 +20,7 @@ const Frame: React.FC<FrameProps> = ({ children }) => {
         {/* Main content */}
         <main className="flex-1 overflow-hidden">
           {/* Dashboard content */}
-          <div className="p-8 overflow-auto h-[calc(100vh-3.5rem)] no-scrollbar">
+          <div className="p-8 overflow-auto h-[calc(100dvh-3.5rem)] no-scrollbar">
             {children}
           </div>
         </main>

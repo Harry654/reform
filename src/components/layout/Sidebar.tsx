@@ -19,12 +19,12 @@ const Sidebar: React.FC<Props> = ({ currentPage }) => {
       <aside
         className={`${
           isSidebarOpen ? "w-52" : "w-20"
-        } h-[calc(100vh-3.5rem)] flex flex-col justify-between bg-[#121211] text-gray-900 transition-all duration-300 ease-in-out overflow-y-auto divide-y-2 space-y-5 divide-gray-800 px-2`}
+        } h-[calc(100dvh-3.5rem)] flex flex-col justify-between bg-[#121211] text-gray-900 transition-all duration-300 ease-in-out overflow-y-auto divide-y-2 space-y-5 divide-gray-800 px-2`}
       />
       <aside
         className={`${
           isSidebarOpen ? "w-52" : "w-20"
-        } h-[calc(100vh-3.5rem)] flex flex-col justify-between bg-[#121211] text-gray-900 transition-all duration-300 ease-in-out overflow-y-auto fixed divide-y-2 space-y-5 divide-gray-800 px-2`}
+        } h-[calc(100dvh-3.5rem)] flex flex-col justify-between bg-[#121211] text-gray-900 transition-all duration-300 ease-in-out overflow-y-auto fixed divide-y-2 space-y-5 divide-gray-800 px-2`}
       >
         <div
           className={`w-full flex ${
@@ -32,14 +32,16 @@ const Sidebar: React.FC<Props> = ({ currentPage }) => {
           }`}
         >
           <div className="w-full flex justify-between items-center">
-            <p
-              className={`w-full flex items-center rounded-full text-left text-sm capitalize text-green-500 ${
-                !isSidebarOpen && "hidden"
-              }  mx-auto  ps-4`}
-            >
-              <Leaf className="h-5 w-5 mr-2" />
-              {user?.subscription.plan.name} Plan
-            </p>
+            {user?.subscription.plan.name && (
+              <p
+                className={`w-full flex items-center rounded-full text-left text-sm capitalize text-green-500 ${
+                  !isSidebarOpen && "hidden"
+                }  mx-auto  ps-4`}
+              >
+                <Leaf className="h-5 w-5 mr-2" />
+                {user?.subscription.plan.name} Plan
+              </p>
+            )}
 
             {/* Sidebar Toggle */}
             <button className="p-2 rounded-full" onClick={toggleSidebar}>
