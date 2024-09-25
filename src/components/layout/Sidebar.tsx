@@ -23,7 +23,7 @@ const Sidebar: React.FC<Props> = ({ currentPage }) => {
       />
       <aside
         className={`${
-          isSidebarOpen ? "w-52" : "w-20"
+          isSidebarOpen ? "w-44" : "w-20"
         } h-[calc(100dvh-3.5rem)] flex flex-col justify-between bg-[#121211] text-gray-900 transition-all duration-300 ease-in-out overflow-y-auto fixed divide-y-2 space-y-5 divide-gray-800 px-2`}
       >
         <div

@@ -10,3 +10,14 @@ export const freeSubscriptionPlan: TSubscription = {
     name: "free",
   },
 };
+
+export const cancelledSubscriptionPlan: TSubscription = {
+  subscriptionCode: null,
+  subscriptionStatus: "cancelled",
+  subscriptionStartDate: new Date(),
+  paymentMethod: null,
+  plan: {
+    code: null,
+    name: "free",
+  },
+};

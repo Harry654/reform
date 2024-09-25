@@ -102,8 +102,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           logout,
         }}
       >
-        {/* {!loading ? children : <FullPageLoader />} */}
-        {children}
+        {!loading ? children : <FullPageLoader />}
       </AuthContext.Provider>
     </Suspense>
   );

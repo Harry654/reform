@@ -15,6 +15,7 @@ import { useAuth } from "@/context/AuthContext";
 import { TFirestoreUser } from "@/types/user";
 import Link from "next/link";
 import FullPageLoader from "@/components/FullPageLoader";
+import { freeSubscriptionPlan } from "@/constants/plan_types";
 
 export default function SignupPage() {
   const [firstName, setFirstName] = useState("");
@@ -116,16 +117,7 @@ export default function SignupPage() {
           tosAgreedAt: Timestamp.now(), // Add the timestamp of ToS agreement
           privacyPolicyAgreedAt: Timestamp.now(),
           photoURL: user.photoURL || null,
-          subscription: {
-            subscriptionCode: null, // ID of the subscription plan
-            subscriptionStatus: null, // Status of the subscription
-            subscriptionStartDate: new Date(), // Start date ofnew Date() the subscription
-            paymentMethod: null, // Payment method used
-            plan: {
-              name: "free", // name of the subscription plan
-              code: null,
-            },
-          },
+          subscription: freeSubscriptionPlan,
           paystack_id: null,
         };
         await setDoc(userDocRef, newUser);

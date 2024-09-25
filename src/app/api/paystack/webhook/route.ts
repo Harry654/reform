@@ -2,7 +2,7 @@ import { db } from "@/lib/firebase/config";
 import { doc, updateDoc } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
-import { freeSubscriptionPlan } from "@/constants/free_plan";
+import { cancelledSubscriptionPlan } from "@/constants/plan_types";
 
 type TEvent = { [key: string]: any };
 
@@ -11,7 +11,7 @@ const secret =
     ? process.env.PAYSTACK_SECRET_KEY_PRODUCTION
     : process.env.PAYSTACK_SECRET_KEY_DEVELOPMENT) || "";
 
-async function subscriptionDisabled(event: TEvent) {
+async function subscriptionDisable(event: TEvent) {
   console.log(`${event.event} was successful!`);
 
   // Reference the user's document in Firestore
@@ -19,7 +19,7 @@ async function subscriptionDisabled(event: TEvent) {
 
   // Update the user's document with the subscription information
   await updateDoc(userDocRef, {
-    subscription: { ...freeSubscriptionPlan, subscriptionStatus: "cancelled" },
+    subscription: cancelledSubscriptionPlan,
   });
 }
 
@@ -101,7 +101,7 @@ export async function POST(req: NextRequest) {
       subscriptionNotRenew(event);
       break;
     case "subscription.disable":
-      subscriptionDisabled(event);
+      subscriptionDisable(event);
       break;
     default:
       console.log(`Unhandled event type ${event.type}`);
