@@ -7,17 +7,12 @@ const secret =
     : process.env.PAYSTACK_SECRET_KEY_DEVELOPMENT;
 
 export async function POST(req: Request): Promise<NextResponse> {
-  const { customer } = await req.json();
-
-  const params = JSON.stringify({
-    customer,
-    status: "success",
-  });
+  const { code } = await req.json();
 
   const options = {
     hostname: "api.paystack.co",
     port: 443,
-    path: "/transaction",
+    path: `/subscription/${code}`,
     method: "GET",
     headers: {
       Authorization: `Bearer ${secret}`,
@@ -43,7 +38,6 @@ export async function POST(req: Request): Promise<NextResponse> {
       reject(NextResponse.json({ error: error.message }));
     });
 
-    request.write(params);
     request.end();
   });
 }

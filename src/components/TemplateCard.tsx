@@ -12,9 +12,9 @@ const TemplateCard: React.FC<TemplateCardProps> = ({ template }) => {
   const { user } = useAuth();
 
   const userCanUseTemplate = () => {
-    if (user?.subscriptionPlan !== "free") return true;
+    if (user?.subscription.plan.name !== "free") return true;
 
-    if (user?.subscriptionPlan === "free" && template.isFree) return true;
+    if (user?.subscription.plan.name === "free" && template.isFree) return true;
 
     return false;
   };

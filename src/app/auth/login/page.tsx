@@ -66,23 +66,29 @@ export default function LoginComponent() {
 
       if (!userDoc.exists()) {
         // Save user's information to Firestore if it's a new user
-        const newUser = {
+        const newUser: TFirestoreUser = {
           uid: user.uid,
           firstName: user.displayName?.split(" ")[0] || "",
           lastName: user.displayName?.split(" ")[1] || "",
-          email: user.email,
+          email: user.email || "",
           createdAt: Timestamp.now(),
-          subscriptionPlan: null, // or set to a default plan ID if applicable
-          subscriptionStartDate: null,
-          subscriptionStatus: "inactive", // default status
-          lastPaymentDate: null,
-          paymentMethod: null,
           tosAgreedAt: Timestamp.now(), // Add the timestamp of ToS agreement
           privacyPolicyAgreedAt: Timestamp.now(),
-          photoURL: user.photoURL,
+          photoURL: user.photoURL || null,
+          subscription: {
+            subscriptionCode: null, // ID of the subscription plan
+            subscriptionStatus: null, // Status of the subscription
+            subscriptionStartDate: new Date(), // Start date ofnew Date() the subscription
+            paymentMethod: null, // Payment method used
+            plan: {
+              name: "free", // name of the subscription plan
+              code: null,
+            },
+          },
+          paystack_id: null,
         };
         await setDoc(userDocRef, newUser);
-        setUser(newUser as TFirestoreUser);
+        setUser(newUser);
       }
 
       redirect();

@@ -1,5 +1,6 @@
 import { useAuth } from "@/context/AuthContext";
 import { getIntervalAbbreviation } from "@/helpers/getIntervalAbbreviation";
+import { getTwoWeeksFromNowUTC } from "@/helpers/getTwoWeeksFromNowISO";
 import { createCustomer } from "@/helpers/paystack/createCustomer";
 import { TPlan } from "@/types/plans";
 import { CheckCircle } from "lucide-react";
@@ -42,11 +43,14 @@ const PricingPlan: React.FC<Props> = ({ plan, isMostPopularPlan }) => {
           email: user.email,
           amount: plan.amount,
           plan: plan.plan_code,
+          start_date: getTwoWeeksFromNowUTC(),
         }),
       });
 
       const { data } = await response.json();
       setSubscribing(false);
+
+      // console.log(getTwoWeeksFromNowUTC());
       if (response.ok) router.push(data.authorization_url);
     } catch (error) {
       setSubscribing(false);
@@ -79,7 +83,7 @@ const PricingPlan: React.FC<Props> = ({ plan, isMostPopularPlan }) => {
           )}
         </ul>
       )}
-      {user?.subscriptionPlan !== plan.name ? (
+      {user?.subscription.plan.name !== plan.name ? (
         <button
           className={`w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 ${
             subscribing && "opacity-70"

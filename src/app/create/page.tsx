@@ -76,11 +76,9 @@ export default function SurveyCreator() {
     e.preventDefault();
     if (loading) return;
 
-    const main_section = sections.find((section) => section.isMainSection);
-
-    // if there are no questions added
-    if (sections.length === 1 && !main_section?.questions.length)
-      return alert("Add at least one question");
+    const allQuestions = sections.flatMap((section) => section.questions);
+    // if no questions were added, return
+    if (!!!allQuestions.length) return alert("Add at least one question");
 
     if (!formMetadata.createdBy)
       return alert("Please login to create a survey");
@@ -120,6 +118,10 @@ export default function SurveyCreator() {
       alert("There was an error submitting the survey. Please try again.");
     }
   };
+  const handleCloseAccessURLModal = () => {
+    setShowAccessURLModal(false);
+    resetSurvey();
+  };
 
   if (!user) return <FullPageLoader />;
 
@@ -129,7 +131,7 @@ export default function SurveyCreator() {
       <AccessURLModal
         accessUrl={`${process.env.NEXT_PUBLIC_BASE_URL}/s/${formMetadata.id}`}
         isOpen={showAccessURLModal}
-        onClose={resetSurvey}
+        onClose={handleCloseAccessURLModal}
       />
       <div className="max-w-2xl mx-auto p-6 border rounded-lg shadow-md">
         <div className="w-full flex justify-end">

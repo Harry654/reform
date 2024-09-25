@@ -7,18 +7,18 @@ const secret =
     : process.env.PAYSTACK_SECRET_KEY_DEVELOPMENT;
 
 export async function POST(req: Request): Promise<NextResponse> {
-  const { customer } = await req.json();
+  const { code, token } = await req.json();
 
   const params = JSON.stringify({
-    customer,
-    status: "success",
+    code,
+    token,
   });
 
   const options = {
     hostname: "api.paystack.co",
     port: 443,
-    path: "/transaction",
-    method: "GET",
+    path: "/subscription/disable",
+    method: "POST",
     headers: {
       Authorization: `Bearer ${secret}`,
       "Content-Type": "application/json",

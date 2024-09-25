@@ -4,7 +4,6 @@ import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import { CreateSurveyProvider } from "@/context/CreateSurveyContext";
 import { SurveyResponseProvider } from "@/context/SurveyResponseContext";
-import SubscriptionWrapper from "@/wrappers/SubscriptionWrapper";
 import ProtectedRoute from "@/wrappers/ProtectedRoute";
 
 const geistSans = localFont({
@@ -36,11 +35,9 @@ export default function RootLayout({
       >
         <AuthProvider>
           <ProtectedRoute>
-            <SubscriptionWrapper>
-              <CreateSurveyProvider>
-                <SurveyResponseProvider>{children}</SurveyResponseProvider>
-              </CreateSurveyProvider>
-            </SubscriptionWrapper>
+            <CreateSurveyProvider>
+              <SurveyResponseProvider>{children}</SurveyResponseProvider>
+            </CreateSurveyProvider>
           </ProtectedRoute>
         </AuthProvider>
       </body>

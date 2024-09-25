@@ -28,7 +28,12 @@ function PricingPlans() {
 
       const { data: plans } = await response.json();
 
-      const convertedPlans = plans as TPlan[];
+      const filteredPlans = plans.filter(
+        (plan: { [key: string]: string | boolean | number | null }) =>
+          !plan.is_deleted && !plan.is_archived
+      );
+
+      const convertedPlans = filteredPlans as TPlan[];
       const sortedPlans = convertedPlans.sort((a, b) => a.amount - b.amount);
       setPlans(sortedPlans);
 

@@ -79,15 +79,7 @@ export const CreateSurveyProvider = ({ children }: { children: ReactNode }) => {
       id: section_id,
       title: "Section " + sections.length,
       description: "",
-      questions: [
-        {
-          id: uuidv4(),
-          type: "short_answer",
-          text: "",
-          required: true,
-          section_id,
-        },
-      ],
+      questions: [],
       isMainSection: false,
     };
     setSections([...sections, newSection]);
@@ -282,11 +274,7 @@ export const CreateSurveyProvider = ({ children }: { children: ReactNode }) => {
         section.id === section_id
           ? {
               ...section,
-              questions: section.isMainSection
-                ? section.questions.filter((q) => q.id !== id)
-                : section.questions.length > 1
-                ? section.questions.filter((q) => q.id !== id)
-                : section.questions,
+              questions: section.questions.filter((q) => q.id !== id),
             }
           : section
       )

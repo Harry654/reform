@@ -157,7 +157,7 @@ export default function ProfilePage() {
                   Subscription Plan:
                 </span>
                 <span className="ml-2 text-sm text-gray-900 capitalize">
-                  {user?.subscriptionPlan || "No active plan"}
+                  {user?.subscription.plan.name}
                 </span>
               </div>
               <Link
@@ -172,7 +172,7 @@ export default function ProfilePage() {
                 Subscription Status:
               </span>
               <span className="ml-2 text-sm text-gray-900 capitalize">
-                {user?.subscriptionStatus}
+                {user?.subscription.subscriptionStatus}
               </span>
             </div>
             <div>

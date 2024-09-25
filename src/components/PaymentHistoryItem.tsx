@@ -39,10 +39,12 @@ const PaymentHistoryItem: React.FC<PaymentHistoryItemProps> = ({
           </div>
         </div>
         <div className="flex items-center">
-          <div className="mr-4 text-sm text-gray-500">
-            <span className="font-medium">Card:</span> ••••{" "}
-            {payment.authorization.last4}
-          </div>
+          {payment.authorization.last4 && (
+            <div className="mr-4 text-sm text-gray-500">
+              <span className="font-medium">Card:</span> ••••{" "}
+              {payment.authorization.last4}
+            </div>
+          )}
           <button
             onClick={handleViewInvoice}
             className="inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded-md shadow-sm text-blue-600 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"

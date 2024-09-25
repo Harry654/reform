@@ -1,6 +1,6 @@
 // app/api/paystack/plans/route.ts
 import https from "https";
-import {  NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 export async function GET(): Promise<NextResponse> {
   const options = {
@@ -29,6 +29,7 @@ export async function GET(): Promise<NextResponse> {
       // End of the response
       paystackRes.on("end", () => {
         const parsedData = JSON.parse(data);
+     
 
         if (paystackRes.statusCode === 200) {
           resolve(NextResponse.json(parsedData, { status: 200 }));

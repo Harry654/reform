@@ -44,7 +44,7 @@ export default function Navbar() {
   const toggleDropdown = () => setShowDropdown(!showDropdown);
 
   return (
-    <header className="h-14 text-black bg-[#121211] z-50 sticky top-0 px-4">
+    <header className="h-14 text-black bg-[#121211] z-40 sticky top-0 px-4">
       <nav className="mx-auto h-full w-full flex justify-between items-center">
         <Link href="/" className="text-xl font-bold text-white">
           Reform
@@ -58,6 +58,9 @@ export default function Navbar() {
                 onClick={toggleDropdown}
                 className="flex items-center space-x-2 focus:outline-none"
               >
+                <span className="text-sm font-medium text-white">
+                  {`${user.firstName} ${user.lastName}`}
+                </span>
                 <Image
                   className="h-10 w-10 rounded-full"
                   src={
@@ -68,20 +71,6 @@ export default function Navbar() {
                   width={32}
                   height={32}
                 />
-                <p className="flex flex-col items-start">
-                  <span className="text-sm font-medium text-white">
-                    {`${user.firstName} ${user.lastName}`}
-                  </span>
-                  <span
-                    className={`text-xs font-medium capitalize ${
-                      user.subscriptionPlan === "free"
-                        ? "text-gray-400"
-                        : "text-green-500"
-                    }`}
-                  >
-                    {user.subscriptionPlan} plan
-                  </span>
-                </p>
               </button>
               <AnimatePresence>
                 {showDropdown && (

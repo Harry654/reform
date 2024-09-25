@@ -12,6 +12,7 @@ interface PaystackRequestBody {
   email: string;
   amount: string;
   plan: string;
+  start_date: string;
 }
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
@@ -21,13 +22,15 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       email,
       amount,
       plan,
+      start_date,
     }: PaystackRequestBody = await req.json();
-
+    console.log(start_date);
     // Prepare Paystack parameters
     const params = JSON.stringify({
       email,
       amount,
       plan,
+      start_date,
       metadata: { userId },
     });
 
