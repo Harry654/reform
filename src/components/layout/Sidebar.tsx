@@ -18,12 +18,12 @@ const Sidebar: React.FC<Props> = ({ currentPage }) => {
     <>
       <aside
         className={`${
-          isSidebarOpen ? "w-52" : "w-20"
+          isSidebarOpen ? "w-52" : "w-12"
         } h-[calc(100dvh-3.5rem)] flex flex-col justify-between bg-[#121211] text-gray-900 transition-all duration-300 ease-in-out overflow-y-auto divide-y-2 space-y-5 divide-gray-800 px-2`}
       />
       <aside
         className={`${
-          isSidebarOpen ? "w-44" : "w-20"
+          isSidebarOpen ? "w-52" : "w-12"
         } h-[calc(100dvh-3.5rem)] flex flex-col justify-between bg-[#121211] text-gray-900 transition-all duration-300 ease-in-out overflow-y-auto fixed divide-y-2 space-y-5 divide-gray-800 px-2`}
       >
         <div
@@ -44,7 +44,7 @@ const Sidebar: React.FC<Props> = ({ currentPage }) => {
             )}
 
             {/* Sidebar Toggle */}
-            <button className="p-2 rounded-full" onClick={toggleSidebar}>
+            <button className="rounded-full" onClick={toggleSidebar}>
               <ChevronDown
                 className={`h-6 w-6 transition-transform ${
                   isSidebarOpen ? "rotate-90" : "-rotate-90"
@@ -61,13 +61,15 @@ const Sidebar: React.FC<Props> = ({ currentPage }) => {
               <Link
                 key={index}
                 href={item.active ? item.route : "#"}
-                className={`w-full flex items-center rounded-full py-2 text-left text-sm hover:bg-gray-800 duration-500 capitalize ${
+                className={`w-full flex items-center gap-2 py-2 text-left text-sm hover:bg-gray-800 duration-500 capitalize ${
                   item.route === currentPage
                     ? "font-bold text-white bg-gray-800"
                     : "text-slate-400"
-                } ${isSidebarOpen ? "justify-start ps-4" : "justify-center"} ${
-                  !item.active && "opacity-30"
-                } mx-auto`}
+                } ${
+                  isSidebarOpen
+                    ? "justify-start ps-4 rounded-full"
+                    : "justify-center rounded-lg"
+                } ${!item.active && "opacity-30"} mx-auto`}
               >
                 {item.icon}
                 {isSidebarOpen && <span>{item.label}</span>}
@@ -79,13 +81,17 @@ const Sidebar: React.FC<Props> = ({ currentPage }) => {
         {/* Settings Button */}
         <Link
           href={"/settings"}
-          className={`w-full flex items-center rounded-full py-2 text-left text-sm hover:bg-gray-800 duration-500 capitalize ${
+          className={`w-full flex items-center gap-2 py-2 text-left text-sm hover:bg-gray-800 duration-500 capitalize ${
             "/settings" === currentPage
               ? "font-bold text-white bg-gray-800"
               : "text-slate-400"
-          } ${isSidebarOpen ? "justify-start ps-4" : "justify-center"} mx-auto`}
+          } ${
+            isSidebarOpen
+              ? "justify-start ps-4 rounded-full"
+              : "justify-center rounded-lg"
+          } mx-auto`}
         >
-          <Settings className="h-5 w-5 mr-2" />
+          <Settings className="h-5 w-5" />
           {isSidebarOpen && <span>Settings</span>}
         </Link>
       </aside>

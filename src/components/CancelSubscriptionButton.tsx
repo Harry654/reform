@@ -3,25 +3,26 @@ import { BeatLoader } from "react-spinners";
 import { AlertTriangle, X } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { TSubscription } from "@/types/payment";
+import { cancelSubscription } from "@/helpers/paystack/cancelSubscription";
 
-interface CancelSubscriptionButtonProps {
+interface handleCancelSubscriptionButtonProps {
   currentSubscription:
     | (TSubscription & { nextPaymentDate: Date; email_token: string })
     | null;
   onCancel: () => void;
 }
 
-export default function CancelSubscriptionButton({
+export default function handleCancelSubscriptionButton({
   currentSubscription,
   onCancel,
-}: CancelSubscriptionButtonProps) {
+}: handleCancelSubscriptionButtonProps) {
   const { user } = useAuth();
   const [showModal, setShowModal] = useState(false);
   const [subscriptionCancelling, setSubscriptionCancelling] =
     useState<boolean>(false);
 
   const isUserOnFreePlan = user?.subscription.plan.name === "free";
-  const canCancelSubscription =
+  const canhandleCancelSubscription =
     !isUserOnFreePlan && user?.subscription.subscriptionStatus === "active";
 
   const handleCancelClick = () => {
@@ -30,7 +31,7 @@ export default function CancelSubscriptionButton({
 
   const handleConfirmCancel = () => {
     if (currentSubscription) {
-      cancelSubscription(
+      handleCancelSubscription(
         currentSubscription.subscriptionCode || "",
         currentSubscription.email_token
       );
@@ -43,24 +44,12 @@ export default function CancelSubscriptionButton({
   };
 
   // Cancel subscription
-  const cancelSubscription = async (code: string, token: string) => {
+  const handleCancelSubscription = async (code: string, token: string) => {
     if (!code || !token) return;
 
     setSubscriptionCancelling(true);
     try {
-      const response = await fetch("/api/paystack/cancel-subscription", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          code,
-          token,
-        }),
-      });
-
-      const { data } = await response.json();
-      // console.log(data);
+      cancelSubscription(code, token);
 
       // run cancel callback
       onCancel();
@@ -79,9 +68,10 @@ export default function CancelSubscriptionButton({
     <>
       <button
         className={`inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-red-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 ${
-          (!canCancelSubscription || subscriptionCancelling) && "opacity-50"
+          (!canhandleCancelSubscription || subscriptionCancelling) &&
+          "opacity-50"
         }`}
-        disabled={!canCancelSubscription || subscriptionCancelling}
+        disabled={!canhandleCancelSubscription || subscriptionCancelling}
         onClick={handleCancelClick}
       >
         {!subscriptionCancelling ? (

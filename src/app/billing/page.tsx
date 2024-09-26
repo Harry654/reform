@@ -126,13 +126,6 @@ export default function Billing() {
     });
   };
 
-  const formatCurrency = (amount: number, currency: string) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency,
-    }).format(amount);
-  };
-
   return (
     <Frame>
       <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
@@ -241,7 +234,6 @@ export default function Billing() {
                         <PaymentHistoryItem
                           key={payment.id}
                           payment={payment}
-                          formatCurrency={formatCurrency}
                           formatDate={formatDate}
                         />
                       ))}
@@ -273,7 +265,6 @@ export default function Billing() {
       {showInvoiceModal && selectedPayment && (
         <InvoiceModal
           selectedPayment={selectedPayment}
-          formatCurrency={formatCurrency}
           formatDate={formatDate}
         />
       )}

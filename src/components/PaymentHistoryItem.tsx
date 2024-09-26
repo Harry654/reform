@@ -2,16 +2,15 @@ import React from "react";
 import { CreditCard } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { TPayment } from "@/types/payment";
+import { formatCurrency } from "@/helpers/formatCurrency";
 
 interface PaymentHistoryItemProps {
   payment: TPayment;
-  formatCurrency: (amount: number, currency: string) => string;
   formatDate: (date: Date) => string;
 }
 
 const PaymentHistoryItem: React.FC<PaymentHistoryItemProps> = ({
   payment,
-  formatCurrency,
   formatDate,
 }) => {
   const router = useRouter();

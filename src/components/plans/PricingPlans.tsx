@@ -9,6 +9,23 @@ function PricingPlans() {
   const [loadingPlans, setLoadingPlans] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
+  const freePlan: TPlan = {
+    name: "free",
+    plan_code: "free",
+    amount: 0,
+    interval: "monthly",
+    currency: "NGN",
+    description: JSON.stringify([
+      "Up to 15 survey responses per survey",
+      "Access to basic survey templates",
+      "Simple question types",
+      "Basic survey analytics",
+      "Email support",
+      "Custom branding (limited)",
+    ]),
+    active_subscriptions: 0,
+  };
+
   function isMostPopularPlan(name: string) {
     // Find the plan with the highest number of subscriptions
     const mostPopular = plans.reduce((mostPopular, currentPlan) => {
@@ -56,21 +73,34 @@ function PricingPlans() {
       {error ? (
         <p>{error}</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 justify-center">
           {!loadingPlans ? (
-            plans.map((plan, index) => (
-              <Slide
-                key={index}
-                direction="right"
-                delay={index * 100}
-                triggerOnce={true}
-              >
+            <>
+              {/* free plan */}
+              <Slide direction="right" triggerOnce={true}>
                 <PricingPlan
-                  plan={plan}
-                  isMostPopularPlan={isMostPopularPlan(plan.name)}
+                  plan={freePlan}
+                  plans={plans}
+                  isMostPopularPlan={false}
                 />
               </Slide>
-            ))
+
+              {/* other plans */}
+              {plans.map((plan, index) => (
+                <Slide
+                  key={index}
+                  direction="right"
+                  delay={(index + 1) * 100}
+                  triggerOnce={true}
+                >
+                  <PricingPlan
+                    plan={plan}
+                    plans={plans}
+                    isMostPopularPlan={isMostPopularPlan(plan.name)}
+                  />
+                </Slide>
+              ))}
+            </>
           ) : (
             <FadeLoader color="#000000" />
           )}

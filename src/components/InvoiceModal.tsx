@@ -1,16 +1,15 @@
 import React from "react";
 import { TPayment } from "@/types/payment";
 import { usePathname, useRouter } from "next/navigation";
+import { formatCurrency } from "@/helpers/formatCurrency";
 
 interface InvoiceModalProps {
   selectedPayment: TPayment;
-  formatCurrency: (amount: number, currency: string) => string;
   formatDate: (date: Date) => string;
 }
 
 const InvoiceModal: React.FC<InvoiceModalProps> = ({
   selectedPayment,
-  formatCurrency,
   formatDate,
 }) => {
   const pathname = usePathname();

@@ -23,6 +23,6 @@ export type TSubscription = {
   paymentMethod: string | null; // Payment method used
   plan: {
     code: string | null;
-    name: "free" | "basic" | "pro" | "enterprise" | null; // name of the subscription plan
+    name: "free" | "basic" | "pro" | "enterprise"; // name of the subscription plan
   };
 };
