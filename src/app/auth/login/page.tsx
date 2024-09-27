@@ -78,6 +78,7 @@ export default function LoginComponent() {
           photoURL: user.photoURL || null,
           subscription: freeSubscriptionPlan,
           paystack_id: null,
+          paystack_authorization: null,
         };
         await setDoc(userDocRef, newUser);
         setUser(newUser);

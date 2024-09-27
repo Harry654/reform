@@ -4,12 +4,12 @@ import {
   DialogTitle,
   DialogPanel,
   Transition,
-  TransitionChild
+  TransitionChild,
 } from "@headlessui/react";
 import { Fragment } from "react";
 import { QuestionType } from "@/types/question";
 import { surveyQuestions } from "@/constants/question_types";
-import AddIcon from "./icons/AddIcon";
+import AddIcon from "../icons/AddIcon";
 
 interface AddQuestionModalProps {
   onAddQuestion: (type: QuestionType, section_id: string) => void;
@@ -41,7 +41,7 @@ export default function AddQuestionModal({
       </p>
 
       <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={closeModal}>
+        <Dialog as="div" className="relative z-50" onClose={closeModal}>
           <TransitionChild
             as={Fragment}
             enter="ease-out duration-300"

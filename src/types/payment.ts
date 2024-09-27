@@ -11,18 +11,19 @@ export type TPayment = {
 };
 
 export type TSubscription = {
-  subscriptionCode: string | null; // code for the subscription plan
-  subscriptionStatus:
+  code: string | null; // code for the subscription plan
+  token: string | null; // email token for the subscription plan
+  status:
     | "active"
     | "non-renewing"
     | "attention"
     | "completed"
     | "cancelled"
     | null; // Status of the subscription
-  subscriptionStartDate: Date | null; // Start date of the subscription
+  startDate: Date | null; // Start date of the subscription
   paymentMethod: string | null; // Payment method used
   plan: {
-    code: string | null;
+    code: string;
     name: "free" | "basic" | "pro" | "enterprise"; // name of the subscription plan
   };
 };

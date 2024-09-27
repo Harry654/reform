@@ -2,7 +2,15 @@ import { db } from "@/lib/firebase/config";
 import { doc, updateDoc } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
-import { cancelledSubscriptionPlan } from "@/constants/plan_types";
+import {
+  cancelledSubscriptionPlan,
+  freePlan,
+  freeSubscriptionPlan,
+} from "@/constants/plan_types";
+import { initiateRefund } from "@/helpers/paystack/initiateRefund";
+import { updateUserAuthorization } from "@/helpers/firebase/updateUserAuthorization";
+import { createSubscription } from "@/helpers/paystack/createSubscription";
+import { updateUserSubscription } from "@/helpers/firebase/updateUserSubscription";
 
 type TEvent = { [key: string]: any };
 
@@ -13,6 +21,7 @@ const secret =
 
 async function subscriptionDisable(event: TEvent) {
   console.log(`${event.event} was successful!`);
+  console.log(`${JSON.stringify(event.data.metadata)} !`);
 
   // Reference the user's document in Firestore
   const userDocRef = doc(db, "users", event.data.customer.metadata.userId);
@@ -31,7 +40,7 @@ async function subscriptionNotRenew(event: TEvent) {
 
   // Update the user's document with the subscription information
   await updateDoc(userDocRef, {
-    "subscription.subscriptionStatus": event.data.status, // status of the subscription
+    "subscription.status": event.data.status, // status of the subscription
   });
 }
 
@@ -44,9 +53,10 @@ async function subscriptionCreate(event: TEvent) {
   // Update the user's document with the subscription information
   await updateDoc(userDocRef, {
     subscription: {
-      subscriptionCode: event.data.subscription_code, // code for the subscription plan
-      subscriptionStatus: event.data.status, // status of the subscription
-      subscriptionStartDate: event.data.createdAt, // Start date of the subscription
+      code: event.data.subscription_code, // code for the subscription plan
+      token: event.data.email_token, // code for the subscription plan
+      status: event.data.status, // status of the subscription
+      startDate: event.data.createdAt, // Start date of the subscription
       paymentMethod: "card", // Payment method used
       plan: {
         code: event.data.plan.plan_code,
@@ -59,12 +69,32 @@ async function subscriptionCreate(event: TEvent) {
 async function chargeSuccess(event: TEvent) {
   console.log(`${event.event} was successful!`);
 
+  if (event.data.metadata.reason === "card_authorization_charge") {
+    console.log(event.data.metadata.reason);
+    if (!event.data.authorization.reusable) return;
+    console.log(event.data.metadata.reason);
+
+    await updateUserAuthorization(
+      event.data.customer.metadata.userId,
+      event.data.authorization.authorization_code
+    );
+    await initiateRefund(event.data.reference);
+
+    await createSubscription(
+      event.data.customer.metadata.userId,
+      event.data.customer.customer_code,
+      event.data.metadata.plan_code,
+      event.data.authorization.authorization_code,
+      event.data.metadata.start_date
+    );
+    return;
+  }
   // Reference the user's document in Firestore
   const userDocRef = doc(db, "users", event.data.customer.metadata.userId);
 
   // Update the user's document with the plan information
   await updateDoc(userDocRef, {
-    "subscription.subscriptionStatus": "active", // Update the status only
+    "subscription.status": "active", // Update the status only
     "subscription.paymentMethod": event.data.channel, // Update the payment method only
   });
 }

@@ -2,6 +2,7 @@ import React from "react";
 import { ITemplate } from "@/types/template";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { Lightbulb, MoveRight } from "lucide-react";
 
 interface TemplateCardProps {
   template: ITemplate;
@@ -33,12 +34,28 @@ const TemplateCard: React.FC<TemplateCardProps> = ({ template }) => {
             </span>
           ))}
         </div>
-        <button
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-          onClick={() => router.push(`/create?t_id=${template.id}`)}
-        >
-          {userCanUseTemplate() ? "Use Template" : "Upgrade Plan"}
-        </button>
+
+        {userCanUseTemplate() ? (
+          <button
+            className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 text-sm"
+            onClick={() => router.push(`/create?t_id=${template.id}`)}
+          >
+            <span className="flex items-center gap-2">
+              Use Template
+              <MoveRight size={20} color="#ffffff" />
+            </span>
+          </button>
+        ) : (
+          <button
+            className="px-4 py-2 bg-green-300 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 text-sm"
+            onClick={() => router.push(`/plans`)}
+          >
+            <span className="flex items-center gap-2">
+              <Lightbulb size={20} color="#ffffff" />
+              Upgrade Plan
+            </span>
+          </button>
+        )}
       </div>
     </div>
   );

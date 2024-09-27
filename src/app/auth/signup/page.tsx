@@ -66,8 +66,8 @@ export default function SignupPage() {
         email: user.email,
         createdAt: new Date(),
         subscriptionPlan: null,
-        subscriptionStartDate: null,
-        subscriptionStatus: "inactive", // default status
+        startDate: null,
+        status: "inactive", // default status
         lastPaymentDate: null,
         paymentMethod: null,
         tosAgreedAt: new Date(), // Add the timestamp of ToS agreement
@@ -119,6 +119,7 @@ export default function SignupPage() {
           photoURL: user.photoURL || null,
           subscription: freeSubscriptionPlan,
           paystack_id: null,
+          paystack_authorization: null,
         };
         await setDoc(userDocRef, newUser);
         setUser(newUser);

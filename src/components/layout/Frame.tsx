@@ -21,16 +21,14 @@ const Frame: React.FC<FrameProps> = ({ children }) => {
         <Sidebar currentPage={pathname} />
 
         {/* Main content */}
-        <main className="flex-1 overflow-hidden relative">
+        <main className="flex-1 relative p-8 overflow-auto h-[calc(100dvh-3.5rem)] no-scrollbar">
           {/* Dashboard content */}
-          <div className="p-8 overflow-auto h-[calc(100dvh-3.5rem)] no-scrollbar">
-            {children}
-          </div>
+          {children}
 
           {/* Support button */}
           <Link href="/support" passHref>
             <button
-              className="fixed bottom-8 right-8 bg-blue-600 hover:bg-blue-700 text-white rounded-full p-3 shadow-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex gap-2"
+              className="fixed bottom-8 right-8 bg-green-600 hover:bg-green-700 text-white rounded-full p-3 shadow-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 flex gap-2"
               aria-label="Get Support"
             >
               <HelpCircle size={24} />

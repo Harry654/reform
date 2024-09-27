@@ -12,5 +12,6 @@ export type TFirestoreUser = {
   tosAgreedAt: Timestamp;
   privacyPolicyAgreedAt: Timestamp;
   paystack_id: string | null;
+  paystack_authorization: string | null;
   subscription: TSubscription;
 };

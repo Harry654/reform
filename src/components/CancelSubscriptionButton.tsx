@@ -6,9 +6,7 @@ import { TSubscription } from "@/types/payment";
 import { cancelSubscription } from "@/helpers/paystack/cancelSubscription";
 
 interface handleCancelSubscriptionButtonProps {
-  currentSubscription:
-    | (TSubscription & { nextPaymentDate: Date; email_token: string })
-    | null;
+  currentSubscription: (TSubscription & { next_payment_date: string }) | null;
   onCancel: () => void;
 }
 
@@ -22,8 +20,8 @@ export default function handleCancelSubscriptionButton({
     useState<boolean>(false);
 
   const isUserOnFreePlan = user?.subscription.plan.name === "free";
-  const canhandleCancelSubscription =
-    !isUserOnFreePlan && user?.subscription.subscriptionStatus === "active";
+  const canCancelSubscription =
+    !isUserOnFreePlan && user?.subscription.status === "active";
 
   const handleCancelClick = () => {
     setShowModal(true);
@@ -32,8 +30,8 @@ export default function handleCancelSubscriptionButton({
   const handleConfirmCancel = () => {
     if (currentSubscription) {
       handleCancelSubscription(
-        currentSubscription.subscriptionCode || "",
-        currentSubscription.email_token
+        currentSubscription.code || "",
+        currentSubscription.token || ""
       );
     }
     setShowModal(false);
@@ -68,10 +66,9 @@ export default function handleCancelSubscriptionButton({
     <>
       <button
         className={`inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-red-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 ${
-          (!canhandleCancelSubscription || subscriptionCancelling) &&
-          "opacity-50"
+          (!canCancelSubscription || subscriptionCancelling) && "opacity-50"
         }`}
-        disabled={!canhandleCancelSubscription || subscriptionCancelling}
+        disabled={!canCancelSubscription || subscriptionCancelling}
         onClick={handleCancelClick}
       >
         {!subscriptionCancelling ? (
@@ -83,7 +80,7 @@ export default function handleCancelSubscriptionButton({
 
       {showModal && (
         <div
-          className="fixed z-10 inset-0 overflow-y-auto"
+          className="fixed z-50 inset-0 overflow-y-auto"
           aria-labelledby="modal-title"
           role="dialog"
           aria-modal="true"
@@ -122,7 +119,7 @@ export default function handleCancelSubscriptionButton({
                       features of the {user?.subscription.plan.name} plan will
                       still be available until{" "}
                       {new Date(
-                        currentSubscription.nextPaymentDate
+                        currentSubscription.next_payment_date
                       ).toLocaleDateString()}
                       .
                     </p>

@@ -8,8 +8,8 @@ import { doc, setDoc, Timestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import { BeatLoader } from "react-spinners";
 import SectionCreate from "@/components/create/SectionCreate";
-import SurveySettings from "@/components/SurveySettings";
-import AddQuestionModal from "@/components/AddQuestionModal";
+import SurveySettings from "@/components/modals/SurveySettings";
+import AddQuestionModal from "@/components/modals/AddQuestionModal";
 import AddIcon from "@/components/icons/AddIcon";
 import { useSearchParams } from "next/navigation";
 import { templates } from "@/constants/template_data";
@@ -121,7 +121,6 @@ export default function SurveyCreator() {
     setShowAccessURLModal(false);
     resetSurvey();
   };
-
 
   return (
     <Frame>

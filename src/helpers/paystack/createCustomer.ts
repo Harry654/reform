@@ -1,5 +1,6 @@
 import { db } from "@/lib/firebase/config";
 import { doc, updateDoc } from "firebase/firestore";
+import { updateUserPaystackId } from "../firebase/updateUserPaystackId";
 
 export const createCustomer = async (
   uid: string,
@@ -34,24 +35,5 @@ export const createCustomer = async (
     }
   } catch (error) {
     return { data: null, statusCode: 500, success: false };
-  }
-};
-
-const updateUserPaystackId = async (
-  userId: string,
-  paystackId: string
-): Promise<void> => {
-  try {
-    const userDocRef = doc(db, "users", userId);
-
-    // Update the paystack_id field
-    await updateDoc(userDocRef, {
-      paystack_id: paystackId,
-    });
-
-    // console.log(`Updated paystack_id for user ${userId}`);
-  } catch (error) {
-    // console.error("Error updating Firestore user:", error);
-    throw error;
   }
 };

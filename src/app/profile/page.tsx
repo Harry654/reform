@@ -172,7 +172,7 @@ export default function ProfilePage() {
                 Subscription Status:
               </span>
               <span className="ml-2 text-sm text-gray-900 capitalize">
-                {user?.subscription.subscriptionStatus}
+                {user?.subscription.status}
               </span>
             </div>
             <div>
