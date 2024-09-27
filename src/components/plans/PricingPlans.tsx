@@ -100,14 +100,13 @@ function PricingPlans() {
     setShowDowngradeModal(false);
     if (!user || !newPlan) return;
 
+    if (user.subscription.code === "free") return;
     setSubscribing(true);
     try {
       await cancelSubscription(
         user.subscription.code || "",
         user.subscription.token || ""
       );
-
-      if (user.subscription.code === "free") return;
 
       const response = await fetchSubscription(user.subscription.code || "");
       const data = response?.data;

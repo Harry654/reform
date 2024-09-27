@@ -34,10 +34,9 @@ export default function Billing() {
 
   // Fetch current subscription plan
   const fetchCurrentSubscription = async () => {
+    if (user?.subscription.code === "free") return;
     setSubscriptionLoading(true);
     try {
-      if (user?.subscription.code === "free") return;
-
       const response = await fetchSubscription(user?.subscription.code || "");
       const data = response?.data;
       if (!data) return;
