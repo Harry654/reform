@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '@/context/AuthContext';
-import { FileText, Eye, Edit, Trash2, BarChart2 } from 'lucide-react';
-import Link from 'next/link';
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { useAuth } from "@/context/AuthContext";
+import { FileText, Eye, Edit, Trash2, BarChart2 } from "lucide-react";
+import Link from "next/link";
 
 interface Survey {
   id: string;
   title: string;
   createdAt: Date;
   responseCount: number;
-  status: 'draft' | 'active' | 'closed';
+  status: "draft" | "active" | "closed";
 }
 
 export default function UserSurveys() {
@@ -18,6 +20,7 @@ export default function UserSurveys() {
 
   useEffect(() => {
     const fetchSurveys = async () => {
+      if (!user) return;
       setIsLoading(true);
       try {
         // Replace this with your actual API call
@@ -25,7 +28,7 @@ export default function UserSurveys() {
         const data = await response.json();
         setSurveys(data);
       } catch (error) {
-        console.error('Failed to fetch surveys:', error);
+        console.error("Failed to fetch surveys:", error);
         // Handle error (e.g., show error message to user)
       } finally {
         setIsLoading(false);
@@ -33,16 +36,16 @@ export default function UserSurveys() {
     };
 
     fetchSurveys();
-  }, [user.uid]);
+  }, [user]);
 
   const handleDeleteSurvey = async (surveyId: string) => {
-    if (window.confirm('Are you sure you want to delete this survey?')) {
+    if (window.confirm("Are you sure you want to delete this survey?")) {
       try {
         // Replace this with your actual API call
-        await fetch(`/api/surveys/${surveyId}`, { method: 'DELETE' });
-        setSurveys(surveys.filter(survey => survey.id !== surveyId));
+        await fetch(`/api/surveys/${surveyId}`, { method: "DELETE" });
+        setSurveys(surveys.filter((survey) => survey.id !== surveyId));
       } catch (error) {
-        console.error('Failed to delete survey:', error);
+        console.error("Failed to delete survey:", error);
         // Handle error (e.g., show error message to user)
       }
     }
@@ -61,7 +64,10 @@ export default function UserSurveys() {
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-gray-900">My Surveys</h1>
-          <Link href="/create-survey" className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+          <Link
+            href="/create-survey"
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          >
             <FileText className="h-5 w-5 mr-2" />
             Create New Survey
           </Link>
@@ -70,10 +76,17 @@ export default function UserSurveys() {
         {surveys.length === 0 ? (
           <div className="text-center py-12">
             <FileText className="mx-auto h-12 w-12 text-gray-400" />
-            <h3 className="mt-2 text-sm font-medium text-gray-900">No surveys</h3>
-            <p className="mt-1 text-sm text-gray-500">Get started by creating a new survey.</p>
+            <h3 className="mt-2 text-sm font-medium text-gray-900">
+              No surveys
+            </h3>
+            <p className="mt-1 text-sm text-gray-500">
+              Get started by creating a new survey.
+            </p>
             <div className="mt-6">
-              <Link href="/create-survey" className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+              <Link
+                href="/create-survey"
+                className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
                 <FileText className="h-5 w-5 mr-2" />
                 Create New Survey
               </Link>
@@ -90,12 +103,17 @@ export default function UserSurveys() {
                         {survey.title}
                       </p>
                       <div className="ml-2 flex-shrink-0 flex">
-                        <p className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          survey.status === 'active' ? 'bg-green-100 text-green-800' :
-                          survey.status === 'draft' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-red-100 text-red-800'
-                        }`}>
-                          {survey.status.charAt(0).toUpperCase() + survey.status.slice(1)}
+                        <p
+                          className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                            survey.status === "active"
+                              ? "bg-green-100 text-green-800"
+                              : survey.status === "draft"
+                              ? "bg-yellow-100 text-yellow-800"
+                              : "bg-red-100 text-red-800"
+                          }`}
+                        >
+                          {survey.status.charAt(0).toUpperCase() +
+                            survey.status.slice(1)}
                         </p>
                       </div>
                     </div>
@@ -108,16 +126,23 @@ export default function UserSurveys() {
                       </div>
                       <div className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
                         <p>
-                          Created on {new Date(survey.createdAt).toLocaleDateString()}
+                          Created on{" "}
+                          {new Date(survey.createdAt).toLocaleDateString()}
                         </p>
                       </div>
                     </div>
                     <div className="mt-4 flex justify-end space-x-3">
-                      <Link href={`/survey/${survey.id}/responses`} className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                      <Link
+                        href={`/survey/${survey.id}/responses`}
+                        className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                      >
                         <Eye className="h-4 w-4 mr-1" />
                         View Responses
                       </Link>
-                      <Link href={`/survey/${survey.id}/edit`} className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-green-700 bg-green-100 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                      <Link
+                        href={`/survey/${survey.id}/edit`}
+                        className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-green-700 bg-green-100 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                      >
                         <Edit className="h-4 w-4 mr-1" />
                         Edit
                       </Link>
