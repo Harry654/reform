@@ -1,5 +1,3 @@
-import { db } from "@/lib/firebase/config";
-import { doc, updateDoc } from "firebase/firestore";
 import { updateUserPaystackId } from "../firebase/updateUserPaystackId";
 
 export const createCustomer = async (

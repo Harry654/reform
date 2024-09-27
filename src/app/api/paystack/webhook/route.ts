@@ -2,15 +2,10 @@ import { db } from "@/lib/firebase/config";
 import { doc, updateDoc } from "firebase/firestore";
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
-import {
-  cancelledSubscriptionPlan,
-  freePlan,
-  freeSubscriptionPlan,
-} from "@/constants/plan_types";
+import { cancelledSubscriptionPlan } from "@/constants/plan_types";
 import { initiateRefund } from "@/helpers/paystack/initiateRefund";
 import { updateUserAuthorization } from "@/helpers/firebase/updateUserAuthorization";
 import { createSubscription } from "@/helpers/paystack/createSubscription";
-import { updateUserSubscription } from "@/helpers/firebase/updateUserSubscription";
 
 type TEvent = { [key: string]: any };
 

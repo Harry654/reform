@@ -19,7 +19,6 @@ const UpgradeModal: React.FC<Props> = ({
   handleUpgrade,
   handleCloseModal,
 }) => {
-  const { user } = useAuth();
 
   return (
     <Transition appear show={isOpen} as={Fragment}>

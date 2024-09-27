@@ -147,8 +147,8 @@ export default function Dashboard() {
                   No surveys yet
                 </h2>
                 <p className="text-gray-600 max-w-md">
-                  You haven't created any surveys. Start by creating your first
-                  survey to gather valuable insights.
+                  You haven&apos;t created any surveys. Start by creating your
+                  first survey to gather valuable insights.
                 </p>
                 <Link href="/create" passHref>
                   <button className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded inline-flex items-center">

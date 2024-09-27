@@ -17,7 +17,6 @@ import { ISurvey } from "@/types/survey";
 import { useParams, useRouter } from "next/navigation";
 import { Question } from "@/types/question";
 import FullPageLoader from "./FullPageLoader";
-import Navbar from "./layout/NavBar";
 import { useAuth } from "@/context/AuthContext";
 
 const SurveyManagement: React.FC = () => {

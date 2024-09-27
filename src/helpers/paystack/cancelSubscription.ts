@@ -1,9 +1,4 @@
-import { freePlan } from "@/constants/plan_types";
-
-export const cancelSubscription = async (
-  code: string,
-  token: string,
-) => {
+export const cancelSubscription = async (code: string, token: string) => {
   if (!code || !token) return;
 
   try {

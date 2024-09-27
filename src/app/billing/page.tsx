@@ -30,7 +30,7 @@ export default function Billing() {
 
   const searchParams = useSearchParams(); // Get the current query parameters
   // Construct query parameters string
-  let params = new URLSearchParams(searchParams);
+  const params = new URLSearchParams(searchParams);
 
   // Fetch current subscription plan
   const fetchCurrentSubscription = async () => {

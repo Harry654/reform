@@ -19,7 +19,6 @@ const AuthorizationChargeModal: React.FC<Props> = ({
   handleProceed,
   handleCloseModal,
 }) => {
-  const { user } = useAuth();
 
   return (
     <Transition appear show={isOpen} as={Fragment}>

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { BeatLoader } from "react-spinners";
-import { AlertTriangle, X } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { TSubscription } from "@/types/payment";
 import { cancelSubscription } from "@/helpers/paystack/cancelSubscription";
@@ -10,7 +10,7 @@ interface handleCancelSubscriptionButtonProps {
   onCancel: () => void;
 }
 
-export default function handleCancelSubscriptionButton({
+export default function CancelSubscriptionButton({
   currentSubscription,
   onCancel,
 }: handleCancelSubscriptionButtonProps) {
