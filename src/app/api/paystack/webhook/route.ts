@@ -7,7 +7,38 @@ import { initiateRefund } from "@/helpers/paystack/initiateRefund";
 import { updateUserAuthorization } from "@/helpers/firebase/updateUserAuthorization";
 import { createSubscription } from "@/helpers/paystack/createSubscription";
 
-type TEvent = { [key: string]: any };
+type TEvent = {
+  event: string;
+  data: {
+    subscription_code: string;
+    status: string;
+    createdAt: string;
+    email_token: string;
+    reference: string;
+    channel: string;
+    plan: {
+      plan_code: string;
+      name: string;
+    };
+    authorization: {
+      authorization_code: string;
+      channel: string;
+      reusable: boolean;
+    };
+    customer: {
+      id: string;
+      name: string;
+      email: string;
+      customer_code: string;
+      metadata: {
+        userId: string;
+      };
+    };
+    metadata: {
+      [key: string]: string;
+    };
+  };
+};
 
 const secret =
   (process.env.MODE === "production"
@@ -16,7 +47,6 @@ const secret =
 
 async function subscriptionDisable(event: TEvent) {
   console.log(`${event.event} was successful!`);
-  console.log(`${JSON.stringify(event.data.metadata)} !`);
 
   // Reference the user's document in Firestore
   const userDocRef = doc(db, "users", event.data.customer.metadata.userId);

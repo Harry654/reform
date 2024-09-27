@@ -5,7 +5,6 @@ import {
   Transition,
   TransitionChild,
 } from "@headlessui/react";
-import { useAuth } from "@/context/AuthContext";
 import { ArrowLeftRight } from "lucide-react";
 
 interface Props {

@@ -5,7 +5,6 @@ import {
   Transition,
   TransitionChild,
 } from "@headlessui/react";
-import { useAuth } from "@/context/AuthContext";
 import { CirclePlus } from "lucide-react";
 
 interface Props {
@@ -19,7 +18,6 @@ const UpgradeModal: React.FC<Props> = ({
   handleUpgrade,
   handleCloseModal,
 }) => {
-
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={handleCloseModal}>
