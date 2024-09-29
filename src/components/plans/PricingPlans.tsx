@@ -184,7 +184,6 @@ function PricingPlans() {
   useEffect(() => {
     fetchPicingPlans();
   }, []);
-
   return (
     <>
       <section className="py-20">
@@ -236,6 +235,7 @@ function PricingPlans() {
 
       <UpgradeModal
         isOpen={showUpgradeModal}
+        // newPlan={newPlan}
         handleUpgrade={handleUpgrade}
         handleCloseModal={handleCloseUpgradeModal}
       />
