@@ -32,6 +32,24 @@ body {
 .section-expanded {
   max-height: 5000px;
 }
-*{
+* {
   scroll-behavior: smooth;
+}
+
+/* For WebKit browsers (Chrome, Safari) */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px; /* Width of the scrollbar */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3); /* Color of the scrollbar */
+  border-radius: 100px; /* Rounded corners */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent; /* Background of the scrollbar track */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  width: 0px; /* Width of the scrollbar */
 }

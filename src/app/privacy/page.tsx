@@ -1,4 +1,5 @@
-import React from "react";
+import FullPageLoader from "@/components/FullPageLoader";
+import React, { Suspense } from "react";
 
 const privacyPolicies: { title: string; description: string }[] = [
   {
@@ -50,21 +51,23 @@ const privacyPolicies: { title: string; description: string }[] = [
 
 export default function PrivacyPolicy() {
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg">
-      <h1 className="text-3xl font-bold mb-6">Privacy Policy</h1>
-      <div className="space-y-4">
-        {privacyPolicies.map(({ title, description }, index) => (
-          <section key={index}>
-            <h2 className="text-xl font-semibold mb-2">
-              {`${index + 1}. ${title}`}
-            </h2>
-            <p className="text-gray-700">{description}</p>
-          </section>
-        ))}
+    <Suspense fallback={<FullPageLoader />}>
+      <div className="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg">
+        <h1 className="text-3xl font-bold mb-6">Privacy Policy</h1>
+        <div className="space-y-4">
+          {privacyPolicies.map(({ title, description }, index) => (
+            <section key={index}>
+              <h2 className="text-xl font-semibold mb-2">
+                {`${index + 1}. ${title}`}
+              </h2>
+              <p className="text-gray-700">{description}</p>
+            </section>
+          ))}
+        </div>
+        <p className="mt-8 text-sm text-gray-500">
+          Last updated: {new Date().toLocaleDateString()}
+        </p>
       </div>
-      <p className="mt-8 text-sm text-gray-500">
-        Last updated: {new Date().toLocaleDateString()}
-      </p>
-    </div>
+    </Suspense>
   );
 }

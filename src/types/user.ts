@@ -8,12 +8,18 @@ export type TFirestoreUser = {
   email: string;
   photoURL?: string;
   createdAt: Timestamp; // Use Firebase Timestamp for date fields
-  subscriptionPlan: string | null; // ID or name of the subscription plan
+  subscriptionPlan: "free" | "basic" | "pro" | "enterprise" | null; // ID or name of the subscription plan
   subscriptionStartDate: Timestamp | null; // Start date of the subscription
-  subscriptionEndDate: Timestamp | null; // End date of the subscription
-  subscriptionStatus: "active" | "inactive" | "expired"; // Status of the subscription
+  subscriptionStatus:
+    | "not-started"
+    | "active"
+    | "non-renewing"
+    | "attention"
+    | "completed"
+    | "cancelled"; // Status of the subscription
   lastPaymentDate: Timestamp | null; // Date of the last payment
   paymentMethod: string | null; // Payment method used
   tosAgreedAt: Timestamp;
   privacyPolicyAgreedAt: Timestamp;
+  paystack_id?: string;
 };

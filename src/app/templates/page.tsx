@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import SearchBar from "@/components/SearchBar";
 // import GenerateTemplateModal from "@/components/GenerateTemplateModal";
 import TemplateCard from "@/components/TemplateCard";
 import { templates } from "@/constants/template_data";
 import { ITemplate } from "@/types/template";
-import Sidebar from "@/components/layout/Sidebar";
+import FullPageLoader from "@/components/FullPageLoader";
+import Frame from "@/components/layout/Frame";
 
 const SurveyTemplates: React.FC = () => {
   const [searchResults, setSearchResults] = useState<ITemplate[]>(templates);
@@ -37,16 +38,12 @@ const SurveyTemplates: React.FC = () => {
   //   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-white text-black">
-      {/* Sidebar */}
-      <Sidebar currentPage="/templates" />
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-y-auto h-screen">
+    <Suspense fallback={<FullPageLoader />}>
+      <Frame>
         <div className="container mx-auto px-4 py-8">
-          <h1 className="text-3xl font-bold text-center mb-8">
+          {/* <h1 className="text-3xl font-bold text-center mb-8">
             Sample Templates
-          </h1>
+          </h1> */}
           <div className="flex justify-between items-center mb-8">
             <SearchBar onSearch={handleSearch} />
             {/* <GenerateTemplateModal onGenerateTemplate={handleGenerateTemplate} /> */}
@@ -57,8 +54,8 @@ const SurveyTemplates: React.FC = () => {
             ))}
           </div>
         </div>
-      </div>
-    </div>
+      </Frame>
+    </Suspense>
   );
 };
 
