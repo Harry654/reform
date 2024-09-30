@@ -3,6 +3,7 @@ export function formatDate(dateString: string): string {
 
   const day = date.getDate();
   const month = date.toLocaleString("default", { month: "long" });
+  const year = date.toLocaleString("default", { year: "numeric" });
 
   const daySuffix = (day: number) => {
     if (day > 3 && day < 21) return "th"; // Handles 11th, 12th, etc.
@@ -18,5 +19,5 @@ export function formatDate(dateString: string): string {
     }
   };
 
-  return `${day}${daySuffix(day)} ${month}`;
+  return `${day}${daySuffix(day)} ${month}, ${year}`;
 }

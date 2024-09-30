@@ -8,15 +8,16 @@ const secret =
     ? process.env.PAYSTACK_SECRET_KEY_PRODUCTION
     : process.env.PAYSTACK_SECRET_KEY_DEVELOPMENT) || "";
 interface PaystackRequestBody {
-  transcation: string;
+  transaction: string;
 }
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
-    const { transcation }: PaystackRequestBody = await req.json();
+    const { transaction }: PaystackRequestBody = await req.json();
+    console.log(transaction);
     // Prepare Paystack parameters
     const params = JSON.stringify({
-      transcation,
+      transaction,
     });
 
     const options = {
