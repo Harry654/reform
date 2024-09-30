@@ -4,6 +4,7 @@ import {
   Transition,
   DialogTitle,
   DialogPanel,
+  TransitionChild,
 } from "@headlessui/react";
 import { Fragment } from "react";
 import { X, Copy, Check } from "lucide-react";
@@ -39,8 +40,8 @@ const AccessURLModal: React.FC<AccessURLModalProps> = ({
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={onClose}>
-        <Transition.Child
+      <Dialog as="div" className="relative z-50" onClose={onClose}>
+        <TransitionChild
           as={Fragment}
           enter="ease-out duration-300"
           enterFrom="opacity-0"
@@ -50,11 +51,11 @@ const AccessURLModal: React.FC<AccessURLModalProps> = ({
           leaveTo="opacity-0"
         >
           <div className="fixed inset-0 bg-black bg-opacity-25" />
-        </Transition.Child>
+        </TransitionChild>
 
         <div className="fixed inset-0 overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4 text-center">
-            <Transition.Child
+            <TransitionChild
               as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0 scale-95"
@@ -131,7 +132,7 @@ const AccessURLModal: React.FC<AccessURLModalProps> = ({
                   </Transition>
                 </div>
               </DialogPanel>
-            </Transition.Child>
+            </TransitionChild>
           </div>
         </div>
       </Dialog>

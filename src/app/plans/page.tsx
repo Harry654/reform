@@ -1,6 +1,7 @@
 "use client";
 
 import FullPageLoader from "@/components/FullPageLoader";
+import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/NavBar";
 import PricingPlans from "@/components/plans/PricingPlans";
 import React, { Suspense } from "react";
@@ -15,6 +16,7 @@ function page() {
           <PricingPlans />
         </div>
       </div>
+      <Footer />
     </Suspense>
   );
 }

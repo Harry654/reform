@@ -15,6 +15,7 @@ import { useAuth } from "@/context/AuthContext";
 import { TFirestoreUser } from "@/types/user";
 import Link from "next/link";
 import FullPageLoader from "@/components/FullPageLoader";
+import { freeSubscriptionPlan } from "@/constants/plan_types";
 
 export default function SignupPage() {
   const [firstName, setFirstName] = useState("");
@@ -65,8 +66,8 @@ export default function SignupPage() {
         email: user.email,
         createdAt: new Date(),
         subscriptionPlan: null,
-        subscriptionStartDate: null,
-        subscriptionStatus: "inactive", // default status
+        startDate: null,
+        status: "inactive", // default status
         lastPaymentDate: null,
         paymentMethod: null,
         tosAgreedAt: new Date(), // Add the timestamp of ToS agreement
@@ -107,23 +108,21 @@ export default function SignupPage() {
 
       if (!userDoc.exists()) {
         // Save user's information to Firestore if it's a new user
-        const newUser = {
+        const newUser: TFirestoreUser = {
           uid: user.uid,
           firstName: user.displayName?.split(" ")[0] || "",
           lastName: user.displayName?.split(" ")[1] || "",
-          email: user.email,
+          email: user.email || "",
           createdAt: Timestamp.now(),
-          subscriptionPlan: null,
-          subscriptionStartDate: null,
-          subscriptionStatus: "inactive", // default status
-          lastPaymentDate: null,
-          paymentMethod: null,
           tosAgreedAt: Timestamp.now(), // Add the timestamp of ToS agreement
           privacyPolicyAgreedAt: Timestamp.now(),
-          photoURL: user.photoURL,
+          photoURL: user.photoURL || null,
+          subscription: freeSubscriptionPlan,
+          paystack_id: null,
+          paystack_authorization: null,
         };
         await setDoc(userDocRef, newUser);
-        setUser(newUser as TFirestoreUser);
+        setUser(newUser);
       }
 
       redirect();

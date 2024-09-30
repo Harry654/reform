@@ -11,25 +11,23 @@ interface PaystackRequestBody {
   uid: string;
   email: string;
   amount: string;
-  plan: string;
+  plan_code: string;
+  start_date: string;
 }
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
-    const {
-      uid: userId,
-      email,
-      amount,
-      plan,
-    }: PaystackRequestBody = await req.json();
-
+    const { email, amount, plan_code, start_date }: PaystackRequestBody =
+      await req.json();
     // Prepare Paystack parameters
     const params = JSON.stringify({
       email,
       amount,
-      plan,
-      metadata: { userId },
+      channels: ["card"],
+      metadata: { reason: "card_authorization_charge", plan_code, start_date },
     });
+
+    console.log(JSON.stringify(params));
 
     const options = {
       hostname: "api.paystack.co",

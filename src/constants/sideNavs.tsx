@@ -14,69 +14,69 @@ import {
 
 const sideNavs = [
   {
-    icon: <Home className="h-5 w-5 mr-2" />,
+    icon: <Home className="h-5 w-5" />,
     label: "dashboard",
     route: "/dashboard",
     active: true,
   },
   {
-    icon: <FileText className="h-5 w-5 mr-2" />,
+    icon: <FileText className="h-5 w-5" />,
     label: "new survey",
     route: "/create",
     active: true,
   },
   {
-    icon: <FileText className="h-5 w-5 mr-2" />,
+    icon: <FileText className="h-5 w-5" />,
     label: "templates",
     route: "/templates",
     active: true,
   },
   {
-    icon: <CreditCard className="h-5 w-5 mr-2" />,
+    icon: <CreditCard className="h-5 w-5" />,
     label: "billing",
     route: "/billing",
     active: true,
   },
   {
-    icon: <Folder className="h-5 w-5 mr-2" />,
+    icon: <Folder className="h-5 w-5" />,
     label: "my surveys",
     route: "/my-surveys",
     active: false,
   },
   {
-    icon: <Users className="h-5 w-5 mr-2" />,
+    icon: <Users className="h-5 w-5" />,
     label: "audience",
     route: "/audience",
     active: false,
   },
   {
-    icon: <BarChart className="h-5 w-5 mr-2" />,
+    icon: <BarChart className="h-5 w-5" />,
     label: "analytics",
     route: "/analytics",
     active: false,
   },
 
   {
-    icon: <Bell className="h-5 w-5 mr-2" />,
+    icon: <Bell className="h-5 w-5" />,
     label: "notifications",
     route: "/notifications",
     active: false,
   },
   {
-    icon: <HelpCircle className="h-5 w-5 mr-2" />,
+    icon: <HelpCircle className="h-5 w-5" />,
     label: "help & support",
     route: "/help-support",
     active: false,
   },
 
   {
-    icon: <Mail className="h-5 w-5 mr-2" />,
+    icon: <Mail className="h-5 w-5" />,
     label: "inbox",
     route: "/inbox",
     active: false,
   },
   {
-    icon: <Share className="h-5 w-5 mr-2" />,
+    icon: <Share className="h-5 w-5" />,
     label: "integrations",
     route: "/integrations",
     active: false,

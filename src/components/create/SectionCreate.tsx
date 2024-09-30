@@ -4,7 +4,7 @@ import CreateSurveyQuestionEditor from "./CreateSurveyQuestionEditor";
 import { useQuestion } from "@/context/CreateSurveyContext";
 import DeleteIcon from "../icons/DeleteIcon";
 import DownArrowIcon from "../icons/DownArrowIcon";
-import AddQuestionModal from "../AddQuestionModal";
+import AddQuestionModal from "../modals/AddQuestionModal";
 
 interface Props {
   section: ISection;

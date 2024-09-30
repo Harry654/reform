@@ -8,14 +8,13 @@ import { doc, setDoc, Timestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import { BeatLoader } from "react-spinners";
 import SectionCreate from "@/components/create/SectionCreate";
-import SurveySettings from "@/components/SurveySettings";
-import AddQuestionModal from "@/components/AddQuestionModal";
+import SurveySettings from "@/components/modals/SurveySettings";
+import AddQuestionModal from "@/components/modals/AddQuestionModal";
 import AddIcon from "@/components/icons/AddIcon";
 import { useSearchParams } from "next/navigation";
 import { templates } from "@/constants/template_data";
 import { survey_categories } from "@/constants/survey_categories";
 import AccessURLModal from "@/components/AccessURLModal";
-import FullPageLoader from "@/components/FullPageLoader";
 import Frame from "@/components/layout/Frame";
 
 export default function SurveyCreator() {
@@ -76,11 +75,9 @@ export default function SurveyCreator() {
     e.preventDefault();
     if (loading) return;
 
-    const main_section = sections.find((section) => section.isMainSection);
-
-    // if there are no questions added
-    if (sections.length === 1 && !main_section?.questions.length)
-      return alert("Add at least one question");
+    const allQuestions = sections.flatMap((section) => section.questions);
+    // if no questions were added, return
+    if (!!!allQuestions.length) return alert("Add at least one question");
 
     if (!formMetadata.createdBy)
       return alert("Please login to create a survey");
@@ -120,8 +117,10 @@ export default function SurveyCreator() {
       alert("There was an error submitting the survey. Please try again.");
     }
   };
-
-  if (!user) return <FullPageLoader />;
+  const handleCloseAccessURLModal = () => {
+    setShowAccessURLModal(false);
+    resetSurvey();
+  };
 
   return (
     <Frame>
@@ -129,7 +128,7 @@ export default function SurveyCreator() {
       <AccessURLModal
         accessUrl={`${process.env.NEXT_PUBLIC_BASE_URL}/s/${formMetadata.id}`}
         isOpen={showAccessURLModal}
-        onClose={resetSurvey}
+        onClose={handleCloseAccessURLModal}
       />
       <div className="max-w-2xl mx-auto p-6 border rounded-lg shadow-md">
         <div className="w-full flex justify-end">

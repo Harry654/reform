@@ -44,7 +44,7 @@ export default function Navbar() {
   const toggleDropdown = () => setShowDropdown(!showDropdown);
 
   return (
-    <header className="h-14 text-black bg-[#121211] z-50 sticky top-0 px-4">
+    <header className="h-14 text-black bg-[#121211] z-40 sticky top-0 px-4">
       <nav className="mx-auto h-full w-full flex justify-between items-center">
         <Link href="/" className="text-xl font-bold text-white">
           Reform
@@ -62,7 +62,7 @@ export default function Navbar() {
                   {`${user.firstName} ${user.lastName}`}
                 </span>
                 <Image
-                  className="h-8 w-8 rounded-full"
+                  className="h-10 w-10 rounded-full"
                   src={
                     user.photoURL ||
                     "https://firebasestorage.googleapis.com/v0/b/reform-a80a2.appspot.com/o/empty_user.png?alt=media&token=5ad8397a-1e3f-44fd-8143-31972b02f3fd"

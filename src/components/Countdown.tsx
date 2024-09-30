@@ -15,7 +15,7 @@ export default function Countdown() {
 
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
-  const launchDateISO = "2024-09-16T00:00:00";
+  const launchDateISO = "2024-10-01T00:00:00";
 
   useEffect(() => {
     const launchDate = new Date(launchDateISO).getTime();
