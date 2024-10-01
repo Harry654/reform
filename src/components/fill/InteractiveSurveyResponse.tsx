@@ -6,7 +6,21 @@ import { Send, Mic, Check, ChevronLeft } from "lucide-react";
 import { useSwipeable } from "react-swipeable";
 import FullPageLoader from "@/components/FullPageLoader";
 import { ISurvey,  } from "@/types/survey";
-import { MCQQuestionFill, RatingQuestionFill } from "./QuestionFillComponents";
+import {
+  CheckboxesQuestionFill,
+  DateTimeQuestionFill,
+  DropdownQuestionFill,
+  FileUploadQuestionFill,
+  ImageChoiceQuestionFill,
+  LongAnswerQuestionFill, 
+  MatrixQuestionFill, 
+  MCQQuestionFill,
+  RankingQuestionFill,
+  RatingQuestionFill,
+  ShortAnswerQuestionFill,
+  SliderQuestionFill,
+  YesNoQuestionFill
+} from "./QuestionFillComponents";
 import { Question } from "@/types/question";
 
 interface InteractiveSurveyResponseProps {
@@ -130,9 +144,31 @@ export const InteractiveSurveyResponse: React.FC<InteractiveSurveyResponseProps>
   const renderQuestionComponent = (question: Question) => {
     switch (question.type) {
       case "mcq":
-        return <MCQQuestionFill question={question} />;
+      return <MCQQuestionFill question={question} />;
+      case "short_answer":
+        return <ShortAnswerQuestionFill question={question} />;
+      case "long_answer":
+        return <LongAnswerQuestionFill question={question} />;
       case "rating":
         return <RatingQuestionFill question={question} />;
+      case "checkboxes":
+        return <CheckboxesQuestionFill question={question} />;
+      case "dropdown":
+        return <DropdownQuestionFill question={question} />;
+      case "ranking":
+        return <RankingQuestionFill question={question} />;
+      case "date_time":
+        return <DateTimeQuestionFill question={question} />;
+      case "matrix":
+        return <MatrixQuestionFill question={question} />;
+      case "slider":
+        return <SliderQuestionFill question={question} />;
+      case "file_upload":
+        return <FileUploadQuestionFill question={question} />;
+      case "yes_no":
+        return <YesNoQuestionFill question={question} />;
+      case "image_choice":
+        return <ImageChoiceQuestionFill question={question} />;
       default:
         return null;
     }
