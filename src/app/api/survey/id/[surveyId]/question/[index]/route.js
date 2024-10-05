@@ -81,7 +81,7 @@ export const POST = async (req, { params }) => {
   } catch (error) {
     console.error("Error fetching survey: ", error);
     return NextResponse.json(
-      { error: "error fetching survey" },
+      { error: "error fetching question. please try again" },
       { status: 500 }
     );
   }

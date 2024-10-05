@@ -6,18 +6,28 @@ import {
   TransitionChild,
 } from "@headlessui/react";
 import { CirclePlus } from "lucide-react";
+import { TPlan } from "@/types/plans";
+import { useAuth } from "@/context/AuthContext";
+import { formatCurrency } from "@/helpers/formatCurrency";
+import { getDateISO } from "@/helpers/getDateISO";
+import { formatDate } from "@/helpers/formatDate";
 
 interface Props {
   isOpen: boolean;
+  // newPlan: TPlan;
   handleUpgrade: () => void;
   handleCloseModal: () => void;
 }
 
 const UpgradeModal: React.FC<Props> = ({
   isOpen,
+  // newPlan,
   handleUpgrade,
   handleCloseModal,
 }) => {
+  const { user } = useAuth();
+  const twoWeeksFreeApplicable = user?.subscription.status === null;
+
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={handleCloseModal}>
@@ -61,9 +71,24 @@ const UpgradeModal: React.FC<Props> = ({
                         Upgrade Plan
                       </Dialog.Title>
                       <div className="mt-2">
-                        <p className="text-sm text-gray-500">
-                          You are about to upgrade to a higher plan
-                        </p>
+                        {twoWeeksFreeApplicable ? (
+                          <>
+                            <p className="text-sm text-gray-500">
+                              {/* You are about to upgrade to the {newPlan.name}{" "} */}
+                              You are about to upgrade to a higher plan
+                            </p>
+                            <p className="text-sm text-gray-500">
+                              You will be charged{" "}
+                              {/* {formatCurrency(newPlan.amount, "NGN")} monthly */}
+                              starting from {formatDate(getDateISO(14))}
+                            </p>
+                          </>
+                        ) : (
+                          <p className="text-sm text-gray-500">
+                            {/* You are about to upgrade to the {newPlan.name} plan */}
+                            You are about to upgrade to a higher plan
+                          </p>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -74,7 +99,9 @@ const UpgradeModal: React.FC<Props> = ({
                     className="inline-flex w-full justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
                     onClick={handleUpgrade}
                   >
-                    Proceed
+                    {twoWeeksFreeApplicable
+                      ? "Stary My 14 Days Free Trial"
+                      : "Proceed"}
                   </button>
                   <button
                     type="button"

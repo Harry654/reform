@@ -1,75 +1,238 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Send, Mic, Check, ChevronLeft } from 'lucide-react';
+import { Send, Mic, Check, ChevronLeft, ArrowBigRight, UploadIcon, Loader } from 'lucide-react';
 import { useSwipeable } from 'react-swipeable';
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import FullPageLoader from '@/components/FullPageLoader';
+import { Question } from '@/types/question';
+import {
+  CheckboxesQuestionFill,
+  DateTimeQuestionFill,
+  DropdownQuestionFill,
+  FileUploadQuestionFill,
+  ImageChoiceQuestionFill,
+  LongAnswerQuestionFill, 
+  MatrixQuestionFill, 
+  MCQQuestionFill,
+  RankingQuestionFill,
+  RatingQuestionFill,
+  ShortAnswerQuestionFill,
+  SliderQuestionFill,
+  YesNoQuestionFill
+} from '@/components/fill/QuestionFillComponents';
+import { useSurvey } from '@/context/SurveyResponseContext';
+import { TAnswer, TSurveyResponse } from '@/types/response';
+import { doc, setDoc, Timestamp } from "firebase/firestore";
+import { db } from "@/lib/firebase/config";
+import { useAuth } from '@/context/AuthContext';
+import { v4 as uuidv4 } from "uuid";
 
-type Response = {
-  questionId: string;
-  questionType: string;
-  questionText: string;
-  answer: string;
-};
+
+type AskedQuestion = {
+  question: {questionDetails: Question, time: number};
+  answer: {answerValue: TAnswer, time: number} | null;
+}
+
+type ClarificationMessage = {
+  sender: "ai"|"user";
+  text: string;
+  timeSent: number;
+}
 
 type Message = {
-  id: number;
   text: string;
+  questionId: string;
   sender: 'ai' | 'user';
+  timeSent: number;
 }
 
 
 export default function ChatSurvey() {
-  const defaultMessage = { id: 1, text: "Hello! I'm ReformAI. Let's begin the survey", sender: 'ai' }
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [currentQuestion, setCurrentQuestion] = useState({});
-  const [responses, setResponses] = useState([]);
+  const { user } = useAuth();
+  const { responses } = useSurvey()
+  const router = useRouter()
+
+  const [allAskedQuestions, setAllAskedQuestions] = useState<AskedQuestion[]>([]);
+  const [clarificationMessages, setClarificationMessages] = useState<ClarificationMessage[]>([]);
   const { surveyId } = useParams();
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [progress, setProgress] = useState(0);
+  const [submitting, setSubmitting] = useState(false);
+  const [showCompletionAnimation, setShowCompletionAnimation] = useState(false);
+  const [progress, setProgress] = useState(1);
   const [isSurveyComplete, setSurveyComplete] = useState(false);
-  const [surveyInfo, setSurveyInfo] = useState({});
+  const [surveyInfo, setSurveyInfo] = useState<{title: string, questionCount: number}>({ title: "Loading ...", questionCount: 0 });
+
   const chatEndRef = useRef<HTMLDivElement>(null);
   const chatStartRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [allAskedQuestions, clarificationMessages]);
 
-
-  function convertToMessages(allResponses, tempQuestion) {
-    if(Boolean(tempQuestion)) {
-      const res =  allResponses.map((response, i) => {
-        return [{ id: i+"-ai", text: response.questionText, sender: "ai" }, { id: i+"-user", text: response.answer, sender: "user" }]
-      }).flat()
-      res.push({id: "temp", text: tempQuestion.text, sender: "ai"})
-      return res
+  async function submitSurveyResponse() {
+    if(!isSurveyComplete) {
+      return alert("You haven't completed the survey yet")
     }
-    return allResponses.map((response, i) => {
-      return [{ id: i+"-ai", text: response.questionText, sender: "ai" }, { id: i+"-user", text: response.answer, sender: "user" }]
-    }).flat()
+    
+    setSubmitting(true)
+    try {
+      const newSurveyResponse: TSurveyResponse = {
+        surveyId: surveyId as string,
+        userId: user?.uid || null,
+        responseId: uuidv4(),
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now(),
+        answers: responses,
+      }
+      console.log("newSurveyRespnse",newSurveyResponse)
+      await setDoc(doc(db, "responses", newSurveyResponse.responseId), newSurveyResponse);
+      setSubmitting(false)
+      setShowCompletionAnimation(true)
+    } catch (error) {
+      setSubmitting(false)
+      alert("Couldn't submit response. Check your internet and try again")
+    }
   }
 
-  async function getAndOptimizeNextQuestion(questionNumber, previousResponse, updatedResponses) {
+  const renderQuestionComponent = (question: Question) => {
+    switch (question.type) {
+      case "mcq":
+      return <MCQQuestionFill question={question} />;
+      case "short_answer":
+        return <ShortAnswerQuestionFill question={question} />;
+      case "long_answer":
+        return <LongAnswerQuestionFill question={question} />;
+      case "rating":
+        return <RatingQuestionFill question={question} />;
+      case "checkboxes":
+        return <CheckboxesQuestionFill question={question} />;
+      case "dropdown":
+        return <DropdownQuestionFill question={question} />;
+      case "ranking":
+        return <RankingQuestionFill question={question} />;
+      case "date_time":
+        return <DateTimeQuestionFill question={question} />;
+      case "matrix":
+        return <MatrixQuestionFill question={question} />;
+      case "slider":
+        return <SliderQuestionFill question={question} />;
+      case "file_upload":
+        return <FileUploadQuestionFill question={question} />;
+      case "yes_no":
+        return <YesNoQuestionFill question={question} />;
+      case "image_choice":
+        return <ImageChoiceQuestionFill question={question} />;
+      default:
+        return null;
+    }
+  };
+
+  function convertToAIChatMessages(askedQuestions: Array<AskedQuestion>) {
+    console.log("from convertToAIChatMessages: ", askedQuestions)
+    const convertedAIChatMessagesFromAskedQuestions =  askedQuestions.map(askedQuestion => {
+      if(askedQuestion.answer) {
+        return [
+          { timeSent: askedQuestion.question.time, role: "model", parts: [{text: JSON.stringify(askedQuestion.question.questionDetails.text)}] }, 
+          { timeSent: askedQuestion.answer.time, role: "user", parts: [{text: JSON.stringify(askedQuestion.answer.answerValue)}] }
+        ];
+      } else {
+        return { timeSent: askedQuestion.question.time, role: "model", parts: [{text: JSON.stringify(askedQuestion.question.questionDetails.text)}] }
+      }
+    }).flat();
+
+    const convertedMessagesFromClarificationMessages = clarificationMessages.map(cm => {
+      return {
+        text: cm.text,
+        parts: [{text: cm.text}],
+        role: cm.sender === "ai" ? "model": "user",
+        timeSent: cm.timeSent,
+      }
+    })
+
+    const sortedMessages = [...convertedAIChatMessagesFromAskedQuestions, ...convertedMessagesFromClarificationMessages]
+    .sort((a, b) => a.timeSent-b.timeSent)
+    .map(m => ({ role: m.role, parts: m.parts }))
+
+    console.log("ai chatconverted messages: ", sortedMessages)
+    return [{ role: "user", parts: [{text: "hello"}] }, ...sortedMessages]
+  }
+
+
+  function convertToMessages(askedQuestions: Array<AskedQuestion>): Array<Message> {
+    console.log("from converToMessages: ", askedQuestions)
+    const convertedMessagesFromAskedQuestions =  askedQuestions.map(askedQuestion => {
+      return {
+        text: askedQuestion.question.questionDetails.text,
+        questionId: askedQuestion.question.questionDetails.id,
+        sender: "ai" as const,
+        timeSent: askedQuestion.question.time
+      }
+    })
+
+    console.log("converted messages from askedQuestions: ", convertedMessagesFromAskedQuestions)
+
+    const convertedMessagesFromClarificationMessages = clarificationMessages.map(cm => {
+      return {
+        text: cm.text,
+        questionId: "clarification",
+        sender: cm.sender,
+        timeSent: cm.timeSent,
+      }
+    })
+    return [...convertedMessagesFromAskedQuestions, ...convertedMessagesFromClarificationMessages].sort((a, b) => a.timeSent-b.timeSent)
+  }
+  
+
+  async function getAndOptimizeNextQuestion(currentAskedQuestion : AskedQuestion) {
     try {
-      const response = await fetch(`/api/survey/id/${surveyId}/question/${questionNumber}`, {
+      if(currentAskedQuestion.answer === null)return
+      const response = await fetch(`/api/survey/id/${surveyId}/question/${allAskedQuestions.length+1}`, {
         method: "POST",
-        "Content-Type": "application/json",
+        headers: {
+          "Content-Type": "application/json"
+        },
         body: JSON.stringify({
-          previousQuestion: currentQuestion,
-          previousResponse
+          previousQuestion: currentAskedQuestion.question.questionDetails,
+          previousResponse: currentAskedQuestion.answer.answerValue
         })
       })
       const result = await response.json()
-      console.log("Responses befores send to ai", updatedResponses)
-      setMessages([...convertToMessages(updatedResponses, result)])
-      setCurrentQuestion(result)
       if(result?.error) {
         throw new Error(result.error)
       }
-    } catch(err) {
+      setAllAskedQuestions(prev => [...prev, { question: { questionDetails: result, time: new Date().getTime()}, answer: null}]);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch(err: any) {
+      console.log(err)
+      setIsTyping(false)
+      alert(err.message)
+    }
+  }
+
+  
+  async function sendClarificationMessageToAI(message: string) {
+    try {
+      const response = await fetch(`/api/survey/clarify`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          history: convertToAIChatMessages(allAskedQuestions),
+          newMessage: message
+        })
+      })
+      const result = await response.json()
+      if(result?.error) {
+        throw new Error(result.error)
+      }
+      console.log("clarification message AI response", result)
+      setClarificationMessages(prev => [...prev, { text: result, sender: "ai", timeSent: new Date().getTime()}]);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch(err: any) {
       console.log(err)
       setIsTyping(false)
       alert(err.message)
@@ -77,7 +240,7 @@ export default function ChatSurvey() {
   }
 
   async function initializeSurvey() {
-    if(messages.length>0)return
+    if(allAskedQuestions.length>0)return
     try {
       setIsTyping(true)
       const response = await fetch("/api/survey/start/"+surveyId)
@@ -87,10 +250,10 @@ export default function ChatSurvey() {
         throw new Error(result.error)
       }
       setSurveyInfo({title: result.name, questionCount: result.questionCount})
-      setMessages(convertToMessages([], result.question))
-      setCurrentQuestion(result.question)
+      setAllAskedQuestions([{question: { questionDetails: result.question, time: new Date().getTime() }, answer: null}])
       setIsTyping(false)
-    } catch (err) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
       console.log(err)
       setIsTyping(false)
       alert(err.message)
@@ -99,39 +262,53 @@ export default function ChatSurvey() {
 
   useEffect(() => {
     initializeSurvey()
-  }, [])
+  }, [surveyId])
 
-  const handleSend = async () => {
-    if(isTyping)return
-    if (input.trim()) {
-      const newResponse = {
-        questionId: currentQuestion.id,
-        questionType: currentQuestion.type,
-        questionText: currentQuestion.text,
-        answer: input,
-      }
+const handleSendQuestionResponse = async (questionId: string) => {
+  const questionAnswer = responses.find(res => res.questionId === questionId)
+  console.log("questionAnswer", questionId)
+  const targetAskedQuestion = allAskedQuestions.find(q => q.question.questionDetails.id === questionId)
+  if(isTyping) return
+  if (targetAskedQuestion?.question.questionDetails.required && !questionAnswer)return alert("You can't skip a required question")
+  if(!targetAskedQuestion) return
 
-
-      const updatedResponses = [...responses, newResponse];
-      setResponses(updatedResponses);
-      setMessages([...convertToMessages(updatedResponses, null)]);
-      console.log("updatedresponses", updatedResponses)
-      setInput('');
-      setIsTyping(true);
-      setProgress((prev) => {
-        const newProgress = Math.min(prev + 1 / surveyInfo.questionCount, 1);
-        if (newProgress === 1) {
-          setSurveyComplete(true);
-        }
-        return newProgress;
-      });
-
-      // AI response
-      console.log("progress", progress)
-      await getAndOptimizeNextQuestion(updatedResponses.length+1, newResponse.answer, updatedResponses)
-      setIsTyping(false);
+  const newAskedQuestion : AskedQuestion = { question: targetAskedQuestion.question, answer: { answerValue: questionAnswer? questionAnswer.answer: "", time: new Date().getTime() } }
+  const filteredAskedQuestions = allAskedQuestions.filter(aaq => aaq.question.questionDetails.id !== targetAskedQuestion.question.questionDetails.id)
+  setAllAskedQuestions([...filteredAskedQuestions, newAskedQuestion])
+  setInput('');
+  setIsTyping(true);
+  setProgress((prev) => {
+    const newProgress = prev+1
+    if (newProgress === surveyInfo.questionCount && !allAskedQuestions[allAskedQuestions.length-1].question.questionDetails.required) {
+      setSurveyComplete(true);
     }
-  };
+    return newProgress;
+  });
+  
+  // AI response
+  console.log("progress", progress)
+  await getAndOptimizeNextQuestion(newAskedQuestion)
+  setIsTyping(false);
+};
+
+const handleSendClarificationMessage = async () => {
+  if(isTyping)return
+  if (input.trim()) {
+    const newClarificationMessage : ClarificationMessage = {
+      text: input,
+      sender: "user",
+      timeSent: new Date().getTime()
+    }
+    setClarificationMessages(prev => [...prev, newClarificationMessage])
+    setInput('');
+    setIsTyping(true);
+    
+    // AI response
+    console.log("progress", progress)
+    await sendClarificationMessageToAI(input)
+    setIsTyping(false);
+  }
+};
 
   const handlers = useSwipeable({
     onSwipedRight: () => {
@@ -141,129 +318,199 @@ export default function ChatSurvey() {
     trackTouch: true,
   });
 
-  console.log("end messages", messages)
-  console.log("end repsonses", responses)
+  console.log("allAskedQuestions: ", allAskedQuestions)
+  console.log("responses from usesurvey: ", responses)
   return (
-    <div {...handlers} className="flex flex-col h-screen bg-gray-50">
-      <header className="bg-white shadow-sm p-4 flex items-center">
-        <button className="mr-2 md:hidden">
-          <ChevronLeft size={24} />
-        </button>
-        <h1 className="text-xl md:text-2xl font-semibold text-gray-800">ReformAI: {surveyInfo.title}</h1>
-      </header>
-
-      <main className="flex-1 overflow-hidden flex flex-col">
-        <div className="flex-1 overflow-y-auto p-4 pb-24 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-          <div ref={chatStartRef} />
-          <AnimatePresence>
-            {[defaultMessage, ...messages].map((message) => (
-              // console.log(messages)
-              <motion.div
-                key={message.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3 }}
-                className={`mb-4 ${message.sender === 'ai' ? 'text-left' : 'text-right'}`}
-              >
-                <div
-                  className={`inline-block p-3 rounded-lg max-w-[80%] md:max-w-[70%] ${
-                    message.sender === 'ai'
-                      ? 'bg-blue-100 text-blue-800'
-                      : 'bg-green-100 text-green-800'
-                  }`}
-                >
-                  {message.text}
-                </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-
-          {isTyping && (
-            <div className="text-left mb-4">
-              <div className="inline-block p-3 rounded-lg bg-gray-200">
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.5, repeat: Infinity, repeatType: 'reverse' }}
-                  className="w-12 h-6 flex justify-around items-center"
-                >
-                  <div className="w-2 h-2 bg-gray-500 rounded-full" />
-                  <div className="w-2 h-2 bg-gray-500 rounded-full" />
-                  <div className="w-2 h-2 bg-gray-500 rounded-full" />
-                </motion.div>
-              </div>
-            </div>
-          )}
-          <div ref={chatEndRef} />
-        </div>
-
-        <div className="fixed bottom-0 left-0 right-0 bg-white shadow-md p-4">
-          <div className="w-full max-w-7xl mx-auto">
-            <div className="flex items-center mb-4">
-              <div className="flex-1 h-2 bg-gray-200 rounded-full">
-                <motion.div
-                  className="h-2 bg-blue-500 rounded-full"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${progress * 100}%` }}
-                  transition={{ duration: 0.5 }}
-                />
-              </div>
-            </div>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSend();
-              }}
-              className="flex items-center"
-            >
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Type your response..."
-                className="flex-1 p-2 rounded-l-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <button style={{cursor: isTyping && "not-allowed"}} type="submit" className="p-2 bg-blue-500 text-white rounded-r-lg transition-colors">
-                <Send size={20} />
-              </button>
-              <button type="button" className="p-2 ml-2 bg-gray-200 text-gray-600 rounded-lg transition-colors">
-                <Mic size={20} />
-              </button>
-            </form>
-          </div>
-        </div>
-      </main>
-
-      <AnimatePresence>
-        {isSurveyComplete && (
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 50 }}
-            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+    <Suspense fallback={<FullPageLoader />}>
+      <div {...handlers} className="flex flex-col h-screen bg-gray-50">
+        <header className="bg-white shadow-sm p-4 flex items-center gap-x-10">
+          <button className="mr-2 md:hidden">
+            <ChevronLeft size={24} />
+          </button>
+          <h1 className="text-xl md:text-2xl font-semibold text-gray-800">ReformAI: {surveyInfo.title}</h1>
+          <button
+            style={{cursor: (isTyping || isSurveyComplete) ? "not-allowed": "pointer"}}
+            disabled={isTyping || isSurveyComplete}
+            onClick={() => handleSendQuestionResponse(allAskedQuestions[allAskedQuestions.length-1].question.questionDetails.id)}
+            className={`w-50 flex items-center gap-x-1 justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${isSurveyComplete ? "bg-gray-600" : "bg-blue-600 hover:bg-blue-700"} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`}
           >
-            <div className="bg-white rounded-lg p-6 max-w-sm w-full">
-              <div className="flex items-center justify-center mb-4">
-                <div className="bg-green-100 rounded-full p-2">
-                  <Check className="text-green-500" size={32} />
+            <ArrowBigRight size={15} />
+            Get Next Question
+          </button>
+          <button
+            style={{cursor: "pointer"}}
+            onClick={submitSurveyResponse}
+            className="w-50 flex items-center gap-x-1 justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+          >
+            { submitting ? 
+              <><Loader color="#ffffff" size={15} /> Submitting...</> :
+              <><UploadIcon size={15} /> Submit Survey</>
+            }
+            
+          </button>
+        </header>
+
+        <main className="flex-1 overflow-hidden flex flex-col">
+          <div className="flex-1 overflow-y-auto p-4 pb-24 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+            <div ref={chatStartRef} />
+            <AnimatePresence>
+              <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.3 }}
+                    className="mb-4 text-left"
+                  >
+                    <div
+                      className="inline-block p-4 rounded-lg max-w-[80%] md:max-w-[70%] bg-blue-100 text-blue-800"
+                    >{"Hello! I'm ReformAI. Let's begin the survey"}</div>
+                  </motion.div>
+              {convertToMessages(allAskedQuestions).map((message) => {
+                  if(message.questionId === "clarification") {
+                    return (
+                      <motion.div
+                        key={message.timeSent}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.3 }}
+                        className={`mb-4 ${
+                          message.sender === "ai" ? "text-left" : "text-right"
+                        }`}
+                      >
+                        <div
+                          className={`inline-block p-4 rounded-lg max-w-[80%] md:max-w-[70%] ${
+                            message.sender === "ai"
+                              ? "bg-blue-100 text-blue-800"
+                              : "bg-green-100 text-green-800"
+                          }`}
+                        >
+                          {message.text}
+                        </div>
+                      </motion.div>
+                    )
+                  }
+                  const targetQuestion = allAskedQuestions.find(aaq => aaq.question.questionDetails.id === message.questionId)!.question
+                  return (
+                    // console.log(messages)
+                    <motion.div
+                      key={message.timeSent}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      transition={{ duration: 0.3 }}
+                      className={`mb-4 ${message.sender === 'ai' ? 'text-left' : 'text-right'}`}
+                    >
+                      <div
+                        className={`inline-block p-3 rounded-lg max-w-[80%] md:max-w-[70%] ${
+                          message.sender === 'ai'
+                            ? 'bg-blue-100 text-blue-800'
+                            : 'bg-green-100 text-green-800'
+                        }`}
+                      >
+                          <>
+                            <p className="mb-4">{message.text}</p>
+                            {renderQuestionComponent(targetQuestion.questionDetails)}
+                            
+                          </>
+                      </div>
+                    </motion.div>
+                  )
+                }
+              )}
+            </AnimatePresence>
+
+            {isTyping && (
+              <div className="text-left mb-4">
+                <div className="inline-block p-3 rounded-lg bg-gray-200">
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.5, repeat: Infinity, repeatType: 'reverse' }}
+                    className="w-12 h-6 flex justify-around items-center"
+                  >
+                    <div className="w-2 h-2 bg-gray-500 rounded-full" />
+                    <div className="w-2 h-2 bg-gray-500 rounded-full" />
+                    <div className="w-2 h-2 bg-gray-500 rounded-full" />
+                  </motion.div>
                 </div>
               </div>
-              <h2 className="text-2xl font-semibold text-center mb-2">Survey Complete!</h2>
-              <p className="text-center text-gray-600 mb-4">
-                Thank you for participating in our survey. Your feedback is valuable to us.
-              </p>
-              <button
-                onClick={() => setSurveyComplete(false)}
-                className="w-full p-2 bg-blue-500 text-white rounded-lg transition-colors"
+            )}
+            <div ref={chatEndRef} />
+          </div>
+
+          <div className="fixed bottom-0 left-0 right-0 bg-white shadow-md p-4">
+            <div className="w-full max-w-7xl mx-auto">
+              <div className="flex items-center mb-4">
+                <div className="flex-1 h-2 bg-gray-200 rounded-full">
+                  <motion.div
+                    className="h-2 bg-blue-500 rounded-full"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${(progress/surveyInfo.questionCount) * 100}%` }}
+                    transition={{ duration: 0.5 }}
+                  />
+                </div>
+              </div>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleSendClarificationMessage();
+                }}
+                className="flex items-center"
               >
-                Close
-              </button>
+                <input
+                  type="text"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Type your response..."
+                  className="flex-1 p-2 rounded-l-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <button 
+                  style={{cursor: (isTyping || !input) ? "not-allowed": "pointer"}} 
+                  type="submit" className="p-2 bg-blue-500 text-white rounded-r-lg transition-colors">
+                    <Send size={20} />
+                </button>
+                <button type="button" className="p-2 ml-2 bg-gray-200 text-gray-600 rounded-lg transition-colors">
+                  <Mic size={20} />
+                </button>
+              </form>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+          </div>
+        </main>
+
+        <AnimatePresence>
+          {showCompletionAnimation && (
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 50 }}
+              className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+            >
+              <div className="bg-white rounded-lg p-6 max-w-sm w-full">
+                <div className="flex items-center justify-center mb-4">
+                  <div className="bg-green-100 rounded-full p-2">
+                    <Check className="text-green-500" size={32} />
+                  </div>
+                </div>
+                <h2 className="text-2xl font-semibold text-center mb-2">Survey Complete!</h2>
+                <p className="text-center text-gray-600 mb-4">
+                  Thank you for participating in our survey. Your feedback is valuable to us.
+                </p>
+                <button
+                  onClick={() => {
+                  router.push("/")
+                  setSurveyComplete(false)
+                  }}
+                  className="w-full p-2 bg-blue-500 text-white rounded-lg transition-colors"
+                >
+                  Close
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </Suspense>
   );
 }
