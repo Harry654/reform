@@ -62,7 +62,6 @@ export default function ChatSurvey() {
   const [submitting, setSubmitting] = useState(false);
   const [showCompletionAnimation, setShowCompletionAnimation] = useState(false);
   const [progress, setProgress] = useState(1);
-  const [isSurveyComplete, setSurveyComplete] = useState(false);
   const [surveyInfo, setSurveyInfo] = useState<{title: string, questionCount: number}>({ title: "Loading ...", questionCount: 0 });
 
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -204,6 +203,8 @@ export default function ChatSurvey() {
         throw new Error(result.error)
       }
       setAllAskedQuestions(prev => [...prev, { question: { questionDetails: result, time: new Date().getTime()}, answer: null}]);
+      setProgress(prev => prev+1);
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch(err: any) {
       console.log(err)
@@ -275,18 +276,10 @@ const handleSendQuestionResponse = async (questionId: string) => {
   const newAskedQuestion : AskedQuestion = { question: targetAskedQuestion.question, answer: { answerValue: questionAnswer? questionAnswer.answer: "", time: new Date().getTime() } }
   const filteredAskedQuestions = allAskedQuestions.filter(aaq => aaq.question.questionDetails.id !== targetAskedQuestion.question.questionDetails.id)
   setAllAskedQuestions([...filteredAskedQuestions, newAskedQuestion])
-  setInput('');
   setIsTyping(true);
-  setProgress((prev) => {
-    const newProgress = prev+1
-    if (newProgress === surveyInfo.questionCount && !allAskedQuestions[allAskedQuestions.length-1].question.questionDetails.required) {
-      setSurveyComplete(true);
-    }
-    return newProgress;
-  });
+  
   
   // AI response
-  console.log("progress", progress)
   await getAndOptimizeNextQuestion(newAskedQuestion)
   setIsTyping(false);
 };
@@ -310,6 +303,23 @@ const handleSendClarificationMessage = async () => {
   }
 };
 
+  function checkSurveyCompletion() {
+    if(allAskedQuestions.length === surveyInfo.questionCount) {
+      const lastQuestion = allAskedQuestions[allAskedQuestions.length-1]
+      if(!lastQuestion) return false
+      if(!lastQuestion.question.questionDetails.required) {
+        return true
+      } else {
+        const questionAnswer = responses.find(res => res.questionId === lastQuestion.question.questionDetails.id)
+        if(questionAnswer?.answer) {
+           return true
+        } else {
+           return false
+        }
+      }
+    } else return false
+  }
+
   const handlers = useSwipeable({
     onSwipedRight: () => {
       console.log('Swiped right - go back');
@@ -318,8 +328,11 @@ const handleSendClarificationMessage = async () => {
     trackTouch: true,
   });
 
+  console.log("last progress: ", progress)
+  console.log("surveyInfo: ", surveyInfo)
   console.log("allAskedQuestions: ", allAskedQuestions)
   console.log("responses from usesurvey: ", responses)
+  const isSurveyComplete = checkSurveyCompletion()
   return (
     <Suspense fallback={<FullPageLoader />}>
       <div {...handlers} className="flex flex-col h-screen bg-gray-50">
@@ -329,10 +342,10 @@ const handleSendClarificationMessage = async () => {
           </button>
           <h1 className="text-xl md:text-2xl font-semibold text-gray-800">ReformAI: {surveyInfo.title}</h1>
           <button
-            style={{cursor: (isTyping || isSurveyComplete) ? "not-allowed": "pointer"}}
-            disabled={isTyping || isSurveyComplete}
+            style={{cursor: (isTyping || allAskedQuestions.length === surveyInfo.questionCount) ? "not-allowed": "pointer"}}
+            disabled={isTyping || allAskedQuestions.length === surveyInfo.questionCount}
             onClick={() => handleSendQuestionResponse(allAskedQuestions[allAskedQuestions.length-1].question.questionDetails.id)}
-            className={`w-50 flex items-center gap-x-1 justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${isSurveyComplete ? "bg-gray-600" : "bg-blue-600 hover:bg-blue-700"} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`}
+            className={`w-50 flex items-center gap-x-1 justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${allAskedQuestions.length === surveyInfo.questionCount ? "bg-gray-600" : "bg-blue-600 hover:bg-blue-700"} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`}
           >
             <ArrowBigRight size={15} />
             Get Next Question
@@ -340,7 +353,7 @@ const handleSendClarificationMessage = async () => {
           <button
             style={{cursor: "pointer"}}
             onClick={submitSurveyResponse}
-            className="w-50 flex items-center gap-x-1 justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+            className={`w-50 flex items-center gap-x-1 justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${!isSurveyComplete ? "bg-gray-600" : "bg-green-600 hover:bg-green-700"} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`}
           >
             { submitting ? 
               <><Loader color="#ffffff" size={15} /> Submitting...</> :
@@ -498,10 +511,7 @@ const handleSendClarificationMessage = async () => {
                   Thank you for participating in our survey. Your feedback is valuable to us.
                 </p>
                 <button
-                  onClick={() => {
-                  router.push("/")
-                  setSurveyComplete(false)
-                  }}
+                  onClick={() => router.push("/")}
                   className="w-full p-2 bg-blue-500 text-white rounded-lg transition-colors"
                 >
                   Close
