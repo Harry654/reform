@@ -1,82 +1,95 @@
 "use client";
 
-import React, { useState, useEffect, useRef, Suspense } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { Send, Mic, Check, ChevronLeft, ArrowBigRight, UploadIcon, Loader } from 'lucide-react';
-import { useSwipeable } from 'react-swipeable';
+import React, { useState, useEffect, useRef, Suspense } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  Send,
+  Mic,
+  Check,
+  ChevronLeft,
+  ArrowBigRight,
+  UploadIcon,
+  Loader,
+} from "lucide-react";
+import { useSwipeable } from "react-swipeable";
 import { useParams, useRouter } from "next/navigation";
-import FullPageLoader from '@/components/FullPageLoader';
-import { Question } from '@/types/question';
+import FullPageLoader from "@/components/FullPageLoader";
+import { Question } from "@/types/question";
 import {
   CheckboxesQuestionFill,
   DateTimeQuestionFill,
   DropdownQuestionFill,
   FileUploadQuestionFill,
   ImageChoiceQuestionFill,
-  LongAnswerQuestionFill, 
-  MatrixQuestionFill, 
+  LongAnswerQuestionFill,
+  MatrixQuestionFill,
   MCQQuestionFill,
   RankingQuestionFill,
   RatingQuestionFill,
   ShortAnswerQuestionFill,
   SliderQuestionFill,
-  YesNoQuestionFill
-} from '@/components/fill/QuestionFillComponents';
-import { useSurvey } from '@/context/SurveyResponseContext';
-import { TAnswer, TSurveyResponse } from '@/types/response';
+  YesNoQuestionFill,
+} from "@/components/fill/QuestionFillComponents";
+import { useSurvey } from "@/context/SurveyResponseContext";
+import { TAnswer, TSurveyResponse } from "@/types/response";
 import { doc, setDoc, Timestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from "@/context/AuthContext";
 import { v4 as uuidv4 } from "uuid";
 
-
 type AskedQuestion = {
-  question: {questionDetails: Question, time: number};
-  answer: {answerValue: TAnswer, time: number} | null;
-}
+  question: { questionDetails: Question; time: number };
+  answer: { answerValue: TAnswer; time: number } | null;
+};
 
 type ClarificationMessage = {
-  sender: "ai"|"user";
+  sender: "ai" | "user";
   text: string;
   timeSent: number;
-}
+};
 
 type Message = {
   text: string;
   questionId: string;
-  sender: 'ai' | 'user';
+  sender: "ai" | "user";
   timeSent: number;
-}
-
+};
 
 export default function ChatSurvey() {
   const { user } = useAuth();
-  const { responses } = useSurvey()
-  const router = useRouter()
+  const { responses } = useSurvey();
+  const router = useRouter();
 
-  const [allAskedQuestions, setAllAskedQuestions] = useState<AskedQuestion[]>([]);
-  const [clarificationMessages, setClarificationMessages] = useState<ClarificationMessage[]>([]);
+  const [allAskedQuestions, setAllAskedQuestions] = useState<AskedQuestion[]>(
+    []
+  );
+  const [clarificationMessages, setClarificationMessages] = useState<
+    ClarificationMessage[]
+  >([]);
   const { surveyId } = useParams();
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [showCompletionAnimation, setShowCompletionAnimation] = useState(false);
   const [progress, setProgress] = useState(1);
-  const [surveyInfo, setSurveyInfo] = useState<{title: string, questionCount: number}>({ title: "Loading ...", questionCount: 0 });
+  const [surveyInfo, setSurveyInfo] = useState<{
+    title: string;
+    questionCount: number;
+  }>({ title: "Loading ...", questionCount: 0 });
 
   const chatEndRef = useRef<HTMLDivElement>(null);
   const chatStartRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [allAskedQuestions, clarificationMessages]);
 
   async function submitSurveyResponse() {
-    if(!isSurveyComplete) {
-      return alert("You haven't completed the survey yet")
+    if (!isSurveyComplete) {
+      return alert("You haven't completed the survey yet");
     }
-    
-    setSubmitting(true)
+
+    setSubmitting(true);
     try {
       const newSurveyResponse: TSurveyResponse = {
         surveyId: surveyId as string,
@@ -85,21 +98,24 @@ export default function ChatSurvey() {
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
         answers: responses,
-      }
-      console.log("newSurveyRespnse",newSurveyResponse)
-      await setDoc(doc(db, "responses", newSurveyResponse.responseId), newSurveyResponse);
-      setSubmitting(false)
-      setShowCompletionAnimation(true)
+      };
+      console.log("newSurveyRespnse", newSurveyResponse);
+      await setDoc(
+        doc(db, "responses", newSurveyResponse.responseId),
+        newSurveyResponse
+      );
+      setSubmitting(false);
+      setShowCompletionAnimation(true);
     } catch (error) {
-      setSubmitting(false)
-      alert("Couldn't submit response. Check your internet and try again")
+      setSubmitting(false);
+      alert("Couldn't submit response. Check your internet and try again");
     }
   }
 
   const renderQuestionComponent = (question: Question) => {
     switch (question.type) {
       case "mcq":
-      return <MCQQuestionFill question={question} />;
+        return <MCQQuestionFill question={question} />;
       case "short_answer":
         return <ShortAnswerQuestionFill question={question} />;
       case "long_answer":
@@ -130,209 +146,293 @@ export default function ChatSurvey() {
   };
 
   function convertToAIChatMessages(askedQuestions: Array<AskedQuestion>) {
-    console.log("from convertToAIChatMessages: ", askedQuestions)
-    const convertedAIChatMessagesFromAskedQuestions =  askedQuestions.map(askedQuestion => {
-      if(askedQuestion.answer) {
-        return [
-          { timeSent: askedQuestion.question.time, role: "model", parts: [{text: JSON.stringify(askedQuestion.question.questionDetails.text)}] }, 
-          { timeSent: askedQuestion.answer.time, role: "user", parts: [{text: JSON.stringify(askedQuestion.answer.answerValue)}] }
-        ];
-      } else {
-        return { timeSent: askedQuestion.question.time, role: "model", parts: [{text: JSON.stringify(askedQuestion.question.questionDetails.text)}] }
-      }
-    }).flat();
-
-    const convertedMessagesFromClarificationMessages = clarificationMessages.map(cm => {
-      return {
-        text: cm.text,
-        parts: [{text: cm.text}],
-        role: cm.sender === "ai" ? "model": "user",
-        timeSent: cm.timeSent,
-      }
-    })
-
-    const sortedMessages = [...convertedAIChatMessagesFromAskedQuestions, ...convertedMessagesFromClarificationMessages]
-    .sort((a, b) => a.timeSent-b.timeSent)
-    .map(m => ({ role: m.role, parts: m.parts }))
-
-    console.log("ai chatconverted messages: ", sortedMessages)
-    return [{ role: "user", parts: [{text: "hello"}] }, ...sortedMessages]
-  }
-
-
-  function convertToMessages(askedQuestions: Array<AskedQuestion>): Array<Message> {
-    console.log("from converToMessages: ", askedQuestions)
-    const convertedMessagesFromAskedQuestions =  askedQuestions.map(askedQuestion => {
-      return {
-        text: askedQuestion.question.questionDetails.text,
-        questionId: askedQuestion.question.questionDetails.id,
-        sender: "ai" as const,
-        timeSent: askedQuestion.question.time
-      }
-    })
-
-    console.log("converted messages from askedQuestions: ", convertedMessagesFromAskedQuestions)
-
-    const convertedMessagesFromClarificationMessages = clarificationMessages.map(cm => {
-      return {
-        text: cm.text,
-        questionId: "clarification",
-        sender: cm.sender,
-        timeSent: cm.timeSent,
-      }
-    })
-    return [...convertedMessagesFromAskedQuestions, ...convertedMessagesFromClarificationMessages].sort((a, b) => a.timeSent-b.timeSent)
-  }
-  
-
-  async function getAndOptimizeNextQuestion(currentAskedQuestion : AskedQuestion) {
-    try {
-      if(currentAskedQuestion.answer === null)return
-      const response = await fetch(`/api/survey/id/${surveyId}/question/${allAskedQuestions.length+1}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          previousQuestion: currentAskedQuestion.question.questionDetails,
-          previousResponse: currentAskedQuestion.answer.answerValue
-        })
+    console.log("from convertToAIChatMessages: ", askedQuestions);
+    const convertedAIChatMessagesFromAskedQuestions = askedQuestions
+      .map((askedQuestion) => {
+        if (askedQuestion.answer) {
+          return [
+            {
+              timeSent: askedQuestion.question.time,
+              role: "model",
+              parts: [
+                {
+                  text: JSON.stringify(
+                    askedQuestion.question.questionDetails.text
+                  ),
+                },
+              ],
+            },
+            {
+              timeSent: askedQuestion.answer.time,
+              role: "user",
+              parts: [
+                { text: JSON.stringify(askedQuestion.answer.answerValue) },
+              ],
+            },
+          ];
+        } else {
+          return {
+            timeSent: askedQuestion.question.time,
+            role: "model",
+            parts: [
+              {
+                text: JSON.stringify(
+                  askedQuestion.question.questionDetails.text
+                ),
+              },
+            ],
+          };
+        }
       })
-      const result = await response.json()
-      if(result?.error) {
-        throw new Error(result.error)
-      }
-      setAllAskedQuestions(prev => [...prev, { question: { questionDetails: result, time: new Date().getTime()}, answer: null}]);
-      setProgress(prev => prev+1);
+      .flat();
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch(err: any) {
-      console.log(err)
-      setIsTyping(false)
-      alert(err.message)
+    const convertedMessagesFromClarificationMessages =
+      clarificationMessages.map((cm) => {
+        return {
+          text: cm.text,
+          parts: [{ text: cm.text }],
+          role: cm.sender === "ai" ? "model" : "user",
+          timeSent: cm.timeSent,
+        };
+      });
+
+    const sortedMessages = [
+      ...convertedAIChatMessagesFromAskedQuestions,
+      ...convertedMessagesFromClarificationMessages,
+    ]
+      .sort((a, b) => a.timeSent - b.timeSent)
+      .map((m) => ({ role: m.role, parts: m.parts }));
+
+    console.log("ai chatconverted messages: ", sortedMessages);
+    return [{ role: "user", parts: [{ text: "hello" }] }, ...sortedMessages];
+  }
+
+  function convertToMessages(
+    askedQuestions: Array<AskedQuestion>
+  ): Array<Message> {
+    console.log("from converToMessages: ", askedQuestions);
+    const convertedMessagesFromAskedQuestions = askedQuestions.map(
+      (askedQuestion) => {
+        return {
+          text: askedQuestion.question.questionDetails.text,
+          questionId: askedQuestion.question.questionDetails.id,
+          sender: "ai" as const,
+          timeSent: askedQuestion.question.time,
+        };
+      }
+    );
+
+    console.log(
+      "converted messages from askedQuestions: ",
+      convertedMessagesFromAskedQuestions
+    );
+
+    const convertedMessagesFromClarificationMessages =
+      clarificationMessages.map((cm) => {
+        return {
+          text: cm.text,
+          questionId: "clarification",
+          sender: cm.sender,
+          timeSent: cm.timeSent,
+        };
+      });
+    return [
+      ...convertedMessagesFromAskedQuestions,
+      ...convertedMessagesFromClarificationMessages,
+    ].sort((a, b) => a.timeSent - b.timeSent);
+  }
+
+  async function getAndOptimizeNextQuestion(
+    currentAskedQuestion: AskedQuestion
+  ) {
+    try {
+      if (currentAskedQuestion.answer === null) return;
+      const response = await fetch(
+        `/api/survey/id/${surveyId}/question/${allAskedQuestions.length + 1}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            previousQuestion: currentAskedQuestion.question.questionDetails,
+            previousResponse: currentAskedQuestion.answer.answerValue,
+          }),
+        }
+      );
+      const result = await response.json();
+      if (result?.error) {
+        throw new Error(result.error);
+      }
+      setAllAskedQuestions((prev) => [
+        ...prev,
+        {
+          question: { questionDetails: result, time: new Date().getTime() },
+          answer: null,
+        },
+      ]);
+      setProgress((prev) => prev + 1);
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      console.log(err);
+      setIsTyping(false);
+      alert(err.message);
     }
   }
 
-  
   async function sendClarificationMessageToAI(message: string) {
     try {
       const response = await fetch(`/api/survey/clarify`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           history: convertToAIChatMessages(allAskedQuestions),
-          newMessage: message
-        })
-      })
-      const result = await response.json()
-      if(result?.error) {
-        throw new Error(result.error)
+          newMessage: message,
+        }),
+      });
+      const result = await response.json();
+      if (result?.error) {
+        throw new Error(result.error);
       }
-      console.log("clarification message AI response", result)
-      setClarificationMessages(prev => [...prev, { text: result, sender: "ai", timeSent: new Date().getTime()}]);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch(err: any) {
-      console.log(err)
-      setIsTyping(false)
-      alert(err.message)
+      console.log("clarification message AI response", result);
+      setClarificationMessages((prev) => [
+        ...prev,
+        { text: result, sender: "ai", timeSent: new Date().getTime() },
+      ]);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      console.log(err);
+      setIsTyping(false);
+      alert(err.message);
     }
   }
 
   async function initializeSurvey() {
-    if(allAskedQuestions.length>0)return
+    if (allAskedQuestions.length > 0) return;
     try {
-      setIsTyping(true)
-      const response = await fetch("/api/survey/start/"+surveyId)
-      const result = await response.json()
+      setIsTyping(true);
+      const response = await fetch("/api/survey/start/" + surveyId);
+      const result = await response.json();
       // console.log(result)
-      if(result?.error) {
-        throw new Error(result.error)
+      if (result?.error) {
+        throw new Error(result.error);
       }
-      setSurveyInfo({title: result.name, questionCount: result.questionCount})
-      setAllAskedQuestions([{question: { questionDetails: result.question, time: new Date().getTime() }, answer: null}])
-      setIsTyping(false)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      setSurveyInfo({
+        title: result.name,
+        questionCount: result.questionCount,
+      });
+      setAllAskedQuestions([
+        {
+          question: {
+            questionDetails: result.question,
+            time: new Date().getTime(),
+          },
+          answer: null,
+        },
+      ]);
+      setIsTyping(false);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      console.log(err)
-      setIsTyping(false)
-      alert(err.message)
+      console.log(err);
+      setIsTyping(false);
+      alert(err.message);
     }
   }
 
   useEffect(() => {
-    initializeSurvey()
-  }, [surveyId])
+    initializeSurvey();
+  }, [surveyId]);
 
-const handleSendQuestionResponse = async (questionId: string) => {
-  const questionAnswer = responses.find(res => res.questionId === questionId)
-  console.log("questionAnswer", questionId)
-  const targetAskedQuestion = allAskedQuestions.find(q => q.question.questionDetails.id === questionId)
-  if(isTyping) return
-  if (targetAskedQuestion?.question.questionDetails.required && !questionAnswer)return alert("You can't skip a required question")
-  if(!targetAskedQuestion) return
+  const handleSendQuestionResponse = async (questionId: string) => {
+    const questionAnswer = responses.find(
+      (res) => res.questionId === questionId
+    );
+    console.log("questionAnswer", questionId);
+    const targetAskedQuestion = allAskedQuestions.find(
+      (q) => q.question.questionDetails.id === questionId
+    );
+    if (isTyping) return;
+    if (
+      targetAskedQuestion?.question.questionDetails.required &&
+      !questionAnswer
+    )
+      return alert("You can't skip a required question");
+    if (!targetAskedQuestion) return;
 
-  const newAskedQuestion : AskedQuestion = { question: targetAskedQuestion.question, answer: { answerValue: questionAnswer? questionAnswer.answer: "", time: new Date().getTime() } }
-  const filteredAskedQuestions = allAskedQuestions.filter(aaq => aaq.question.questionDetails.id !== targetAskedQuestion.question.questionDetails.id)
-  setAllAskedQuestions([...filteredAskedQuestions, newAskedQuestion])
-  setIsTyping(true);
-  
-  
-  // AI response
-  await getAndOptimizeNextQuestion(newAskedQuestion)
-  setIsTyping(false);
-};
-
-const handleSendClarificationMessage = async () => {
-  if(isTyping)return
-  if (input.trim()) {
-    const newClarificationMessage : ClarificationMessage = {
-      text: input,
-      sender: "user",
-      timeSent: new Date().getTime()
-    }
-    setClarificationMessages(prev => [...prev, newClarificationMessage])
-    setInput('');
+    const newAskedQuestion: AskedQuestion = {
+      question: targetAskedQuestion.question,
+      answer: {
+        answerValue: questionAnswer ? questionAnswer.answer : "",
+        time: new Date().getTime(),
+      },
+    };
+    const filteredAskedQuestions = allAskedQuestions.filter(
+      (aaq) =>
+        aaq.question.questionDetails.id !==
+        targetAskedQuestion.question.questionDetails.id
+    );
+    setAllAskedQuestions([...filteredAskedQuestions, newAskedQuestion]);
     setIsTyping(true);
-    
+
     // AI response
-    console.log("progress", progress)
-    await sendClarificationMessageToAI(input)
+    await getAndOptimizeNextQuestion(newAskedQuestion);
     setIsTyping(false);
-  }
-};
+  };
+
+  const handleSendClarificationMessage = async () => {
+    if (isTyping) return;
+    if (input.trim()) {
+      const newClarificationMessage: ClarificationMessage = {
+        text: input,
+        sender: "user",
+        timeSent: new Date().getTime(),
+      };
+      setClarificationMessages((prev) => [...prev, newClarificationMessage]);
+      setInput("");
+      setIsTyping(true);
+
+      // AI response
+      console.log("progress", progress);
+      await sendClarificationMessageToAI(input);
+      setIsTyping(false);
+    }
+  };
 
   function checkSurveyCompletion() {
-    if(allAskedQuestions.length === surveyInfo.questionCount) {
-      const lastQuestion = allAskedQuestions[allAskedQuestions.length-1]
-      if(!lastQuestion) return false
-      if(!lastQuestion.question.questionDetails.required) {
-        return true
+    if (allAskedQuestions.length === surveyInfo.questionCount) {
+      const lastQuestion = allAskedQuestions[allAskedQuestions.length - 1];
+      if (!lastQuestion) return false;
+      if (!lastQuestion.question.questionDetails.required) {
+        return true;
       } else {
-        const questionAnswer = responses.find(res => res.questionId === lastQuestion.question.questionDetails.id)
-        if(questionAnswer?.answer) {
-           return true
+        const questionAnswer = responses.find(
+          (res) => res.questionId === lastQuestion.question.questionDetails.id
+        );
+        if (questionAnswer?.answer) {
+          return true;
         } else {
-           return false
+          return false;
         }
       }
-    } else return false
+    } else return false;
   }
 
   const handlers = useSwipeable({
     onSwipedRight: () => {
-      console.log('Swiped right - go back');
+      console.log("Swiped right - go back");
     },
     trackMouse: true,
     trackTouch: true,
   });
 
-  console.log("last progress: ", progress)
-  console.log("surveyInfo: ", surveyInfo)
-  console.log("allAskedQuestions: ", allAskedQuestions)
-  console.log("responses from usesurvey: ", responses)
-  const isSurveyComplete = checkSurveyCompletion()
+  // console.log("last progress: ", progress);
+  // console.log("surveyInfo: ", surveyInfo);
+  // console.log("allAskedQuestions: ", allAskedQuestions);
+  // console.log("responses from usesurvey: ", responses);
+  const isSurveyComplete = checkSurveyCompletion();
   return (
     <Suspense fallback={<FullPageLoader />}>
       <div {...handlers} className="flex flex-col h-screen bg-gray-50">
@@ -340,26 +440,53 @@ const handleSendClarificationMessage = async () => {
           <button className="mr-2 md:hidden">
             <ChevronLeft size={24} />
           </button>
-          <h1 className="text-xl md:text-2xl font-semibold text-gray-800">ReformAI: {surveyInfo.title}</h1>
+          <h1 className="text-xl md:text-2xl font-semibold text-gray-800">
+            ReformAI: {surveyInfo.title}
+          </h1>
           <button
-            style={{cursor: (isTyping || allAskedQuestions.length === surveyInfo.questionCount) ? "not-allowed": "pointer"}}
-            disabled={isTyping || allAskedQuestions.length === surveyInfo.questionCount}
-            onClick={() => handleSendQuestionResponse(allAskedQuestions[allAskedQuestions.length-1].question.questionDetails.id)}
-            className={`w-50 flex items-center gap-x-1 justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${allAskedQuestions.length === surveyInfo.questionCount ? "bg-gray-600" : "bg-blue-600 hover:bg-blue-700"} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`}
+            style={{
+              cursor:
+                isTyping ||
+                allAskedQuestions.length === surveyInfo.questionCount
+                  ? "not-allowed"
+                  : "pointer",
+            }}
+            disabled={
+              isTyping || allAskedQuestions.length === surveyInfo.questionCount
+            }
+            onClick={() =>
+              handleSendQuestionResponse(
+                allAskedQuestions[allAskedQuestions.length - 1].question
+                  .questionDetails.id
+              )
+            }
+            className={`w-50 flex items-center gap-x-1 justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
+              allAskedQuestions.length === surveyInfo.questionCount
+                ? "bg-gray-600"
+                : "bg-blue-600 hover:bg-blue-700"
+            } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`}
           >
             <ArrowBigRight size={15} />
             Get Next Question
           </button>
           <button
-            style={{cursor: "pointer"}}
+            style={{ cursor: "pointer" }}
             onClick={submitSurveyResponse}
-            className={`w-50 flex items-center gap-x-1 justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${!isSurveyComplete ? "bg-gray-600" : "bg-green-600 hover:bg-green-700"} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`}
+            className={`w-50 flex items-center gap-x-1 justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
+              !isSurveyComplete
+                ? "bg-gray-600"
+                : "bg-green-600 hover:bg-green-700"
+            } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`}
           >
-            { submitting ? 
-              <><Loader color="#ffffff" size={15} /> Submitting...</> :
-              <><UploadIcon size={15} /> Submit Survey</>
-            }
-            
+            {submitting ? (
+              <>
+                <Loader color="#ffffff" size={15} /> Submitting...
+              </>
+            ) : (
+              <>
+                <UploadIcon size={15} /> Submit Survey
+              </>
+            )}
           </button>
         </header>
 
@@ -368,69 +495,74 @@ const handleSendClarificationMessage = async () => {
             <div ref={chatStartRef} />
             <AnimatePresence>
               <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.3 }}
-                    className="mb-4 text-left"
-                  >
-                    <div
-                      className="inline-block p-4 rounded-lg max-w-[80%] md:max-w-[70%] bg-blue-100 text-blue-800"
-                    >{"Hello! I'm ReformAI. Let's begin the survey"}</div>
-                  </motion.div>
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+                className="mb-4 text-left"
+              >
+                <div className="inline-block p-4 rounded-lg max-w-[80%] md:max-w-[70%] bg-blue-100 text-blue-800">
+                  {"Hello! I'm ReformAI. Let's begin the survey"}
+                </div>
+              </motion.div>
               {convertToMessages(allAskedQuestions).map((message) => {
-                  if(message.questionId === "clarification") {
-                    return (
-                      <motion.div
-                        key={message.timeSent}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        transition={{ duration: 0.3 }}
-                        className={`mb-4 ${
-                          message.sender === "ai" ? "text-left" : "text-right"
-                        }`}
-                      >
-                        <div
-                          className={`inline-block p-4 rounded-lg max-w-[80%] md:max-w-[70%] ${
-                            message.sender === "ai"
-                              ? "bg-blue-100 text-blue-800"
-                              : "bg-green-100 text-green-800"
-                          }`}
-                        >
-                          {message.text}
-                        </div>
-                      </motion.div>
-                    )
-                  }
-                  const targetQuestion = allAskedQuestions.find(aaq => aaq.question.questionDetails.id === message.questionId)!.question
+                if (message.questionId === "clarification") {
                   return (
-                    // console.log(messages)
                     <motion.div
                       key={message.timeSent}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -20 }}
                       transition={{ duration: 0.3 }}
-                      className={`mb-4 ${message.sender === 'ai' ? 'text-left' : 'text-right'}`}
+                      className={`mb-4 ${
+                        message.sender === "ai" ? "text-left" : "text-right"
+                      }`}
                     >
                       <div
-                        className={`inline-block p-3 rounded-lg max-w-[80%] md:max-w-[70%] ${
-                          message.sender === 'ai'
-                            ? 'bg-blue-100 text-blue-800'
-                            : 'bg-green-100 text-green-800'
+                        className={`inline-block p-4 rounded-lg max-w-[80%] md:max-w-[70%] ${
+                          message.sender === "ai"
+                            ? "bg-blue-100 text-blue-800"
+                            : "bg-green-100 text-green-800"
                         }`}
                       >
-                          <>
-                            <p className="mb-4">{message.text}</p>
-                            {renderQuestionComponent(targetQuestion.questionDetails)}
-                            
-                          </>
+                        {message.text}
                       </div>
                     </motion.div>
-                  )
+                  );
                 }
-              )}
+                const targetQuestion = allAskedQuestions.find(
+                  (aaq) =>
+                    aaq.question.questionDetails.id === message.questionId
+                )!.question;
+                return (
+                  // console.log(messages)
+                  <motion.div
+                    key={message.timeSent}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.3 }}
+                    className={`mb-4 ${
+                      message.sender === "ai" ? "text-left" : "text-right"
+                    }`}
+                  >
+                    <div
+                      className={`inline-block p-3 rounded-lg max-w-[80%] md:max-w-[70%] ${
+                        message.sender === "ai"
+                          ? "bg-blue-100 text-blue-800"
+                          : "bg-green-100 text-green-800"
+                      }`}
+                    >
+                      <>
+                        <p className="mb-4">{message.text}</p>
+                        {renderQuestionComponent(
+                          targetQuestion.questionDetails
+                        )}
+                      </>
+                    </div>
+                  </motion.div>
+                );
+              })}
             </AnimatePresence>
 
             {isTyping && (
@@ -440,7 +572,11 @@ const handleSendClarificationMessage = async () => {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.5, repeat: Infinity, repeatType: 'reverse' }}
+                    transition={{
+                      duration: 0.5,
+                      repeat: Infinity,
+                      repeatType: "reverse",
+                    }}
                     className="w-12 h-6 flex justify-around items-center"
                   >
                     <div className="w-2 h-2 bg-gray-500 rounded-full" />
@@ -460,7 +596,9 @@ const handleSendClarificationMessage = async () => {
                   <motion.div
                     className="h-2 bg-blue-500 rounded-full"
                     initial={{ width: 0 }}
-                    animate={{ width: `${(progress/surveyInfo.questionCount) * 100}%` }}
+                    animate={{
+                      width: `${(progress / surveyInfo.questionCount) * 100}%`,
+                    }}
                     transition={{ duration: 0.5 }}
                   />
                 </div>
@@ -479,12 +617,19 @@ const handleSendClarificationMessage = async () => {
                   placeholder="Type your response..."
                   className="flex-1 p-2 rounded-l-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-                <button 
-                  style={{cursor: (isTyping || !input) ? "not-allowed": "pointer"}} 
-                  type="submit" className="p-2 bg-blue-500 text-white rounded-r-lg transition-colors">
-                    <Send size={20} />
+                <button
+                  style={{
+                    cursor: isTyping || !input ? "not-allowed" : "pointer",
+                  }}
+                  type="submit"
+                  className="p-2 bg-blue-500 text-white rounded-r-lg transition-colors"
+                >
+                  <Send size={20} />
                 </button>
-                <button type="button" className="p-2 ml-2 bg-gray-200 text-gray-600 rounded-lg transition-colors">
+                <button
+                  type="button"
+                  className="p-2 ml-2 bg-gray-200 text-gray-600 rounded-lg transition-colors"
+                >
                   <Mic size={20} />
                 </button>
               </form>
@@ -506,9 +651,12 @@ const handleSendClarificationMessage = async () => {
                     <Check className="text-green-500" size={32} />
                   </div>
                 </div>
-                <h2 className="text-2xl font-semibold text-center mb-2">Survey Complete!</h2>
+                <h2 className="text-2xl font-semibold text-center mb-2">
+                  Survey Complete!
+                </h2>
                 <p className="text-center text-gray-600 mb-4">
-                  Thank you for participating in our survey. Your feedback is valuable to us.
+                  Thank you for participating in our survey. Your feedback is
+                  valuable to us.
                 </p>
                 <button
                   onClick={() => router.push("/")}

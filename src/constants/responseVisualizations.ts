@@ -11,7 +11,7 @@ export const responseVisualizations: {
   dropdown: ["bar-chart", "pie-chart", "donut-chart"], // Dropdown-based options
   ranking: ["bar-chart", "radar-chart", "stacked-bar-chart"], // Ranking (e.g., order preferences)
   date_time: ["line-graph", "bar-chart", "histogram"], // Date and Time inputs
-  matrix: ["heat-map", "stacked-bar-chart", "radar-chart"], // Matrix (Grid of questions)
+  matrix: ["bar-chart", "heat-map", "stacked-bar-chart", "radar-chart"], // Matrix (Grid of questions)
   slider: ["bar-chart", "gauge-chart", "line-graph"], // Slider inputs (e.g., range-based questions)
   file_upload: ["bar-chart", "pie-chart"], // File Upload (e.g., count of file types)
   yes_no: ["pie-chart", "donut-chart", "bar-chart"], // Yes/No (Boolean questions)

@@ -14,11 +14,11 @@ import { ISurvey } from "@/types/survey";
 import { NormalSurveyResponse } from "@/components/fill/NormalSurveyResponse";
 import { useParams, useRouter } from "next/navigation";
 import FullPageLoader from "@/components/FullPageLoader";
-import { InteractiveSurveyResponse } from "@/components/fill/InteractiveSurveyResponse";
 import { useAuth } from "@/context/AuthContext";
 import { useSurvey } from "@/context/SurveyResponseContext";
 import AuthenticationRequired from "@/components/AuthenticationRequired";
 import FormSubmissionSuccess from "@/components/FormSubmissionSuccess";
+import InteractiveSurveyResponse from "@/components/fill/InteractiveSurveyResponse";
 
 const Survey = () => {
   const [surveyData, setSurveyData] = useState<ISurvey | null>(null);

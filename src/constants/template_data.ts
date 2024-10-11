@@ -242,7 +242,7 @@ export const templates: ITemplate[] = [
     id: "f8c7e9d6-3b2a-4f1c-9e5d-1a2b3c4d5e6f",
     title: "Product Launch Feedback Survey",
     description: "Gather feedback on a newly launched product or feature.",
-    isFree: true,
+    isFree: false,
     survey_data: {
       title: "New Product Feedback",
       description:
@@ -398,7 +398,7 @@ export const templates: ITemplate[] = [
     id: "x5y6z7a8-b9c0-d1e2-f3g4-h5i6j7k8l9m0",
     title: "Customer Service Complaint Survey",
     description: "Gather details about customer service issues and complaints.",
-    isFree: true,
+    isFree: false,
     survey_data: {
       title: "Customer Service Complaint Form",
       description:
@@ -557,7 +557,7 @@ export const templates: ITemplate[] = [
     title: "Conference Feedback Survey",
     description:
       "Gather feedback from attendees about various aspects of a conference.",
-    isFree: true,
+    isFree: false,
     survey_data: {
       title: "Conference Feedback",
       description:
