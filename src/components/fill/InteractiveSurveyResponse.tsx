@@ -12,7 +12,7 @@ import {
   Loader,
 } from "lucide-react";
 import { useSwipeable } from "react-swipeable";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import FullPageLoader from "@/components/FullPageLoader";
 import { Question } from "@/types/question";
 import {

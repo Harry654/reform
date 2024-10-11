@@ -6,9 +6,7 @@ import {
   TransitionChild,
 } from "@headlessui/react";
 import { CirclePlus } from "lucide-react";
-import { TPlan } from "@/types/plans";
 import { useAuth } from "@/context/AuthContext";
-import { formatCurrency } from "@/helpers/formatCurrency";
 import { getDateISO } from "@/helpers/getDateISO";
 import { formatDate } from "@/helpers/formatDate";
 
