@@ -65,7 +65,6 @@ interface Props {
 const InteractiveSurveyResponse: React.FC<Props> = ({ surveyData }) => {
   const { user } = useAuth();
   const { responses } = useSurvey();
-  const router = useRouter();
 
   const [allAskedQuestions, setAllAskedQuestions] = useState<AskedQuestion[]>([
     {
