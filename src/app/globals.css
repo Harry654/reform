@@ -53,3 +53,14 @@ body {
 .no-scrollbar::-webkit-scrollbar {
   width: 0px; /* Width of the scrollbar */
 }
+
+
+
+
+.bgi {
+  background-image: url("../../public/images/bg.jpg");
+  background-position: center 0;
+  /* background-size: cover; */
+  background-repeat: no-repeat;
+  /* background-attachment: fixed; */
+}

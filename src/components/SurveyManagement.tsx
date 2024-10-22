@@ -159,7 +159,7 @@ const SurveyManagement: React.FC = () => {
   const handleSaveSurvey = async (updatedSurvey: ISurvey) => {
     // Implement API call to save updated survey
     console.log("Saving survey:", updatedSurvey);
-    setSurvey(updatedSurvey);
+    // setSurvey(updatedSurvey);
   };
 
   if (!survey) {
